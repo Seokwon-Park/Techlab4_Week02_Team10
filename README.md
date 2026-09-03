@@ -3,10 +3,10 @@
 ## 코딩 규약 (Coding Convention)
 
 ### Upper Camel Case
-- 낙타 모양에서 따온 방법으로 첫 글자는 소문자로 시작, 두 번째 단어부터는 대문자로 표현하는 방식으로 많이 사용합니다.
-- Original Text : USER LOGIN LOG
-- Camel Case : userLoginLog
-- 첫 글자를 대문자로 시작하는 Camel Case를 Upper Camel Case or Pascal Case
+- Camel Case : 낙타 모양에서 따온 방법으로 첫 글자는 소문자로 시작, 두 번째 단어부터는 대문자로 표현하는 방식으로 많이 사용합니다.
+- Upper Camel Case or Pascal Case : 첫 글자를 대문자로 시작하는 Camel Case
+  
+### 기타 클래스 명명법
 - Generic Class 의 접두사 T
 - Structure의 접두사 F
 - Non-Skeleton Mesh - Static Mesh
