@@ -45,7 +45,7 @@
 - 본문에는 '무엇을', '왜' 변경했는지를 상세히 작성합니다.
 
 ## 4. 풀 리퀘스트(Pull Request) 템플릿
-- ~~저장소의 .github/PULL_REQUEST_TEMPLATE.md 파일로 저장하여 사용합니다.~~
+
 ```
 ## 📌 개요
 - 작업 목적 및 변경 사항을 간략히 요약합니다.
@@ -68,7 +68,6 @@
 - 특별히 확인을 요청하는 부분이나 고려해야 할 사항을 기재합니다.
 ```
 ## 5. 이슈(Issue) 템플릿
-- ~~용도에 맞게 분리하여 .github/ISSUE_TEMPLATE/ 디렉터리 내에 생성합니다.~~
 1. 기능 제안 (.github/ISSUE_TEMPLATE/feature_request.md)
 ```
 ---
