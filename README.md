@@ -1,5 +1,8 @@
 # GAMETECHLAB04 Week02 Team10 Project
 
+## 팀원
+박석원 권성욱 황혜진
+
 ## 코딩 규약 (Coding Convention)
 
 ### Upper Camel Case
@@ -46,7 +49,7 @@
 ## 3. Git 커밋 컨벤션 (Conventional Commits 기반)
 - 커밋 메시지는 제목, 본문, 바닥글 (Footer) 형태로 작성하며, 본문과 바닥글은 선택 사항입니다.
 ```
-<타입>[적용 범위(선택)]: <제목>
+<타입>:<제목>
 
 [본문(선택)]
 
