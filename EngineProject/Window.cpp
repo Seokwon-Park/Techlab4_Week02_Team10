@@ -71,16 +71,16 @@ bool Window::Create(HINSTANCE hInstance, int Width, int Height, const wchar_t* T
 	wc.lpszClassName = CLASS_NAME;
 	RegisterClass(&wc);
 
-	HWND hwnd = CreateWindowEx(
-		0, CLASS_NAME, Title,
+	hWnd = CreateWindowEx(
+		0, CLASS_NAME, title,
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, Width, Height,
 		nullptr, nullptr, hInstance, nullptr);
 
-	if (hwnd == nullptr)
+	if (hWnd == nullptr)
 		return false;
 
-	ShowWindow(hwnd, SW_SHOW);
+	ShowWindow(hWnd, SW_SHOW);
 	return true;
 }
 
