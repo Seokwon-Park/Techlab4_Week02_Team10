@@ -10,6 +10,14 @@
 - Upper Camel Case or Pascal Case : 첫 글자를 대문자로 시작하는 Camel Case
   
 ### 기타 클래스 명명법
+파일 이름에는 접두사 X
+예시) 
+Object.h
+class UObject (O)
+
+UObject.h
+class UObject (X)
+
 - Generic Class 의 접두사 T
 - Structure의 접두사 F
 - Non-Skeleton Mesh - Static Mesh
