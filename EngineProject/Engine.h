@@ -14,6 +14,6 @@ public:
 
 private:
 	bool bIsRunning = false;
-	TUniquePtr<Window> mainWindow;
+	TUniquePtr<Window> MainWindow;
 };
 
