@@ -102,13 +102,6 @@ class UObject (X)
 ## 5. 이슈(Issue) 템플릿
 1. 기능 제안 (.github/ISSUE_TEMPLATE/feature_request.md)
 ```
----
-name: Feature Request
-about: 새로운 기능 제안
-title: '[FEAT] '
-labels: enhancement
----
-
 ## 🚀 기능 설명
 - 제안하려는 기능에 대해 명확하고 간결하게 설명합니다.
 
