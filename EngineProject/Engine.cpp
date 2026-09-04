@@ -1,6 +1,8 @@
 #include "Engine.h"
 #include "EngineStatics.h"
-#include "Input.h"
+#include "InputSystem.h"
+
+#include <iostream>
 
 void* operator new(size_t size)
 {
@@ -42,7 +44,14 @@ void Engine::Run()
 	{
 		MainWindow->ProcessMessage(bIsRunning);
 
-		FInput::UpdateInputStates();
+		if (FInputSystem::IsKeyPressed(EKeyCode::A))
+		{
+			std::cout << "Key Pressed!" << '\n';
+		}
+
+		std::cout << FInputSystem::GetMouseX() << "," << FInputSystem::GetMouseY() << '\n';
+
+		FInputSystem::UpdateInputStates();
 	}
 }
 

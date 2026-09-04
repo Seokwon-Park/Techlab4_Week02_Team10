@@ -4,7 +4,7 @@
 #include "MouseButton.h"
 #include "Types.h"
 
-class FInput
+class FInputSystem
 {
 public:
     static bool IsKeyPressed(EKeyCode KeyCode);
@@ -16,11 +16,21 @@ public:
     static bool IsMouseReleased(EMouseButton MouseButton);
 
     static void UpdateInputStates();
-    static void SetKeyDown(int VirtualKey, bool bIsDown);
-    static void SetMouseButtonDown(EMouseButton MouseButton, bool bIsDown);
+    static void OnKeyUp(int VirtualKey);
+    static void OnMouseUp(EMouseButton MouseButton);
+    static void OnKeyDown(int VirtualKey);
+    static void OnMouseDown(EMouseButton MouseButton);
+    static void OnMouseMove(int32 x, int32 y);
+
+
+    static inline int32 GetMouseX() { return MouseX; }
+    static inline int32 GetMouseY() { return MouseY; }
+
+    static inline int32 GetMouseDeltaX() { return DeltaX; }
+    static inline int32 GetMouseDeltaY() { return DeltaY; }
 
 private:
-    FInput() = delete;
+    FInputSystem() = delete;
 
     static inline bool bMouseStates[5] = {};
     static inline bool bPrevMouseStates[5] = {};
@@ -29,8 +39,6 @@ private:
     static inline bool bPrevKeyStates[256] = {};
 
     static inline int32 MouseX = 0, MouseY = 0;
-    static inline int32 LastMouseX = 0, LastMouseY = 0;
+    static inline int32 PrevMouseX = 0, PrevMouseY = 0;
     static inline int32 DeltaX = 0, DeltaY = 0;
-
-    
 };

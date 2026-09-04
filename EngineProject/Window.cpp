@@ -1,35 +1,35 @@
 #include "Window.h"
-#include "Input.h"
+#include "InputSystem.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
 	case WM_LBUTTONDOWN:
-		FInput::SetMouseButtonDown(EMouseButton::Left, true);
+		FInputSystem::OnMouseDown(EMouseButton::Left);
 		break;
 	case WM_LBUTTONUP:
-		FInput::SetMouseButtonDown(EMouseButton::Left, false);
+		FInputSystem::OnMouseUp(EMouseButton::Left);
 		break;
 	case WM_RBUTTONDOWN:
-		FInput::SetMouseButtonDown(EMouseButton::Right, true);
+		FInputSystem::OnMouseDown(EMouseButton::Right);
 		break;
 	case WM_RBUTTONUP:
-		FInput::SetMouseButtonDown(EMouseButton::Right, false);
+		FInputSystem::OnMouseUp(EMouseButton::Right);
 		break;
 	case WM_MBUTTONDOWN:
-		FInput::SetMouseButtonDown(EMouseButton::Middle, true);
+		FInputSystem::OnMouseDown(EMouseButton::Middle);
 		break;
 	case WM_MBUTTONUP:
-		FInput::SetMouseButtonDown(EMouseButton::Middle, false);
+		FInputSystem::OnMouseUp(EMouseButton::Middle);
 		break;
 	case WM_XBUTTONDOWN:
 	{
 		int Button = GET_XBUTTON_WPARAM(wParam); // XBUTTON1 또는 XBUTTON2 매크로
 		if (Button == XBUTTON1)
-			FInput::SetMouseButtonDown(EMouseButton::Side1, true);
+			FInputSystem::OnMouseDown(EMouseButton::Side1);
 		else if (Button == XBUTTON2)
-			FInput::SetMouseButtonDown(EMouseButton::Side2, true);
+			FInputSystem::OnMouseDown(EMouseButton::Side2);
 		break;
 	}
 
@@ -37,18 +37,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		int Button = GET_XBUTTON_WPARAM(wParam); // XBUTTON1 또는 XBUTTON2 매크로
 		if (Button == XBUTTON1)
-			FInput::SetMouseButtonDown(EMouseButton::Side1, false);
+			FInputSystem::OnMouseUp(EMouseButton::Side1);
 		else if (Button == XBUTTON2)
-			FInput::SetMouseButtonDown(EMouseButton::Side2, false);
+			FInputSystem::OnMouseUp(EMouseButton::Side2);
 		break;
 	}
 	
+	case WM_MOUSEMOVE:
+		FInputSystem::OnMouseMove((int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+		break;
+
 	case WM_KEYDOWN:
-		FInput::SetKeyDown(wParam, true);
+		FInputSystem::OnKeyDown(wParam);
 		break;
 
 	case WM_KEYUP:
-		FInput::SetKeyDown(wParam, false);
+		FInputSystem::OnKeyUp(wParam);
 		break;
 
 	case WM_DESTROY:
@@ -71,11 +75,20 @@ bool Window::Create(HINSTANCE hInstance, int Width, int Height, const wchar_t* T
 	wc.lpszClassName = CLASS_NAME;
 	RegisterClass(&wc);
 
+	DWORD style = WS_OVERLAPPEDWINDOW;
+
+	// 원하는 클라이언트 크기 -> 실제 윈도우 크기로 보정
+	RECT rc = { 0, 0, Width, Height };
+	AdjustWindowRect(&rc, style, FALSE);   // FALSE = 메뉴 없음
+	int WindowWidth = rc.right - rc.left;
+	int WindowHeight = rc.bottom - rc.top;
+
+
 	hWnd = CreateWindowEx(
-		0, CLASS_NAME, title,
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT, Width, Height,
-		nullptr, nullptr, hInstance, nullptr);
+		0, CLASS_NAME, Title,
+		style,
+		CW_USEDEFAULT, CW_USEDEFAULT, WindowWidth, WindowHeight,
+		nullptr, nullptr, hInstance, this);
 
 	if (hWnd == nullptr)
 		return false;
