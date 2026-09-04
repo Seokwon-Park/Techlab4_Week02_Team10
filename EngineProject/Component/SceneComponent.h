@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Object.h"
+#include "../Object.h"
 
 class USceneComponent :public UObject
 {
+	DECLARE_CLASS(USceneComponent, UObject)
 public:
-
 private:
 	
 };

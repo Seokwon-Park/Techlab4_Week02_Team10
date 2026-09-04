@@ -20,7 +20,7 @@ template <typename T>
 using TSharedPtr = std::shared_ptr<T>;
 
 template <typename T>
-using TWeakPtr= std::shared_ptr<T>;
+using TWeakPtr= std::weak_ptr<T>;
 
 template<typename T, typename... Args>
 TSharedPtr<T> MakeShared(Args&&... args) {
