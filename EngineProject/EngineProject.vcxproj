@@ -177,6 +177,9 @@
     <ClInclude Include="EngineStatics.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Vector.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
