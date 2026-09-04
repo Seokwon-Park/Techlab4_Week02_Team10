@@ -2,28 +2,30 @@
 
 #include "Engine.h"
 #include "EngineStatics.h"
+#include "EngineTimer.h"
 #include "InputSystem.h"
 
+#include "ObjectFactory.h"
+
 #include "Component/SceneComponent.h"
+#include "World.h"
 
-#include <iostream>
-
-void* operator new(size_t size)
+void* operator new(uint64 Size)
 {
-	void* ptr = malloc(size);
-	if (!ptr)
+	void* Ptr = malloc(Size);
+	if (!Ptr)
 		throw std::bad_alloc();
 
-	FEngineStatics::TotalAllocationBytes += static_cast<uint32>(size);
+	FEngineStatics::TotalAllocationBytes += static_cast<uint64>(Size);
 	FEngineStatics::TotalAllocationCount += 1;
-	return ptr;
+	return Ptr;
 }
 
-void operator delete(void* ptr, size_t size)
+void operator delete(void* Ptr, uint64 Size)
 {
-	FEngineStatics::TotalAllocationBytes -= static_cast<uint32>(size);
+	FEngineStatics::TotalAllocationBytes -= static_cast<uint64>(Size);
 	FEngineStatics::TotalAllocationCount -= 1;
-	free(ptr);
+	free(Ptr);
 }
 
 bool Engine::Init(HINSTANCE hInstance)
@@ -36,6 +38,7 @@ bool Engine::Init(HINSTANCE hInstance)
 	}
 
 	// Do Sth
+	World = new UWorld();
 
 	bIsRunning = true;
 
@@ -44,10 +47,18 @@ bool Engine::Init(HINSTANCE hInstance)
 
 void Engine::Run()
 {
+	EngineTimer::Init();
+
+	World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
+	World->SaveScene("A");
 	while (bIsRunning)
 	{
+		EngineTimer::Tick();
+		float DeltaTime = EngineTimer::GetDeltaTime();
+
 		MainWindow->ProcessMessage(bIsRunning);
 
+		World->Tick(DeltaTime);
 
 		FInputSystem::UpdateInputStates();
 	}
@@ -55,5 +66,5 @@ void Engine::Run()
 
 void Engine::Shutdown()
 {
-
+	
 }

@@ -5,6 +5,8 @@
 #include "Types.h"
 #include "Containers.h"
 
+#include "World.h"
+
 class Engine
 {
 public:
@@ -15,5 +17,8 @@ public:
 private:
 	bool bIsRunning = false;
 	TUniquePtr<Window> MainWindow;
+
+	UWorld* World;
+	
 };
 

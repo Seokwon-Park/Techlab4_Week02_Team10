@@ -141,10 +141,15 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Class.cpp" />
+    <ClCompile Include="DefaultShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Engine.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="EnginePCH.cpp" />
+    <ClCompile Include="EngineTimer.cpp" />
     <ClCompile Include="InputSystem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -155,11 +160,13 @@
     <ClCompile Include="Object.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vector.cpp" />
-    <ClCompile Include="Vector4.cpp" />
+    <ClCompile Include="ObjectFactory.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Window.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component\CubeComponent.h" />
@@ -170,6 +177,8 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Class.h" />
     <ClInclude Include="EnginePCH.h" />
+    <ClInclude Include="EngineString.h" />
+    <ClInclude Include="EngineTimer.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Matrix.h" />
@@ -177,11 +186,13 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EngineStatics.h" />
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="Window.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vector.h" />

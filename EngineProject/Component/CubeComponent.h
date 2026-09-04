@@ -4,6 +4,7 @@
 
 class UCubeComponent :public UPrimitiveComponent
 {
+	DECLARE_CLASS(UCubeComponent, UPrimitiveComponent)
 public:
 private:
 
