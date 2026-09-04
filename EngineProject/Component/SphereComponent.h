@@ -4,6 +4,8 @@
 
 class USphereComponent :public UPrimitiveComponent
 {
+	DECLARE_CLASS(USphereComponent, UPrimitiveComponent)
+
 public:
 private:
 

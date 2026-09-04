@@ -11,6 +11,6 @@ public:
 	}
 	inline static uint32 NextUUID = 1;
 
-	inline static uint32 TotalAllocationBytes = 0;
+	inline static uint64 TotalAllocationBytes = 0;
 	inline static uint32 TotalAllocationCount = 0;
 };
