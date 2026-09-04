@@ -143,6 +143,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +156,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="PrimitiveComponent.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="SphereComponent.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="Types.h" />

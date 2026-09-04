@@ -20,6 +20,7 @@ public:
 	void CreateRasterizerState();
 	void SwapBuffer();
 
+
 	void Shutdown();
 
 private:
