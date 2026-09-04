@@ -187,7 +187,6 @@
     <ClInclude Include="MouseButton.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="Types.h" />
@@ -198,9 +197,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vector.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="EngineProject.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
