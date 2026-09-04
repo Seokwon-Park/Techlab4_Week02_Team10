@@ -141,22 +141,27 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="EnginePCH.cpp" />
-    <ClCompile Include="InputSystem.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
+<ClCompile Include="DefaultShader.hlsl">
+        <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      </ClCompile>
+      <ClCompile Include="Engine.cpp">
+        <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      </ClCompile>
+      <ClCompile Include="EnginePCH.cpp" />
+      <ClCompile Include="InputSystem.cpp">
+        <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      </ClCompile>
+      <ClCompile Include="main.cpp">
+        <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      </ClCompile>
+      <ClCompile Include="Object.cpp">
+        <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      </ClCompile>
+      <ClCompile Include="Renderer.cpp" />
+      <ClCompile Include="Shader.cpp" />
+      <ClCompile Include="Window.cpp">
+        <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component\CubeComponent.h" />
@@ -172,6 +177,8 @@
     <ClInclude Include="MouseButton.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EngineStatics.h" />
