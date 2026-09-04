@@ -23,6 +23,8 @@ public:
 	void CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
 
 	void Prepare();
+	
+	void Render();
 
 	void Shutdown();
 

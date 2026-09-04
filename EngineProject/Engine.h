@@ -6,6 +6,7 @@
 #include "Containers.h"
 
 #include "World.h"
+#include "Renderer.h"
 
 class Engine
 {
@@ -20,5 +21,6 @@ private:
 
 	UWorld* World;
 	
+	TUniquePtr<FRenderer> Renderer;
 };
 

@@ -37,6 +37,10 @@ bool Engine::Init(HINSTANCE hInstance)
 		return false;
 	}
 
+	// Create Renderer
+	Renderer = MakeUnique<FRenderer>();
+	Renderer->Create(MainWindow->GetHandle());
+
 	// Do Sth
 	World = new UWorld();
 
@@ -59,8 +63,10 @@ void Engine::Run()
 		MainWindow->ProcessMessage(bIsRunning);
 
 		World->Tick(DeltaTime);
-
+		
 		FInputSystem::UpdateInputStates();
+
+		Renderer->Render();
 	}
 }
 

@@ -103,6 +103,11 @@ void FRenderer::Prepare()
 	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
 }
 
+void FRenderer::Render()
+{
+	SwapBuffer();
+}
+
 
 void FRenderer::Shutdown()
 {
