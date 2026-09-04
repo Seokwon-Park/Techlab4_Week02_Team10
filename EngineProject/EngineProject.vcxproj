@@ -141,6 +141,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Class.cpp" />
     <ClCompile Include="Engine.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -154,6 +155,7 @@
     <ClCompile Include="Object.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Window.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -172,7 +174,7 @@
     <ClInclude Include="MouseButton.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.h" />
-    <ClInclude Include="String.h" />
+    <ClInclude Include="EngineString.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EngineStatics.h" />
     <ClInclude Include="Window.h" />

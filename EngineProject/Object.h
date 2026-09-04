@@ -16,6 +16,7 @@ public:                                                                 \
         {                                                               \
             c.Name  = #ClassName;                                       \
             c.Super = SuperClassName::StaticClass();                    \
+            c.Constructor = []() -> UObject* { return new ClassName(); };\
             bIsInit = true;                                             \
         }                                                               \
         return &c;                                                      \
@@ -44,13 +45,13 @@ public:
 	virtual FClass* GetClass() const { return StaticClass(); }
 
 	template <typename T>
-	bool IsA(UObject* Object)
+	bool IsA()
 	{
-		if (!Object) return false;
-		for (FClass* c = Object->GetClass(); c; c = c->Super)
-			if (c == T::StaticClass()) return true;
-		return false;
+		return IsA(T::StaticClass());
 	}
+
+	bool IsA(FClass* Class);
+	
 
 private:
 	uint32 UUID;

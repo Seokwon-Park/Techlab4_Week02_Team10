@@ -4,9 +4,9 @@
 #include "EngineStatics.h"
 #include "InputSystem.h"
 
-#include "Component/SceneComponent.h"
+#include "ObjectFactory.h"
 
-#include <iostream>
+#include "Component/SceneComponent.h"
 
 void* operator new(size_t size)
 {
@@ -48,6 +48,10 @@ void Engine::Run()
 	{
 		MainWindow->ProcessMessage(bIsRunning);
 
+		if (FInputSystem::IsKeyDown(EKeyCode::Escape))
+		{
+			bIsRunning = false;
+		}
 
 		FInputSystem::UpdateInputStates();
 	}
