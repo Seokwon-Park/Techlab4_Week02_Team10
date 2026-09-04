@@ -8,7 +8,7 @@
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 
-
+class FShader;
 
 class FRenderer
 {
@@ -20,6 +20,7 @@ public:
 	void CreateRasterizerState();
 	void SwapBuffer();
 
+	void CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
 
 	void Shutdown();
 

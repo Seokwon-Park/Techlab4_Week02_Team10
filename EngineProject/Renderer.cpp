@@ -1,6 +1,7 @@
 #include "Renderer.h"
+#include "Shader.h"
 
-void Renderer::Create(HWND hWindow)
+void FRenderer::Create(HWND hWindow)
 {
 	CreateDeviceAndSwapChain(hWindow);
 
@@ -10,7 +11,7 @@ void Renderer::Create(HWND hWindow)
 }
 
 
-void Renderer::CreateDeviceAndSwapChain(HWND hWindow)
+void FRenderer::CreateDeviceAndSwapChain(HWND hWindow)
 {
 	D3D_FEATURE_LEVEL FeatureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
 
@@ -39,7 +40,7 @@ void Renderer::CreateDeviceAndSwapChain(HWND hWindow)
 }
 
 
-void Renderer::CreateFrameBuffer()
+void FRenderer::CreateFrameBuffer()
 {
 	SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&FrameBuffer);
 
@@ -51,7 +52,7 @@ void Renderer::CreateFrameBuffer()
 }
 
 
-void Renderer::CreateRasterizerState()
+void FRenderer::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC RasterizerDesc = {};
 	RasterizerDesc.FillMode = D3D11_FILL_SOLID;
@@ -61,13 +62,33 @@ void Renderer::CreateRasterizerState()
 }
 
 
-void Renderer::SwapBuffer()
+void FRenderer::SwapBuffer()
 {
 	SwapChain->Present(1, 0);
 }
 
+void FRenderer::CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize)
+{
+	Microsoft::WRL::ComPtr<ID3DBlob> VertexShaderCSO;
+	
+	D3DCompileFromFile(InShader->File, nullptr, nullptr, InShader->VertexFunctionName, "vs_5_0", 0, 0, &VertexShaderCSO, nullptr);
 
-void Renderer::Shutdown()
+	Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
+		VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(InShader->InputLayout));
+
+	Microsoft::WRL::ComPtr<ID3DBlob> PixelShaderCSO;
+
+	D3DCompileFromFile(InShader->File, nullptr, nullptr, InShader->PixelFunctionName, "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
+
+	Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
+		PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), &(InShader->InputLayout));
+
+	VertexShaderCSO->Release();
+	PixelShaderCSO->Release();
+}
+
+
+void FRenderer::Shutdown()
 {
 	if (DeviceContext)
 	{
