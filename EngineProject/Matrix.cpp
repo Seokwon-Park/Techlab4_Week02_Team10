@@ -22,6 +22,10 @@ FMatrix::FMatrix(const FVector4& InX, const FVector4& InY, const FVector4& InZ, 
 
 /* Functions */
 
+FVector4 FMatrix::GetOrigin()
+{
+	return M[3];
+}
 
 FMatrix FMatrix::GetTransposed() const
 {
@@ -94,7 +98,11 @@ FMatrix FMatrix::Inverse() const
 	return Result;
 }
 
-
+FVector4 FMatrix::InverseTransformPosition(const FVector& V) const
+{
+	FMatrix InvMatrix = Inverse();
+	return InvMatrix.TransformPosition(V);
+}
 
 void FMatrix::SetIdentity()
 {
@@ -104,6 +112,30 @@ void FMatrix::SetIdentity()
 	M[3] = FVector4(ZeroVector, 1);
 }
 
+void FMatrix::SetOrigin(const FVector & NewOrigin)
+{
+	M[3] = FVector4(NewOrigin, 1.0f);
+}
+
+FVector4 FMatrix::TransformFVector4(const FVector4& V) const
+{
+	return FVector4(
+		V.X * M[0][0] + V.Y * M[1][0] + V.Z * M[2][0] + V.W * M[3][0],
+		V.X * M[0][1] + V.Y * M[1][1] + V.Z * M[2][1] + V.W * M[3][1],
+		V.X * M[0][2] + V.Y * M[1][2] + V.Z * M[2][2] + V.W * M[3][2],
+		V.X * M[0][3] + V.Y * M[1][3] + V.Z * M[2][3] + V.W * M[3][3]
+	);
+}
+
+FVector4 FMatrix::TransformPosition(const FVector& V) const
+{
+	return TransformFVector4(FVector4(V.X, V.Y, V.Z, 1.0f));
+}
+
+FVector4 FMatrix::TransformVector(const FVector& V) const
+{
+	return TransformFVector4(FVector4(V.X, V.Y, V.Z, 0.0f));
+}
 
 /* Operator */
 

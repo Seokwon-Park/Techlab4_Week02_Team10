@@ -160,11 +160,6 @@
     <ClCompile Include="Object.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vector.cpp" />
-    <ClCompile Include="Vector4.cpp" />
-    <ClCompile Include="ObjectFactory.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -197,8 +192,6 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="String.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EngineStatics.h" />
     <ClInclude Include="Vector4.h" />
