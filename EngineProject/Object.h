@@ -24,6 +24,7 @@ public:                                                                 \
     virtual FClass* GetClass() const override { return StaticClass(); }
 
 
+
 class UObject
 {
 public:
@@ -51,6 +52,8 @@ public:
 	}
 
 	bool IsA(FClass* Class);
+
+	uint32 GetUUID() const { return UUID; }
 	
 
 private:
