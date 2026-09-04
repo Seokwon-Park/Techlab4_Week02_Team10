@@ -57,4 +57,4 @@ private:
 	uint32 InternalIndex;
 };
 
-TArray<UObject*> GUObjectArray;
+extern TArray<UObject*> GUObjectArray;

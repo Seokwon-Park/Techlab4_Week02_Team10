@@ -1,6 +1,10 @@
+#include "EnginePCH.h"
+
 #include "Engine.h"
 #include "EngineStatics.h"
 #include "InputSystem.h"
+
+#include "Component/SceneComponent.h"
 
 #include <iostream>
 
@@ -44,12 +48,6 @@ void Engine::Run()
 	{
 		MainWindow->ProcessMessage(bIsRunning);
 
-		if (FInputSystem::IsKeyPressed(EKeyCode::A))
-		{
-			std::cout << "Key Pressed!" << '\n';
-		}
-
-		std::cout << FInputSystem::GetMouseX() << "," << FInputSystem::GetMouseY() << '\n';
 
 		FInputSystem::UpdateInputStates();
 	}

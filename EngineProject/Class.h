@@ -2,7 +2,7 @@
 
 #include "String.h"
 
-struct FClass
+struct FClass 
 {
 	FString Name;
 	FClass* Super = nullptr;
