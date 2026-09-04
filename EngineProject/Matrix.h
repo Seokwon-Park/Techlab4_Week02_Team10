@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector4.h"
+#include "Math.h"
 
 // Row Vector sys
 struct FMatrix{
@@ -15,10 +16,10 @@ public:
 	
 	FVector4 GetOrigin();
 	FVector4 GetScaledAxis(FVector4& X, FVector4& Y, FVector4& Z) const; 
-	FMatrix GetTransposed();
 	FMatrix GetTransposed() const;
 	void GetUnitAxis(FVector4& X, FVector4& Y, FVector4& Z) const;
-	FMatrix Inverse();
+	float Determinant() const;
+	FMatrix Inverse() const;
 	FVector4 InverseTransformPosition(const FVector& V) const;
 	void SetAxes(const FVector4* Axis0, const FVector4* Axis1, const FVector4* Axis2, const FVector4* Axis3);
 	void SetAxis(int i, const FVector& Axis);
@@ -53,3 +54,7 @@ public:
 
 };
 
+/* Constants */
+
+inline static const FMatrix Identity 
+	= FMatrix(FVector4(1, 0, 0, 0), FVector4(0, 1, 0, 0), FVector4(0, 0, 1, 0), FVector4(0, 0, 0, 1));
