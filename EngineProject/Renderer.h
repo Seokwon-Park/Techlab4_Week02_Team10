@@ -22,6 +22,8 @@ public:
 
 	void CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
 
+	void Prepare();
+
 	void Shutdown();
 
 private:
@@ -36,4 +38,6 @@ private:
 
 	Microsoft::WRL::ComPtr <ID3D11Buffer> ConstantBuffer;
 	D3D11_VIEWPORT ViewportInfo;
+
+	FLOAT ClearColor[4] = {0.8f, 0.8f, 0.8f, 1.0f };
 };

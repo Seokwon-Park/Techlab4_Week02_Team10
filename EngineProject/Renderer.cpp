@@ -87,6 +87,21 @@ void FRenderer::CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayo
 	PixelShaderCSO->Release();
 }
 
+void FRenderer::Prepare()
+{
+	DeviceContext->ClearRenderTargetView(FrameBufferRTV.Get(), ClearColor);
+
+	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	DeviceContext->RSSetViewports(1, &ViewportInfo);
+
+	DeviceContext->RSSetState(RasterizerState.Get());
+
+	DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, nullptr);
+
+	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
+}
+
 
 void FRenderer::Shutdown()
 {
