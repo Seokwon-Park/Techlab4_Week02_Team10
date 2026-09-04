@@ -228,7 +228,7 @@ float& FVector::operator[] (int Index)
 /* Global Operator */
 std::ostream& operator << (std::ostream & OS, const FVector & V)
 {
-	OS << "X: " << V.X << " Y: " << V.Y << " Z: " << V.Z;
+	OS << "(" << V.X << ", " << V.Y << ", " << V.Z << ")";
 	return OS;
 }
 
