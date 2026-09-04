@@ -1,6 +1,12 @@
+#include "EnginePCH.h"
+
 #include "Engine.h"
 #include "EngineStatics.h"
-#include "Input.h"
+#include "InputSystem.h"
+
+#include "Component/SceneComponent.h"
+
+#include <iostream>
 
 void* operator new(size_t size)
 {
@@ -42,7 +48,8 @@ void Engine::Run()
 	{
 		MainWindow->ProcessMessage(bIsRunning);
 
-		FInput::UpdateInputStates();
+
+		FInputSystem::UpdateInputStates();
 	}
 }
 

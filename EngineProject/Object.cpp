@@ -1,6 +1,9 @@
+#include "EnginePCH.h"
 #include "Object.h"
 
 #include "EngineStatics.h"
+
+TArray<UObject*> GUObjectArray;
 
 UObject::UObject()
 {
@@ -12,3 +15,4 @@ UObject::UObject()
 UObject::~UObject()
 {
 }
+
