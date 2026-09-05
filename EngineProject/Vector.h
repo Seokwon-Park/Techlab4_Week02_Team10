@@ -2,10 +2,17 @@
 #include <iostream>
 
 struct FVector {
-	float X;
-	float Y;
-	float Z;
-	const int NumComponents = 3;
+
+	union
+	{
+		float V[4];
+		struct
+		{
+			float X;
+			float Y;
+			float Z;
+		};
+	};
 
 public:
 /* Constructor */

@@ -122,10 +122,10 @@ FVector4 FVector4::Cross(const FVector4& V1) const
 
 
 FVector4 FVector4::GetAbs() {
-	float AbsX = 0.0f;
-	float AbsY = 0.0f;
-	float AbsZ = 0.0f;
-	float AbsW = 0.0f;
+	float AbsX = X;
+	float AbsY = Y;
+	float AbsZ = Z;
+	float AbsW = W;
 	if (X < 0) AbsX = -X;
 	if (Y < 0) AbsY = -Y;
 	if (Z < 0) AbsZ = -Z;
@@ -237,33 +237,27 @@ FVector4& FVector4::operator /= (const float& f)
 // 스트림 출력 연산자와 함께 사용할 시 괄호로 묶을 것
 FVector4 FVector4::operator ^ (const FVector4& V1) const
 {
-	return this->Cross(V1);
+	return Cross(V1);
 }
 
 bool FVector4::operator == (const FVector4& V1) const
 {
-	if (this->X == V1.X && this->Y == V1.Y && this->Z == V1.Z && this->W == V1.Z)
-		return true;
-	else
-		return false;
+	return (X == V1.X) && (Y == V1.Y) && (Z == V1.Z) && (W == V1.W);
 }
 
 bool FVector4::operator != (const FVector4& V1) const
 {
-	if (this->X == V1.X && this->Y == V1.Y && this->Z == V1.Z && this->W == V1.W)
-		return false;
-	else
-		return true;
+	return !(*this == V1);
 }
 
 float FVector4::operator[] (int Index) const
 {
-	return this->Component(Index);
+	return V[Index];
 }
 
 float& FVector4::operator[] (int Index)
 {
-	return this->Component(Index);
+	return V[Index];
 }
 
 /* Global Operator */

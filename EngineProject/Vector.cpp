@@ -90,9 +90,9 @@ FVector FVector::Cross(const FVector& V1) const
 
 
 FVector FVector::GetAbs() {
-	float AbsX = 0.0f;
-	float AbsY = 0.0f;
-	float AbsZ = 0.0f;
+	float AbsX = X;
+	float AbsY = Y;
+	float AbsZ = Z;
 	if (X < 0) AbsX = -X;
 	if (Y < 0) AbsY = -Y;
 	if (Z < 0) AbsZ = -Z;
@@ -156,8 +156,8 @@ FVector& FVector::operator *= (const FVector& V1)
 FVector& FVector::operator *= (const float& f)
 {
 	X *= f;
-	Y -= f;
-	Z -= f;
+	Y *= f;
+	Z *= f;
 	return *this;
 }
 
@@ -179,17 +179,24 @@ FVector FVector::operator / (const float& f) const
 
 FVector& FVector::operator /= (const FVector& V1)
 {
-	X /= V1.X;
-	Y /= V1.Y;
-	Z /= V1.Z;
+	const float InvX = 1.0f / V1.X;
+	const float InvY = 1.0f / V1.Y;
+	const float InvZ = 1.0f / V1.Z;
+
+	X *= InvX;
+	Y *= InvY;
+	Z *= InvZ;
+	
 	return *this;
 }
 
 FVector& FVector::operator /= (const float& f)
 {
-	X /= f;
-	Y /= f;
-	Z /= f;
+	const float InvF = 1.0f / f;
+	X *= InvF;
+	Y *= InvF;
+	Z *= InvF;
+
 	return *this;
 }
 
@@ -201,28 +208,22 @@ FVector FVector::operator ^ (const FVector& V1) const
 
 bool FVector::operator == (const FVector& V1) const
 {
-	if (this->X == V1.X && this->Z == V1.Z && this->Y == V1.Y)
-		return true;
-	else
-		return false;
+	return (X == V1.X) && (Y == V1.Y) && (Z == V1.Z);
 }
 
 bool FVector::operator != (const FVector& V1) const
 {
-	if (this->X == V1.X && this->Z == V1.Z && this->Y == V1.Y)
-		return false;
-	else
-		return true;
+	return !(*this == V1);
 }
 
 float FVector::operator[] (int Index) const
 {
-	return this->Component(Index);
+	return V[Index];
 }
 
 float& FVector::operator[] (int Index) 
 {
-	return this->Component(Index);
+	return V[Index];
 }
 
 /* Global Operator */

@@ -13,10 +13,10 @@ FMatrix::FMatrix()
 
 FMatrix::FMatrix(const FVector4& InX, const FVector4& InY, const FVector4& InZ, const FVector4& InW)
 {
-	M[0][0] = InX.X; M[0][1] = InX.Y; M[0][2] = InX.Z; M[0][3] = InX.Z;
-	M[1][0] = InY.X; M[1][1] = InY.Y; M[1][2] = InY.Z; M[1][3] = InY.Z;
-	M[2][0] = InZ.X; M[2][1] = InZ.Y; M[2][2] = InZ.Z; M[2][3] = InZ.Z;
-	M[3][0] = InW.X; M[3][1] = InW.Y; M[3][2] = InW.Z; M[3][3] = InW.Z;
+	M[0][0] = InX.X; M[0][1] = InX.Y; M[0][2] = InX.Z; M[0][3] = InX.W;
+	M[1][0] = InY.X; M[1][1] = InY.Y; M[1][2] = InY.Z; M[1][3] = InY.W;
+	M[2][0] = InZ.X; M[2][1] = InZ.Y; M[2][2] = InZ.Z; M[2][3] = InZ.W;
+	M[3][0] = InW.X; M[3][1] = InW.Y; M[3][2] = InW.Z; M[3][3] = InW.W;
 }
 
 /* Functions */
@@ -193,20 +193,21 @@ float* FMatrix::operator[] (int Index)
 	return M[Index];
 }
 
-bool FMatrix::operator != (const FMatrix& Other) const
+bool FMatrix::operator == (const FMatrix& Other) const
 {
-	if (M[0] == Other[0] || M[1] == Other[1] || M[2] == Other[2] || M[3] == Other[3])
-		return false;
-	else
-		return true;
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			if (M[i][j] != Other.M[i][j]) return false;
+		}
+	}
+	return true;
 }
 
-bool FMatrix::operator == (const FMatrix& Other) const 
+bool FMatrix::operator != (const FMatrix& Other) const
 {
-	if (M[0] != Other[0] || M[1] != Other[1] || M[2] != Other[2] || M[3] != Other[3])
-		return false;
-	else
-		return true;
+	return !(*this == Other);
 }
 
 FMatrix FMatrix::operator * (const FMatrix& Other) const
@@ -349,25 +350,25 @@ FMatrix& FMatrix::operator += (const FMatrix& Other)
 FMatrix FMatrix::operator - (const FMatrix& Other) const
 {
 	FMatrix Result;
-	Result.M[0][0] = M[0][0] + Other[0][0];
-	Result.M[0][1] = M[0][1] + Other[0][1];
-	Result.M[0][2] = M[0][2] + Other[0][2];
-	Result.M[0][3] = M[0][3] + Other[0][3];
+	Result.M[0][0] = M[0][0] - Other[0][0];
+	Result.M[0][1] = M[0][1] - Other[0][1];
+	Result.M[0][2] = M[0][2] - Other[0][2];
+	Result.M[0][3] = M[0][3] - Other[0][3];
 
-	Result.M[1][0] = M[1][0] + Other[1][0];
-	Result.M[1][1] = M[1][1] + Other[1][1];
-	Result.M[1][2] = M[1][2] + Other[1][2];
-	Result.M[1][3] = M[1][3] + Other[1][3];
+	Result.M[1][0] = M[1][0] - Other[1][0];
+	Result.M[1][1] = M[1][1] - Other[1][1];
+	Result.M[1][2] = M[1][2] - Other[1][2];
+	Result.M[1][3] = M[1][3] - Other[1][3];
 
-	Result.M[2][0] = M[2][0] + Other[2][0];
-	Result.M[2][1] = M[2][1] + Other[2][1];
-	Result.M[2][2] = M[2][2] + Other[2][2];
-	Result.M[2][3] = M[2][3] + Other[2][3];
+	Result.M[2][0] = M[2][0] - Other[2][0];
+	Result.M[2][1] = M[2][1] - Other[2][1];
+	Result.M[2][2] = M[2][2] - Other[2][2];
+	Result.M[2][3] = M[2][3] - Other[2][3];
 
-	Result.M[3][0] = M[3][0] + Other[3][0];
-	Result.M[3][1] = M[3][1] + Other[3][1];
-	Result.M[3][2] = M[3][2] + Other[3][2];
-	Result.M[3][3] = M[3][3] + Other[3][3];
+	Result.M[3][0] = M[3][0] - Other[3][0];
+	Result.M[3][1] = M[3][1] - Other[3][1];
+	Result.M[3][2] = M[3][2] - Other[3][2];
+	Result.M[3][3] = M[3][3] - Other[3][3];
 
 	return Result;
 }
@@ -393,6 +394,16 @@ FMatrix& FMatrix::operator -= (const FMatrix& Other)
 	M[3][1] = M[3][1] - Other[3][1];
 	M[3][2] = M[3][2] - Other[3][2];
 	M[3][3] = M[3][3] - Other[3][3];
-
 	return *this;
+
+}
+
+/* Global Operator */
+std::ostream& operator << (std::ostream& OS, const FMatrix& M )
+{
+	OS << M[0][0] << " " << M[0][1] << " " << M[0][2] << " " << M[0][3] << "\n";
+	OS << M[1][0] << " " << M[1][1] << " " << M[1][2] << " " << M[1][3] << "\n";
+	OS << M[2][0] << " " << M[2][1] << " " << M[2][2] << " " << M[2][3] << "\n";
+	OS << M[3][0] << " " << M[3][1] << " " << M[3][2] << " " << M[3][3] << "\n";
+	return OS;
 }

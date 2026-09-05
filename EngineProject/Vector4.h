@@ -3,13 +3,19 @@
 #include <iostream>
 
 struct FVector4 {
-	float X;
-	float Y;
-	float Z;
-	float W;
-	const int NumComponents = 4;
 
-public:
+	union
+	{
+		float V[4];
+		struct
+		{
+			float X;
+			float Y;
+			float Z;
+			float W;
+		};
+	};
+
 	/* Constructor */
 	FVector4();
 	FVector4(float x, float y, float z, float w);

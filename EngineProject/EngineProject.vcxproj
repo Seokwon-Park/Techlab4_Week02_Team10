@@ -183,6 +183,7 @@
     <ClInclude Include="EngineTimer.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="KeyCode.h" />
+    <ClInclude Include="EngineMath.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MouseButton.h" />
     <ClInclude Include="Object.h" />
