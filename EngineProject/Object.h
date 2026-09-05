@@ -5,9 +5,24 @@
 
 #include "Class.h"
 
+// Property Reflection
+
+#define REFLECT_START(ClassName) \
+private: \
+	inline static void RegisterProperties(FClass* InClass) \
+	{
+
+#define PROPERTY(PropertyName) \
+    InClass->AddProperty<decltype(ThisClass::PropertyName)>(#PropertyName, offsetof(ThisClass, PropertyName));
+
+#define REFLECT_END()\
+	}\
+private:
+
 #define DECLARE_CLASS(ClassName, SuperClassName)                        \
 public:                                                                 \
     using Super = SuperClassName;                                       \
+    using ThisClass = ClassName;		                                \
     static FClass* StaticClass()                                        \
     {                                                                   \
         static FClass c;                                                \
@@ -17,11 +32,13 @@ public:                                                                 \
             c.Name  = #ClassName;                                       \
             c.Super = Super::StaticClass();								\
             c.Constructor = []() -> UObject* { return new ClassName(); };\
+			ClassName::RegisterProperties(&c);							\
             bIsInit = true;                                             \
         }                                                               \
         return &c;                                                      \
     }                                                                   \
-    virtual FClass* GetClass() const override { return StaticClass(); }
+    virtual FClass* GetClass() const override { return StaticClass(); } \
+private:																
 
 class UObject
 {
@@ -35,8 +52,12 @@ public:
 		static bool bIsInit = false;
 		if (!bIsInit)
 		{
-			c.Name = "";
+			c.Name = "Object";
 			c.Super = nullptr;
+			c.Constructor = []() -> UObject* 
+				{ 
+					return new UObject(); 
+				};
 			bIsInit = true;
 		}
 		return &c;
@@ -52,7 +73,8 @@ public:
 	bool IsA(FClass* Class);
 
 	uint32 GetUUID() const { return UUID; }
-	
+
+	inline static void RegisterProperties(FClass* InClass) {};
 
 private:
 	uint32 UUID;

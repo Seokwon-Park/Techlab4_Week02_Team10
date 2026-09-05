@@ -11,6 +11,9 @@ enum class EPrimitiveType
 class UPrimitiveComponent :public USceneComponent
 {
 	DECLARE_CLASS(UPrimitiveComponent, USceneComponent)
+
+	REFLECT_START(ClassName)
+		REFLECT_END()
 public:
 	void Render();
 

@@ -6,6 +6,9 @@
 class AActor : public UObject
 {
 	DECLARE_CLASS(AActor, UObject)
+
+	REFLECT_START(ClassName)
+	REFLECT_END()
 public:
 	AActor() = default;
 	virtual ~AActor() = default;
