@@ -4,7 +4,7 @@
 
 // Row Vector sys
 struct FMatrix{
-	FVector4 M[4];
+	float M[4][4];
 
 public:
 	FMatrix();
@@ -23,7 +23,7 @@ public:
 	FVector4 InverseTransformPosition(const FVector& V) const;
 	void SetAxes(const FVector4* Axis0, const FVector4* Axis1, const FVector4* Axis2, const FVector4* Axis3);
 	void SetAxis(int i, const FVector& Axis);
-	void SetColum(int i, FVector4 Value);
+	void SetColumn(int i, FVector4 Value);
 	void SetIdentity();
 	void SetOrigin(const FVector& NewOrigin);
 	void To3x4MatrixTranspose(float* Out) const;
@@ -38,8 +38,8 @@ public:
 
 	FMatrix& operator = (const FMatrix& Other);
 	FMatrix operator - ();
-	FVector4 operator[] (int Index) const;
-	FVector4& operator[] (int Index);
+	const float* operator[] (int Index) const;
+	float* operator[] (int Index);
 	bool operator != (const FMatrix& Other) const;
 	bool operator == (const FMatrix& Other) const;
 	FMatrix operator * (const FMatrix& Other) const;
