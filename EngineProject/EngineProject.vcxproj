@@ -149,7 +149,9 @@
     <ClCompile Include="Engine.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="EnginePCH.cpp" />
+    <ClCompile Include="EnginePCH.cpp">
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
+    </ClCompile>
     <ClCompile Include="EngineTimer.cpp" />
     <ClCompile Include="InputSystem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -162,6 +164,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ObjectFactory.cpp" />
+    <ClCompile Include="Picking.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -178,6 +181,7 @@
     <ClInclude Include="Component\ActorComponent.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Picking.h" />
+    <ClInclude Include="Property.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Component\CubeComponent.h" />
     <ClInclude Include="Component\PrimitiveComponent.h" />
