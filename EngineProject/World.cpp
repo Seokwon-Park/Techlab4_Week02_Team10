@@ -17,20 +17,47 @@ namespace
 			return "Cube";
 			break;
 		default:
+			return "";
 			break;
 		}
 	}
 }
 
-UPrimitiveComponent* UWorld::SpawnPrimitive(FClass* Class)
+//UPrimitiveComponent* UWorld::SpawnPrimitive(FClass* Class)
+//{
+//	UPrimitiveComponent* Component = FObjectFactory::ConstructObject<UPrimitiveComponent>();
+//	Primitives.push_back(Component);
+//	return Component;
+//}
+
+UWorld::~UWorld()
 {
-	UPrimitiveComponent* Component = FObjectFactory::ConstructObject<UPrimitiveComponent>();
-	Primitives.push_back(Component);
-	return Component;
+	for (AActor* Actor : Actors)
+	{
+		delete Actor;
+	}
+	Actors.clear();
+}
+
+AActor* UWorld::SpawnActor(FClass* Class, const FTransform* UserTransformPtr)
+{
+	if (!Class) return nullptr;
+	if (!Class->IsChildOf(AActor::StaticClass())) return nullptr;
+	const FTransform UserTransform = UserTransformPtr ? *UserTransformPtr : FTransform::Identity;
+	AActor* NewActor = Cast<AActor>(FObjectFactory::ConstructObject(Class));
+	if (!NewActor) return nullptr;
+	//TODO :
+	//NewActor->...
+	Actors.push_back(NewActor);
+	return NewActor;
 }
 
 void UWorld::Tick(float DeltaTime)
 {
+	for (AActor* Actor : Actors)
+	{
+		Actor->Tick(DeltaTime);
+	}
 }
 
 bool UWorld::SaveScene(const FString& Path)
@@ -45,15 +72,15 @@ bool UWorld::SaveScene(const FString& Path)
 	Json["NextUUID"] = FEngineStatics::NextUUID;
 	Json["Primitives"] = json::object();
 
-	for (UPrimitiveComponent* p : Primitives)
+	//for (UPrimitiveComponent* p : Primitives)
 	{
 		json pJson;
 		//pJson["Location"] = { p->Transform.Location.x, p->Transform.Location.y, p->Transform.Location.z };
 		//pJson["Rotation"] = { p->Transform.Rotation.x, p->Transform.Rotation.y, p->Transform.Rotation.z };
 		//pJson["Scale"] = { p->Transform.Scale.x,    p->Transform.Scale.y,    p->Transform.Scale.z };
-		pJson["Type"] = PrimitiveTypeToString(p->GetType());
+		//pJson["Type"] = PrimitiveTypeToString(p->GetType());
 
-		Json["Primitives"][std::to_string(p->GetUUID())] = pJson;
+		//Json["Primitives"][std::to_string(p->GetUUID())] = pJson;
 
 	}
 	std::cout << Json.dump(4);

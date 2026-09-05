@@ -176,7 +176,7 @@ void FRenderer::Prepare()
 	DeviceContext->OMSetDepthStencilState(DepthStencilState.Get(), 1);
 
 	// 임시 버텍스 버퍼 생성 로직
-	FVertexSimple Triangle[]
+	/*FVertexSimple Triangle[]
 	{
 		{0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f},
 		{ 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f },
@@ -184,7 +184,7 @@ void FRenderer::Prepare()
 	};
 
 	ID3D11Buffer* vertexBuffer = FRenderer::GetInstance().CreateVertexBuffer(Triangle, sizeof(Triangle));
-	FRenderer::GetInstance().RenderPrimitive(vertexBuffer, sizeof(FVertexSimple), sizeof(Triangle)/sizeof(FVertexSimple));
+	FRenderer::GetInstance().RenderPrimitive(vertexBuffer, sizeof(FVertexSimple), sizeof(Triangle)/sizeof(FVertexSimple));*/
 }
 
 void FRenderer::RenderPrimitive(ID3D11Buffer* pBuffer, UINT InStride, UINT InNumVertices)
