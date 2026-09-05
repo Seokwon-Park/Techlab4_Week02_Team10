@@ -1,11 +1,13 @@
 #pragma once
 
-#include "../Object.h"
+#include "../Transform.h"
+#include "ActorComponent.h"
 
-class USceneComponent :public UObject
+class USceneComponent :public UActorComponent
 {
 	DECLARE_CLASS(USceneComponent, UObject)
 public:
 private:
+	FTransform transform;
 	
 };

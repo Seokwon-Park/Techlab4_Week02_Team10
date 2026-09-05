@@ -10,6 +10,8 @@
 #include "Component/SceneComponent.h"
 #include "World.h"
 
+#include "Picking.h"
+
 void* operator new(uint64 Size)
 {
 	void* Ptr = malloc(Size);
@@ -49,7 +51,7 @@ void Engine::Run()
 {
 	EngineTimer::Init();
 
-	World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
+	//World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
 	World->SaveScene("A");
 	while (bIsRunning)
 	{

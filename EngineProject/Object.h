@@ -23,8 +23,6 @@ public:                                                                 \
     }                                                                   \
     virtual FClass* GetClass() const override { return StaticClass(); }
 
-
-
 class UObject
 {
 public:
