@@ -40,6 +40,7 @@ bool Engine::Init(HINSTANCE hInstance)
 	// Create Renderer
 	Renderer = MakeUnique<FRenderer>();
 	Renderer->Create(MainWindow->GetHandle());
+	
 
 	// Do Sth
 	World = new UWorld();
@@ -61,16 +62,16 @@ void Engine::Run()
 		float DeltaTime = EngineTimer::GetDeltaTime();
 
 		MainWindow->ProcessMessage(bIsRunning);
-
+		Renderer->Prepare();
 		World->Tick(DeltaTime);
 		
 		FInputSystem::UpdateInputStates();
-
+		
 		Renderer->Render();
 	}
 }
 
 void Engine::Shutdown()
 {
-	
+	Renderer->Shutdown();
 }

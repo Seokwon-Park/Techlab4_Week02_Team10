@@ -9,6 +9,7 @@ void FRenderer::Create(HWND hWindow)
 	CreateFrameBuffer();
 
 	CreateRasterizerState();
+	CreateDepthStencilBufferAndState();
 }
 
 
@@ -31,7 +32,7 @@ void FRenderer::CreateDeviceAndSwapChain(HWND hWindow)
 	D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
 		D3D11_CREATE_DEVICE_BGRA_SUPPORT,
 		FeatureLevels, ARRAYSIZE(FeatureLevels), D3D11_SDK_VERSION,
-		&SwapChainDesc, &SwapChain, &Device, nullptr, &DeviceContext);
+		&SwapChainDesc, SwapChain.GetAddressOf(), Device.GetAddressOf(), nullptr, DeviceContext.GetAddressOf());
 
 	SwapChain->GetDesc(&SwapChainDesc);
 
@@ -43,13 +44,13 @@ void FRenderer::CreateDeviceAndSwapChain(HWND hWindow)
 
 void FRenderer::CreateFrameBuffer()
 {
-	SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&FrameBuffer);
+	SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)FrameBuffer.GetAddressOf());
 
 	D3D11_RENDER_TARGET_VIEW_DESC FrameBufferRTVDesc = {};
 	FrameBufferRTVDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
 	FrameBufferRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 
-	Device->CreateRenderTargetView(FrameBuffer.Get(), &FrameBufferRTVDesc, &FrameBufferRTV);
+	Device->CreateRenderTargetView(FrameBuffer.Get(), &FrameBufferRTVDesc, FrameBufferRTV.GetAddressOf());
 }
 
 
@@ -60,6 +61,44 @@ void FRenderer::CreateRasterizerState()
 	RasterizerDesc.CullMode = D3D11_CULL_BACK;
 
 	Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
+}
+
+void FRenderer::CreateDepthStencilBufferAndState()
+{
+	D3D11_TEXTURE2D_DESC DepthDesc;
+
+	DepthDesc.Width = ViewportInfo.Width;
+	DepthDesc.Height = ViewportInfo.Height;
+
+	DepthDesc.MipLevels = 1;
+	DepthDesc.ArraySize = 1;
+	DepthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;	// 24비트 깊이, 8비트 스텐실
+	DepthDesc.SampleDesc.Count = 1;
+	DepthDesc.SampleDesc.Quality = 0;
+	DepthDesc.Usage = D3D11_USAGE_DEFAULT;
+	DepthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	DepthDesc.CPUAccessFlags = 0;
+	DepthDesc.MiscFlags = 0;
+	HRESULT hr = Device->CreateTexture2D(&DepthDesc, NULL, DepthStencilBuffer.GetAddressOf());
+
+	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc;
+
+	// Depth test Paramiter
+	DepthStencilDesc.DepthEnable = true;
+	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	// Stencil test Paramiter
+	DepthStencilDesc.StencilEnable = true;
+	DepthStencilDesc.StencilReadMask = 0xFF;
+	DepthStencilDesc.StencilWriteMask = 0xFF;
+
+	DepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	DepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	Device->CreateDepthStencilState(&DepthStencilDesc, DepthStencilState.GetAddressOf());
 }
 
 
@@ -93,14 +132,16 @@ void FRenderer::Prepare()
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV.Get(), ClearColor);
 
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+	
 	DeviceContext->RSSetViewports(1, &ViewportInfo);
 
 	DeviceContext->RSSetState(RasterizerState.Get());
 
-	DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, nullptr);
+	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), nullptr);
 
 	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
+
+	DeviceContext->OMSetDepthStencilState(DepthStencilState.Get(), 1);
 }
 
 void FRenderer::Render()
@@ -111,6 +152,7 @@ void FRenderer::Render()
 
 void FRenderer::Shutdown()
 {
+	DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 	if (DeviceContext)
 	{
 		DeviceContext->ClearState();

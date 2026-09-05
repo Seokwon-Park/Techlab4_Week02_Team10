@@ -18,6 +18,7 @@ public:
 	void CreateDeviceAndSwapChain(HWND hWindow);
 	void CreateFrameBuffer();
 	void CreateRasterizerState();
+	void CreateDepthStencilBufferAndState();
 	void SwapBuffer();
 
 	void CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
@@ -36,10 +37,14 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> FrameBuffer;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> FrameBufferRTV;
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> DepthStencilBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> DepthStencilState;
+
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> RasterizerState;
 
 	Microsoft::WRL::ComPtr <ID3D11Buffer> ConstantBuffer;
 	D3D11_VIEWPORT ViewportInfo;
 
-	FLOAT ClearColor[4] = {0.8f, 0.8f, 0.8f, 1.0f };
+	FLOAT ClearColor[4] = {0.1f, 0.1f, 0.1f, 1.0f };
 };
