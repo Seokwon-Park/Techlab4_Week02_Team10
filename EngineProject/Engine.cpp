@@ -66,7 +66,7 @@ void Engine::Run()
 		World->Tick(DeltaTime);
 		
 		FInputSystem::UpdateInputStates();
-	
+		
 		FRenderer::GetInstance().Render();
 	}
 }

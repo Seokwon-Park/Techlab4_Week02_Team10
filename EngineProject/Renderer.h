@@ -16,6 +16,8 @@ struct FVertexSimple
 	float r, g, b, a;
 };
 
+
+
 class FRenderer
 {
 	// 마이어스 Singleton
@@ -35,6 +37,8 @@ public:
 	void SwapBuffer();
 
 	void CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
+
+	ID3D11Buffer* CreateVertexBuffer(FVertexSimple* InVertices, UINT InByteWidth);
 
 	void Prepare();
 	void RenderPrimitive(ID3D11Buffer* pBuffer, UINT InStride, UINT InNumVertices);

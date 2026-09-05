@@ -21,6 +21,10 @@ void FRenderer::Create(HWND hWindow)
 	FShader* shader = new FShader;
 	shader->Init(L"Shader/DefaultShader.hlsl", "mainVS", "mainPS", sizeof(FVertexSimple));
 	shader->Create(&(FRenderer::GetInstance()));
+
+	DeviceContext->VSSetShader(shader->VertexShader.Get(), nullptr, 0);
+	DeviceContext->PSSetShader(shader->PixelShader.Get(), nullptr, 0);
+	DeviceContext->IASetInputLayout(shader->InputLayout.Get());
 }
 
 
@@ -131,11 +135,28 @@ void FRenderer::CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayo
 	D3DCompileFromFile(InShader->File, nullptr, nullptr, InShader->PixelFunctionName, "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
 	Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, InShader->PixelShader.GetAddressOf());
 
-	Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
+	hr = Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
 		VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(InShader->InputLayout));
 
 	VertexShaderCSO->Release();
 	PixelShaderCSO->Release();
+}
+
+ID3D11Buffer* FRenderer::CreateVertexBuffer(FVertexSimple* InVertices, UINT InByteWidth)
+{
+	// Create a vertex buffer
+	D3D11_BUFFER_DESC vertexbufferdesc = {};
+	vertexbufferdesc.ByteWidth = InByteWidth;
+	vertexbufferdesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vertexbufferdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA vertexbufferSRD = { InVertices };
+
+	ID3D11Buffer* vertexBuffer;
+
+	HRESULT hr = Device->CreateBuffer(&vertexbufferdesc, &vertexbufferSRD, &vertexBuffer);
+
+	return vertexBuffer;
 }
 
 void FRenderer::Prepare()
@@ -153,12 +174,23 @@ void FRenderer::Prepare()
 	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
 
 	DeviceContext->OMSetDepthStencilState(DepthStencilState.Get(), 1);
+
+	// 임시 버텍스 버퍼 생성 로직
+	FVertexSimple Triangle[]
+	{
+		{0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+		{ 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f },
+		{ -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f }
+	};
+
+	ID3D11Buffer* vertexBuffer = FRenderer::GetInstance().CreateVertexBuffer(Triangle, sizeof(Triangle));
+	FRenderer::GetInstance().RenderPrimitive(vertexBuffer, sizeof(FVertexSimple), sizeof(Triangle)/sizeof(FVertexSimple));
 }
 
 void FRenderer::RenderPrimitive(ID3D11Buffer* pBuffer, UINT InStride, UINT InNumVertices)
 {
 	UINT offset = 0;
-	DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &InStride, &InNumVertices);
+	DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &InStride, &offset);
 	DeviceContext->Draw(InNumVertices, 0);
 }
 
