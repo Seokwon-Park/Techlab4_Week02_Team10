@@ -10,8 +10,7 @@ public:
 	template <typename T>
 	static T* ConstructObject()
 	{
-		UObject* Object = ConstructObject(T::StaticClass());
-		return static_cast<T*>(Object);
+		return CastChecked<T>(ConstructObject(T::StaticClass()));
 	}
 private:
 

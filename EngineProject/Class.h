@@ -13,4 +13,6 @@ struct FClass
 	FString Name;
 	FClass* Super = nullptr;
 	ClassConstructor Constructor = nullptr;
+
+	bool IsChildOf(FClass* BaseClass) const;
 };

@@ -10,6 +10,9 @@
 #include "Component/SceneComponent.h"
 #include "World.h"
 
+#include "Renderer.h"
+#include "Picking.h"
+
 void* operator new(uint64 Size)
 {
 	void* Ptr = malloc(Size);
@@ -37,6 +40,9 @@ bool Engine::Init(HINSTANCE hInstance)
 		return false;
 	}
 
+	// Create Renderer
+	FRenderer::GetInstance().Create(MainWindow->GetHandle());
+	
 	// Do Sth
 	World = new UWorld();
 
@@ -49,7 +55,7 @@ void Engine::Run()
 {
 	EngineTimer::Init();
 
-	World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
+	//World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
 	World->SaveScene("A");
 	while (bIsRunning)
 	{
@@ -57,14 +63,16 @@ void Engine::Run()
 		float DeltaTime = EngineTimer::GetDeltaTime();
 
 		MainWindow->ProcessMessage(bIsRunning);
-
+		FRenderer::GetInstance().Prepare();
 		World->Tick(DeltaTime);
-
+		
 		FInputSystem::UpdateInputStates();
+		
+		FRenderer::GetInstance().Render();
 	}
 }
 
 void Engine::Shutdown()
 {
-	
+	FRenderer::GetInstance().Shutdown();
 }

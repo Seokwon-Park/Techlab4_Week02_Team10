@@ -1,20 +1,30 @@
 #pragma once
 
 #include "Object.h"
+#include "Actor.h"
 #include "Component/PrimitiveComponent.h"
-#include "json.hpp"
+#include "Transform.h"
 
-using json = nlohmann::ordered_json;
 
 class UWorld : public UObject
 {
 public:
-	UPrimitiveComponent* SpawnPrimitive(FClass* Class);
+	virtual ~UWorld();
+
+	/*UPrimitiveComponent* SpawnPrimitive(FClass* Class);*/
+	AActor* SpawnActor(FClass* Class, const FTransform* Transform);
+
+	template <class T>
+	T* SpawnActor(const FTransform* Transform)
+	{
+		return CastChecked<T>(SpawnActor(T::StaticClass(), Transform));
+	}
 
 	void Tick(float DeltaTime);
 
 	bool SaveScene(const FString& Path);
 	bool LoadScene(const FString& Path);
 private:
-	TArray<UPrimitiveComponent*> Primitives;
+	TArray<AActor*> Actors;
+	
 };
