@@ -14,6 +14,9 @@ struct FClass
 	FClass* Super = nullptr;
 	ClassConstructor Constructor = nullptr;
 
+	TArray<FProperty> Properties;
+	UObject* DefaultObject = nullptr;
+
 	bool IsChildOf(FClass* BaseClass) const;
 	UObject* GetDefaultObject();
 
