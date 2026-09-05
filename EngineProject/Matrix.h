@@ -65,8 +65,8 @@ public:
 	// 뷰행렬 생성 함수
 	static FMatrix MakeView(const FVector& Eye, const FVector& Target, const FVector& Up);
 	// 투영행렬 생성 함수
-	static FMatrix MakePerspective(float FovY, float AspectRatio, float NearZ, float FarZ);
-	static FMatrix MakeOrthographic(float FovY, float AspectRatio, float NearZ, float FarZ);
+	static FMatrix MakePerspective(float FovY, float AspectRatio, float NearX, float FarX);
+	static FMatrix MakeOrthographic(float ViewWidth, float ViewHeight, float NearZ, float FarZ);
 
 
 /* Operator */

@@ -208,6 +208,8 @@ FMatrix FMatrix::MakeWorld(const FVector& Scale, const FVector& Rotation, const 
 	return XMMatrixToFMatrix(S * R * T);
 }
 
+
+// ------------------ 아레는 새로 정의 해야 함 ---------------------- //
 FMatrix FMatrix::MakeView(const FVector& Eye, const FVector& Target, const FVector& Up)
 {
 	XMVECTOR XEye = Eye.FVectorToXMVector();
@@ -219,15 +221,15 @@ FMatrix FMatrix::MakeView(const FVector& Eye, const FVector& Target, const FVect
 	return XMMatrixToFMatrix(View);
 }
 
-FMatrix FMatrix::MakePerspective(float FovY, float AspectRatio, float NearZ, float FarZ)
+FMatrix FMatrix::MakePerspective(float FovY, float AspectRatio, float NearX, float FarX)
 {
-	XMMATRIX Projection = XMMatrixPerspectiveFovLH(FovY, AspectRatio, NearZ, FarZ);
+	XMMATRIX Projection = XMMatrixPerspectiveFovLH(FovY, AspectRatio, NearX, FarX);
 	return XMMatrixToFMatrix(Projection);
 }
 
-FMatrix FMatrix::MakeOrthographic(float FovY, float AspectRatio, float NearZ, float FarZ)
+FMatrix FMatrix::MakeOrthographic(float ViewWidth, float ViewHeight, float NearX, float FarX)
 {
-	XMMATRIX Projection = XMMatrixOrthographicLH(FovY, AspectRatio, NearZ, FarZ);
+	XMMATRIX Projection = XMMatrixOrthographicLH(ViewWidth, ViewHeight, NearX, FarX);
 	return XMMatrixToFMatrix(Projection);
 }
 
