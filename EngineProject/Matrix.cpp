@@ -4,10 +4,6 @@
 #include "Vector.h"
 #include "Vector4.h"
 
-/* Constants */
-inline static const FMatrix Identity
-= FMatrix(FVector4(1, 0, 0, 0), FVector4(0, 1, 0, 0), FVector4(0, 0, 1, 0), FVector4(0, 0, 0, 1));
-
 /* Constructor */
 
 FMatrix::FMatrix()
@@ -196,43 +192,6 @@ FMatrix FMatrix::XMMatrixToFMatrix(const XMMATRIX& Matrix)
 
 	return Result;
 }
-
-
-
-FMatrix FMatrix::MakeWorld(const FVector& Scale, const FVector& Rotation, const FVector& Translation)
-{
-	XMMATRIX S = XMMatrixScaling(Scale.X, Scale.Y, Scale.Z);
-	XMMATRIX R = XMMatrixRotationRollPitchYaw(Rotation.X, Rotation.Y, Rotation.Z );
-	XMMATRIX T = XMMatrixTranslation(Translation.X, Translation.Y, Translation.Z);
-
-	return XMMatrixToFMatrix(S * R * T);
-}
-
-
-// ------------------ 아레는 새로 정의 해야 함 ---------------------- //
-FMatrix FMatrix::MakeView(const FVector& Eye, const FVector& Target, const FVector& Up)
-{
-	XMVECTOR XEye = Eye.FVectorToXMVector();
-	XMVECTOR XTarget = Target.FVectorToXMVector();
-	XMVECTOR XUp = Up.FVectorToXMVector();
-
-	XMMATRIX View = XMMatrixLookAtLH(XEye, XTarget, XUp);
-
-	return XMMatrixToFMatrix(View);
-}
-
-FMatrix FMatrix::MakePerspective(float FovY, float AspectRatio, float NearX, float FarX)
-{
-	XMMATRIX Projection = XMMatrixPerspectiveFovLH(FovY, AspectRatio, NearX, FarX);
-	return XMMatrixToFMatrix(Projection);
-}
-
-FMatrix FMatrix::MakeOrthographic(float ViewWidth, float ViewHeight, float NearX, float FarX)
-{
-	XMMATRIX Projection = XMMatrixOrthographicLH(ViewWidth, ViewHeight, NearX, FarX);
-	return XMMatrixToFMatrix(Projection);
-}
-
 
 /* Operator */
 

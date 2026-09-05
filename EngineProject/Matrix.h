@@ -60,15 +60,6 @@ public:
 	static XMMATRIX FMatrixToXMMatrix(const FMatrix& M);
 	static FMatrix XMMatrixToFMatrix(const XMMATRIX& Matrix);
 
-	// 월드 공간 행렬 생성 함수
-	static FMatrix MakeWorld(const FVector& Scale, const FVector& Rotation, const FVector& Translation);
-	// 뷰행렬 생성 함수
-	static FMatrix MakeView(const FVector& Eye, const FVector& Target, const FVector& Up);
-	// 투영행렬 생성 함수
-	static FMatrix MakePerspective(float FovY, float AspectRatio, float NearX, float FarX);
-	static FMatrix MakeOrthographic(float ViewWidth, float ViewHeight, float NearZ, float FarZ);
-
-
 /* Operator */
 
 	FMatrix& operator = (const FMatrix& Other);
@@ -96,6 +87,13 @@ public:
 };
 
 /* Constants */
+/* Constants */
+inline static const FMatrix Identity = FMatrix(
+	1.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 1.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 1.0f
+);
 
 /* Global Operator*/
 std::ostream& operator << (std::ostream& OS, const FMatrix& M);

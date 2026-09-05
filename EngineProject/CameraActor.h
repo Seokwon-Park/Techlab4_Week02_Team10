@@ -7,14 +7,16 @@ class ACameraActor : public AActor
 {
 	DECLARE_CLASS(ACameraActor, AActor)
 public:
-	ACameraActor() = default;
+	ACameraActor();
+	virtual ~ACameraActor() override;
 protected:
 	UCameraComponent* CameraComponent;
-	USceneComponent* USeceneComponent;
+	TArray<USceneComponent*> SceneComponents;
 
 public:
-	UCameraComponent* GetCameraComponent(); // return CameraComponent subobject
-	virtual USceneComponent* GetDefaultAttachComponent(); // override ? <- Need to override Actors one in UE
-	virtual void BeginPlay();
-
+	//virtual USceneComponent* GetDefaultAttachComponent(); // override ? <- Need to override Actors one in UE
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	void AddCameraComponent();
+	UCameraComponent* GetCameraComponent(int i); // return CameraComponent subobject
 };
