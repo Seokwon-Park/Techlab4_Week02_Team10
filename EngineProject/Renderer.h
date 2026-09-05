@@ -10,6 +10,12 @@
 
 class FShader;
 
+struct FVertexSimple
+{	// test
+	float x, y, z;
+	float r, g, b, a;
+};
+
 class FRenderer
 {
 	// 마이어스 Singleton

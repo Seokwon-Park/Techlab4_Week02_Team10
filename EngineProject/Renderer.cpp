@@ -4,7 +4,6 @@
 
 FRenderer& FRenderer::GetInstance()
 {
-	// TODO: 여기에 return 문을 삽입합니다.
 	static FRenderer Renderer;
 	return Renderer;
 }
@@ -17,6 +16,11 @@ void FRenderer::Create(HWND hWindow)
 
 	CreateRasterizerState();
 	CreateDepthStencilBufferAndState();
+
+	// 임시 셰이더 프로그램 컴파일 로직
+	FShader* shader = new FShader;
+	shader->Init(L"Shader/DefaultShader.hlsl", "mainVS", "mainPS", sizeof(FVertexSimple));
+	shader->Create(&(FRenderer::GetInstance()));
 }
 
 
@@ -116,19 +120,19 @@ void FRenderer::SwapBuffer()
 
 void FRenderer::CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize)
 {
-	Microsoft::WRL::ComPtr<ID3DBlob> VertexShaderCSO;
+	ID3DBlob* VertexShaderCSO;
+
+	ID3DBlob* ErrorBlob;
+	HRESULT hr = D3DCompileFromFile(InShader->File, nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorBlob);
 	
-	D3DCompileFromFile(InShader->File, nullptr, nullptr, InShader->VertexFunctionName, "vs_5_0", 0, 0, &VertexShaderCSO, nullptr);
+	Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, InShader->VertexShader.GetAddressOf());
+
+	ID3DBlob* PixelShaderCSO;
+	D3DCompileFromFile(InShader->File, nullptr, nullptr, InShader->PixelFunctionName, "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
+	Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, InShader->PixelShader.GetAddressOf());
 
 	Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
 		VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(InShader->InputLayout));
-
-	Microsoft::WRL::ComPtr<ID3DBlob> PixelShaderCSO;
-
-	D3DCompileFromFile(InShader->File, nullptr, nullptr, InShader->PixelFunctionName, "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
-
-	Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
-		PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), &(InShader->InputLayout));
 
 	VertexShaderCSO->Release();
 	PixelShaderCSO->Release();
