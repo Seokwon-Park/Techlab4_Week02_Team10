@@ -24,7 +24,7 @@ public:
 	void CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
 
 	void Prepare();
-	
+	void RenderPrimitive(ID3D11Buffer* pBuffer, UINT InStride, UINT InNumVertices);
 	void Render();
 
 	void Shutdown();

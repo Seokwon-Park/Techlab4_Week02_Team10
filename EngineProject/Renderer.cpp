@@ -144,6 +144,13 @@ void FRenderer::Prepare()
 	DeviceContext->OMSetDepthStencilState(DepthStencilState.Get(), 1);
 }
 
+void FRenderer::RenderPrimitive(ID3D11Buffer* pBuffer, UINT InStride, UINT InNumVertices)
+{
+	UINT offset = 0;
+	DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &InStride, &InNumVertices);
+	DeviceContext->Draw(InNumVertices, 0);
+}
+
 void FRenderer::Render()
 {
 	SwapBuffer();
