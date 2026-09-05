@@ -56,7 +56,6 @@ void FRenderer::CreateDeviceAndSwapChain(HWND hWindow)
 		0.0f, 1.0f };
 }
 
-
 void FRenderer::CreateFrameBuffer()
 {
 	SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)FrameBuffer.GetAddressOf());
