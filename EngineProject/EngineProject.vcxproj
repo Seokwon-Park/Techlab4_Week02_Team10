@@ -113,6 +113,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,6 +167,7 @@
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="Vector4.cpp" />
     <ClCompile Include="Window.cpp">
@@ -174,6 +176,9 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="Casts.h" />
+    <ClInclude Include="Component\ActorComponent.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Picking.h" />
     <ClInclude Include="Ray.h" />
