@@ -10,6 +10,8 @@
 #include "Component/SceneComponent.h"
 #include "World.h"
 
+#include "Renderer.h"
+
 void* operator new(uint64 Size)
 {
 	void* Ptr = malloc(Size);
@@ -38,10 +40,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	}
 
 	// Create Renderer
-	Renderer = MakeUnique<FRenderer>();
-	Renderer->Create(MainWindow->GetHandle());
+	FRenderer::GetInstance().Create(MainWindow->GetHandle());
 	
-
 	// Do Sth
 	World = new UWorld();
 
@@ -62,16 +62,16 @@ void Engine::Run()
 		float DeltaTime = EngineTimer::GetDeltaTime();
 
 		MainWindow->ProcessMessage(bIsRunning);
-		Renderer->Prepare();
+		FRenderer::GetInstance().Prepare();
 		World->Tick(DeltaTime);
 		
 		FInputSystem::UpdateInputStates();
-		
-		Renderer->Render();
+	
+		FRenderer::GetInstance().Render();
 	}
 }
 
 void Engine::Shutdown()
 {
-	Renderer->Shutdown();
+	FRenderer::GetInstance().Shutdown();
 }

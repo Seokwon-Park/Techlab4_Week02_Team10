@@ -12,7 +12,14 @@ class FShader;
 
 class FRenderer
 {
+	// 마이어스 Singleton
+private:
+	FRenderer() = default;
 public:
+	FRenderer(const FRenderer& src) = delete;
+	FRenderer& operator= (const FRenderer& src) = delete;
+	static FRenderer& GetInstance();
+
 	void Create(HWND hWindow);
 
 	void CreateDeviceAndSwapChain(HWND hWindow);

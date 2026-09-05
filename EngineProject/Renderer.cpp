@@ -2,6 +2,13 @@
 #include "Renderer.h"
 #include "Shader.h"
 
+FRenderer& FRenderer::GetInstance()
+{
+	// TODO: 여기에 return 문을 삽입합니다.
+	static FRenderer Renderer;
+	return Renderer;
+}
+
 void FRenderer::Create(HWND hWindow)
 {
 	CreateDeviceAndSwapChain(hWindow);
