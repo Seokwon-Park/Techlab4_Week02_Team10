@@ -160,6 +160,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Object.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -180,6 +181,7 @@
     <ClInclude Include="Casts.h" />
     <ClInclude Include="Component\ActorComponent.h" />
     <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Picking.h" />
     <ClInclude Include="Property.h" />
     <ClInclude Include="Ray.h" />

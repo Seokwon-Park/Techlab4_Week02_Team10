@@ -141,7 +141,7 @@ void FRenderer::CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayo
 	PixelShaderCSO->Release();
 }
 
-ID3D11Buffer* FRenderer::CreateVertexBuffer(FVertexSimple* InVertices, UINT InByteWidth)
+ID3D11Buffer* FRenderer::CreateVertexBuffer(void* InVertices, UINT InByteWidth)
 {
 	// Create a vertex buffer
 	D3D11_BUFFER_DESC vertexbufferdesc = {};
@@ -150,6 +150,23 @@ ID3D11Buffer* FRenderer::CreateVertexBuffer(FVertexSimple* InVertices, UINT InBy
 	vertexbufferdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA vertexbufferSRD = { InVertices };
+
+	ID3D11Buffer* vertexBuffer;
+
+	HRESULT hr = Device->CreateBuffer(&vertexbufferdesc, &vertexbufferSRD, &vertexBuffer);
+
+	return vertexBuffer;
+}
+
+ID3D11Buffer* FRenderer::CreateIndexBuffer(void* InIndices, UINT InByteWidth)
+{
+	// Create a vertex buffer
+	D3D11_BUFFER_DESC vertexbufferdesc = {};
+	vertexbufferdesc.ByteWidth = InByteWidth;
+	vertexbufferdesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vertexbufferdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA vertexbufferSRD = { InIndices };
 
 	ID3D11Buffer* vertexBuffer;
 

@@ -17,5 +17,6 @@ public:
 	EPrimitiveType GetType() const { return Type; }
 private:
 	EPrimitiveType Type;
-
+	//FShader* Shader;
+	//FMesh* Mesh;
 };

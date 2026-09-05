@@ -38,7 +38,8 @@ public:
 
 	void CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
 
-	ID3D11Buffer* CreateVertexBuffer(FVertexSimple* InVertices, UINT InByteWidth);
+	ID3D11Buffer* CreateVertexBuffer(void* InVertices, UINT InByteWidth);
+	ID3D11Buffer* CreateIndexBuffer(void* InIndices, UINT InByteWidth);
 
 	void Prepare();
 	void RenderPrimitive(ID3D11Buffer* pBuffer, UINT InStride, UINT InNumVertices);
