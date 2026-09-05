@@ -15,7 +15,7 @@ public:                                                                 \
         if (!bIsInit)                                                   \
         {                                                               \
             c.Name  = #ClassName;                                       \
-            c.Super = SuperClassName::StaticClass();                    \
+            c.Super = Super::StaticClass();								\
             c.Constructor = []() -> UObject* { return new ClassName(); };\
             bIsInit = true;                                             \
         }                                                               \

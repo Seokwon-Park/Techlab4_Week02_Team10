@@ -51,7 +51,7 @@ FVector4::FVector4(const FVector& V1, float w)
 
 XMVECTOR FVector4::FVectorToXMVector() const
 {
-	return XMVectorSet(X, Y, Z, 0.0f);
+	return XMVectorSet(X, Y, Z, W);
 }
 
 

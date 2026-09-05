@@ -28,7 +28,6 @@ public:
 	void GetUnitAxis(FVector4& X, FVector4& Y, FVector4& Z) const;
 
 	XMMATRIX FMatrixToXMMatrix() const;
-	FMatrix XMMatrixToFMatrix(const XMMATRIX& Matrix) const;
 
 	FVector4 GetColumn(int i) const;
 	FVector4 GetOrigin();
@@ -42,15 +41,7 @@ public:
 	FMatrix GetTransposed() const;
 	FMatrix Inverse() const;
 	
-	// 월드 공간 행렬 생성 함수
-	FMatrix MakeWorld();
-
-	// 뷰행렬 생성 함수
-	FMatrix MakeView(const FVector& Eye, const FVector& Target, const FVector& Up);
-	// 투영행렬 생성 함수
-	FMatrix MakePerspective(float FovY, float AspectRatio, float NearZ, float FarZ);
-	FMatrix MakeOrthographic(float FovY, float AspectRatio, float NearZ, float FarZ);
-	
+	FMatrix Multiply(const FMatrix& Other);
 	
 	float Determinant() const;
 	
@@ -58,14 +49,25 @@ public:
 	void SetIdentity();
 	void SetOrigin(const FVector& NewOrigin);
 
-
-
-	
 	// 
 	//void To3x4MatrixTranspose(float* Out) const;
 	// FMatrix TransposeAdjoint();
 
 	//GetFrustum Planes Function// 
+
+	/* Statics */
+
+	static XMMATRIX FMatrixToXMMatrix(const FMatrix& M);
+	static FMatrix XMMatrixToFMatrix(const XMMATRIX& Matrix);
+
+	// 월드 공간 행렬 생성 함수
+	static FMatrix MakeWorld(const FVector& Scale, const FVector& Rotation, const FVector& Translation);
+	// 뷰행렬 생성 함수
+	static FMatrix MakeView(const FVector& Eye, const FVector& Target, const FVector& Up);
+	// 투영행렬 생성 함수
+	static FMatrix MakePerspective(float FovY, float AspectRatio, float NearZ, float FarZ);
+	static FMatrix MakeOrthographic(float FovY, float AspectRatio, float NearZ, float FarZ);
+
 
 /* Operator */
 

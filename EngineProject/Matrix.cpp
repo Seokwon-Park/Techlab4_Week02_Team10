@@ -51,25 +51,6 @@ XMMATRIX FMatrix::FMatrixToXMMatrix() const
 	);
 }
 
-FMatrix FMatrix::XMMatrixToFMatrix(const XMMATRIX& Matrix) const
-{
-	FMatrix Result;
-
-	DirectX::XMFLOAT4X4 Temp;
-	DirectX::XMStoreFloat4x4(&Temp, Matrix);
-
-	for (int Row = 0; Row < 4; ++Row)
-	{
-		for (int Col = 0; Col < 4; ++Col)
-		{
-			Result.M[Row][Col] = Temp.m[Row][Col];
-		}
-	}
-
-	return Result;
-}
-
-
 FMatrix FMatrix::ApplyScale(float Scale) const
 {
 	return FMatrix(
@@ -97,7 +78,10 @@ float FMatrix::Determinant() const
 
 FMatrix FMatrix::Inverse() const
 {
-	return XMMatrixToFMatrix(XMMatrixInverse(&XMMatrixDeterminant(FMatrixToXMMatrix()), FMatrixToXMMatrix()));
+	XMMATRIX Matrix = FMatrixToXMMatrix();
+	XMVECTOR Determinant = XMMatrixDeterminant(Matrix);
+
+	return XMMatrixToFMatrix(XMMatrixInverse(&Determinant, Matrix));
 }
 
 FVector4 FMatrix::InverseTransformPosition(const FVector& V) const
@@ -176,6 +160,60 @@ void FMatrix::GetUnitAxis(FVector4& X, FVector4& Y, FVector4& Z) const
 	Z = Z.Normalize();
 }
 
+FMatrix FMatrix::Multiply(const FMatrix& Other)
+{
+	return XMMatrixToFMatrix(XMMatrixMultiply(FMatrixToXMMatrix(), Other.FMatrixToXMMatrix()));
+}
+
+
+
+
+
+
+
+
+
+/* Statics */
+
+XMMATRIX FMatrix::FMatrixToXMMatrix(const FMatrix& M)
+{
+	return XMMATRIX(
+		M[0][0], M[0][1], M[0][2], M[0][3],
+		M[1][0], M[1][1], M[1][2], M[1][3],
+		M[2][0], M[2][1], M[2][2], M[2][3],
+		M[3][0], M[3][1], M[3][2], M[3][3]
+	);
+}
+
+FMatrix FMatrix::XMMatrixToFMatrix(const XMMATRIX& Matrix)
+{
+	FMatrix Result;
+
+	DirectX::XMFLOAT4X4 Temp;
+	DirectX::XMStoreFloat4x4(&Temp, Matrix);
+
+	for (int Row = 0; Row < 4; ++Row)
+	{
+		for (int Col = 0; Col < 4; ++Col)
+		{
+			Result.M[Row][Col] = Temp.m[Row][Col];
+		}
+	}
+
+	return Result;
+}
+
+
+
+FMatrix FMatrix::MakeWorld(const FVector& Scale, const FVector& Rotation, const FVector& Translation)
+{
+	XMMATRIX S = XMMatrixScaling(Scale.X, Scale.Y, Scale.Z);
+	XMMATRIX R = XMMatrixRotationRollPitchYaw(Rotation.X, Rotation.Y, Rotation.Z );
+	XMMATRIX T = XMMatrixTranslation(Translation.X, Translation.Y, Translation.Z);
+
+	return XMMatrixToFMatrix(S * R * T);
+}
+
 FMatrix FMatrix::MakeView(const FVector& Eye, const FVector& Target, const FVector& Up)
 {
 	XMVECTOR XEye = Eye.FVectorToXMVector();
@@ -251,10 +289,7 @@ bool FMatrix::operator != (const FMatrix& Other) const
 
 FMatrix FMatrix::operator * (const FMatrix& Other) const
 {
-	XMMATRIX M1 = FMatrixToXMMatrix();
-	XMMATRIX M2 = Other.FMatrixToXMMatrix();
-	
-	return XMMatrixToFMatrix(XMMatrixMultiply(M1, M2));
+	return XMMatrixToFMatrix(XMMatrixMultiply(FMatrixToXMMatrix(), Other.FMatrixToXMMatrix()));
 }
 
 FMatrix FMatrix::operator * (const float& Other) const 
@@ -274,34 +309,7 @@ FVector4 FMatrix::operator * (const FVector4& Other) const
 
 FMatrix& FMatrix::operator *= (const FMatrix& Other)
 {
-	FMatrix RM;
-	FMatrix TM = Other.GetTransposed();
-
-	// Row 0
-	RM.M[0][0] = M[0][0] * TM.M[0][0] + M[0][1] * TM.M[0][1] + M[0][2] * TM.M[0][2] + M[0][3] * TM.M[0][3];
-	RM.M[0][1] = M[0][0] * TM.M[1][0] + M[0][1] * TM.M[1][1] + M[0][2] * TM.M[1][2] + M[0][3] * TM.M[1][3];
-	RM.M[0][2] = M[0][0] * TM.M[2][0] + M[0][1] * TM.M[2][1] + M[0][2] * TM.M[2][2] + M[0][3] * TM.M[2][3];
-	RM.M[0][3] = M[0][0] * TM.M[3][0] + M[0][1] * TM.M[3][1] + M[0][2] * TM.M[3][2] + M[0][3] * TM.M[3][3];
-
-	// Row 1
-	RM.M[1][0] = M[1][0] * TM.M[0][0] + M[1][1] * TM.M[0][1] + M[1][2] * TM.M[0][2] + M[1][3] * TM.M[0][3];
-	RM.M[1][1] = M[1][0] * TM.M[1][0] + M[1][1] * TM.M[1][1] + M[1][2] * TM.M[1][2] + M[1][3] * TM.M[1][3];
-	RM.M[1][2] = M[1][0] * TM.M[2][0] + M[1][1] * TM.M[2][1] + M[1][2] * TM.M[2][2] + M[1][3] * TM.M[2][3];
-	RM.M[1][3] = M[1][0] * TM.M[3][0] + M[1][1] * TM.M[3][1] + M[1][2] * TM.M[3][2] + M[1][3] * TM.M[3][3];
-
-	// Row 2
-	RM.M[2][0] = M[2][0] * TM.M[0][0] + M[2][1] * TM.M[0][1] + M[2][2] * TM.M[0][2] + M[2][3] * TM.M[0][3];
-	RM.M[2][1] = M[2][0] * TM.M[1][0] + M[2][1] * TM.M[1][1] + M[2][2] * TM.M[1][2] + M[2][3] * TM.M[1][3];
-	RM.M[2][2] = M[2][0] * TM.M[2][0] + M[2][1] * TM.M[2][1] + M[2][2] * TM.M[2][2] + M[2][3] * TM.M[2][3];
-	RM.M[2][3] = M[2][0] * TM.M[3][0] + M[2][1] * TM.M[3][1] + M[2][2] * TM.M[3][2] + M[2][3] * TM.M[3][3];
-
-	// Row 3
-	RM.M[3][0] = M[3][0] * TM.M[0][0] + M[3][1] * TM.M[0][1] + M[3][2] * TM.M[0][2] + M[3][3] * TM.M[0][3];
-	RM.M[3][1] = M[3][0] * TM.M[1][0] + M[3][1] * TM.M[1][1] + M[3][2] * TM.M[1][2] + M[3][3] * TM.M[1][3];
-	RM.M[3][2] = M[3][0] * TM.M[2][0] + M[3][1] * TM.M[2][1] + M[3][2] * TM.M[2][2] + M[3][3] * TM.M[2][3];
-	RM.M[3][3] = M[3][0] * TM.M[3][0] + M[3][1] * TM.M[3][1] + M[3][2] * TM.M[3][2] + M[3][3] * TM.M[3][3];
-
-	*this = RM;
+	*this = XMMatrixToFMatrix(XMMatrixMultiply(FMatrixToXMMatrix(), Other.FMatrixToXMMatrix()));
 	return *this;
 }
 

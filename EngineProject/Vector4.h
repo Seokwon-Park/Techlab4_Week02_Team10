@@ -1,7 +1,10 @@
 #pragma once
 
 #include "EngineMath.h"
+#include <DirectXMath.h>
 #include <iostream>
+
+using namespace DirectX;
 
 struct FVector;
 struct FMatrix;

@@ -20,42 +20,155 @@ int main()
     engine->Run();
     engine->Shutdown();
     
-    FVector4 V(1.0f, 2.0f, 3.0f, 1.0f);
-
-    FMatrix M(
-        1.0f, 0.0f, 0.0f, 10.0f,
-        0.0f, 1.0f, 0.0f, 20.0f,
-        0.0f, 0.0f, 1.0f, 30.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
+    // ============================================================
+    // 1. Local Position
+    // ============================================================
+    FVector4 LocalPosition(
+        1.0f,
+        0.0f,
+        0.0f,
+        1.0f
     );
 
-    // Matrix.TransformFVector4(Vector4)
-    FVector4 Result1 = M.TransformFVector4(V);
+    // ============================================================
+    // 2. World Matrix
+    // Scale  : (1, 1, 1)
+    // Rotation: Y축 45도
+    // Position: (10, 0, 0)
+    // ============================================================
+    FVector Scale(
+        1.0f,
+        1.0f,
+        1.0f
+    );
 
-    // Vector4 * Matrix
-    FVector4 Result2 = V * M;
+    FVector Rotation(
+        0.0f,
+        XMConvertToRadians(45.0f),
+        0.0f
+    );
 
-    // Matrix * Vector4
-    FVector4 Result3 = M * V;
+    FVector Translation(
+        10.0f,
+        0.0f,
+        0.0f
+    );
 
-    std::cout << "==============================" << std::endl;
+    FMatrix World = FMatrix::MakeWorld(
+        Scale,
+        Rotation,
+        Translation
+    );
 
-    std::cout << "Vector V : " << V << std::endl;
-    std::cout << "Matrix M :" << std::endl;
-    std::cout << M << std::endl;
+    // ============================================================
+    // 3. View Matrix
+    // Camera : (0, 0, -20)
+    // Target : (0, 0, 0)
+    // Up     : (0, 1, 0)
+    // ============================================================
+    FVector Eye(
+        0.0f,
+        0.0f,
+        -20.0f
+    );
 
-    std::cout << "==============================" << std::endl;
+    FVector Target(
+        0.0f,
+        0.0f,
+        0.0f
+    );
 
-    std::cout << "M.TransformFVector4(V) : "
-        << Result1 << std::endl;
+    FVector Up(
+        0.0f,
+        1.0f,
+        0.0f
+    );
 
-    std::cout << "V * M                  : "
-        << Result2 << std::endl;
+    FMatrix View = FMatrix::MakeView(
+        Eye,
+        Target,
+        Up
+    );
 
-    std::cout << "M * V                  : "
-        << Result3 << std::endl;
+    // ============================================================
+    // 4. Projection Matrix
+    // ============================================================
+    float FovY =
+        XMConvertToRadians(60.0f);
 
-    std::cout << "==============================" << std::endl;
+    float AspectRatio =
+        16.0f / 9.0f;
+
+    float NearZ = 0.1f;
+    float FarZ = 1000.0f;
+
+    FMatrix Projection =
+        FMatrix::MakePerspective(
+            FovY,
+            AspectRatio,
+            NearZ,
+            FarZ
+        );
+
+    // ============================================================
+    // 5. World → View → Projection
+    // ============================================================
+    FMatrix WVP =
+        World *
+        View *
+        Projection;
+
+    // ============================================================
+    // 6. Transform
+    // ============================================================
+    FVector4 WorldPosition =
+        World * LocalPosition;
+
+    FVector4 ViewPosition =
+        View * WorldPosition;
+
+    FVector4 ClipPosition =
+        Projection * ViewPosition;
+
+    // 또는
+    FVector4 ClipPosition2 =
+        WVP * LocalPosition;
+
+    // ============================================================
+    // Debug
+    // ============================================================
+
+    std::cout << "========================================\n";
+    std::cout << "Local Position\n";
+    std::cout << LocalPosition << "\n\n";
+
+    std::cout << "World Matrix\n";
+    std::cout << World << "\n";
+
+    std::cout << "View Matrix\n";
+    std::cout << View << "\n";
+
+    std::cout << "Projection Matrix\n";
+    std::cout << Projection << "\n";
+
+    std::cout << "WVP Matrix\n";
+    std::cout << WVP << "\n";
+
+    std::cout << "========================================\n";
+
+    std::cout << "World Position\n";
+    std::cout << WorldPosition << "\n\n";
+
+    std::cout << "View Position\n";
+    std::cout << ViewPosition << "\n\n";
+
+    std::cout << "Clip Position\n";
+    std::cout << ClipPosition << "\n\n";
+
+    std::cout << "Clip Position 2\n";
+    std::cout << ClipPosition2 << "\n";
+
+    std::cout << "========================================\n";
 
     return 0;
     
