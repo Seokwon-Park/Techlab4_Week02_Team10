@@ -43,7 +43,7 @@ public:
 	float Length(); // ==  size()
 	float Dot(const FVector4& V1) const;
 
-	XMVECTOR FVectorToXMVector() const;
+	XMVECTOR FVector4ToXMVector() const;
 
 	FVector4 Normalize();
 	FVector4 Cross(const FVector4& V1) const;
@@ -91,6 +91,9 @@ public:
 	float& operator[] (int Index);
 
 	/* Static */
+	static XMVECTOR FVector4ToXMVector(FVector4 V);
+	static FVector4 XMVectorToFVector4(XMVECTOR Vector);
+
 	static float DotProduct(const FVector4& V1, const FVector4& V2);
 	static FVector4 CrossProduct(const FVector4& V1, const FVector4& V2);
 	static float Distance(const FVector4& V1, const FVector4& V2); // == Dist()

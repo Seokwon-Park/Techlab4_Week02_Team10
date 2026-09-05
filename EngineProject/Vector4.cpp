@@ -49,7 +49,7 @@ FVector4::FVector4(const FVector& V1, float w)
 
 /* Functions */
 
-XMVECTOR FVector4::FVectorToXMVector() const
+XMVECTOR FVector4::FVector4ToXMVector() const
 {
 	return XMVectorSet(X, Y, Z, W);
 }
@@ -295,6 +295,17 @@ std::ostream& operator << (std::ostream& OS, const FVector4& V)
 
 
 /* Static Functions */
+
+static XMVECTOR FVector4ToXMVector(FVector4 V)
+{
+	return XMVectorSet(V.X, V.Y, V.Z, V.W);
+}
+
+static FVector4 XMVectorToFVector4(XMVECTOR Vector)
+{
+	return FVector4(XMVectorGetX(Vector), XMVectorGetY(Vector), XMVectorGetZ(Vector), XMVectorGetW(Vector));
+}
+
 
 float FVector4::DotProduct(const FVector4& V1, const FVector4& V2)
 {

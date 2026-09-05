@@ -290,6 +290,16 @@ std::ostream& operator << (std::ostream & OS, const FVector & V)
 
 /* Static Functions */
 
+static XMVECTOR FVectorToXMVector(FVector V)
+{
+	return XMVectorSet(V.X, V.Y, V.Z, 0.0f);
+}
+
+static FVector XMVectorToFVector(XMVECTOR Vector)
+{
+	return FVector(XMVectorGetX(Vector), XMVectorGetY(Vector), XMVectorGetZ(Vector));
+}
+
 float FVector::DotProduct(const FVector& V1, const FVector& V2)
 {
 	return V1.Dot(V2);

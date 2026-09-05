@@ -88,6 +88,9 @@ public:
 	float& operator[] (int Index);
 
 /* Static */
+	static XMVECTOR FVectorToXMVector(FVector V);
+	static FVector XMVectorToFVector(XMVECTOR Vector);
+
 	static float DotProduct(const FVector& V1, const FVector& V2);
 	static FVector CrossProduct(const FVector& V1, const FVector& V2);
 	static float Distance(const FVector& V1, const FVector& V2); // == Dist()

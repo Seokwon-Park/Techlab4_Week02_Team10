@@ -126,6 +126,8 @@ FVector4 FMatrix::TransformFVector4(const FVector4& V) const
 		V.X * M[0][2] + V.Y * M[1][2] + V.Z * M[2][2] + V.W * M[3][2],
 		V.X * M[0][3] + V.Y * M[1][3] + V.Z * M[2][3] + V.W * M[3][3]
 	);
+
+	//return FVector4ToXMVector(   );
 }
 
 FVector4 FMatrix::TransformPosition(const FVector& V) const
@@ -164,14 +166,6 @@ FMatrix FMatrix::Multiply(const FMatrix& Other)
 {
 	return XMMatrixToFMatrix(XMMatrixMultiply(FMatrixToXMMatrix(), Other.FMatrixToXMMatrix()));
 }
-
-
-
-
-
-
-
-
 
 /* Statics */
 
@@ -252,12 +246,7 @@ FMatrix& FMatrix::operator = (const FMatrix& Other)
 
 FMatrix FMatrix::operator - () 
 {
-	return FMatrix(
-		-FVector4(M[0][0], M[0][1], M[0][2], M[0][3]),
-		-FVector4(M[1][0], M[1][1], M[1][2], M[1][3]),
-		-FVector4(M[2][0], M[2][1], M[2][2], M[2][3]),
-		-FVector4(M[3][0], M[3][1], M[3][2], M[3][3])
-	);
+	return XMMatrixToFMatrix(-FMatrixToXMMatrix());
 }
 
 const float* FMatrix::operator[] (int Index) const
@@ -294,12 +283,7 @@ FMatrix FMatrix::operator * (const FMatrix& Other) const
 
 FMatrix FMatrix::operator * (const float& Other) const 
 {
-	return FMatrix(
-		FVector4(M[0][0] * Other, M[0][1] * Other, M[0][2] * Other, M[0][3] * Other),
-		FVector4(M[1][0] * Other, M[1][1] * Other, M[1][2] * Other, M[1][3] * Other),
-		FVector4(M[2][0] * Other, M[2][1] * Other, M[2][2] * Other, M[2][3] * Other),
-		FVector4(M[3][0] * Other, M[3][1] * Other, M[3][2] * Other, M[3][3] * Other)
-	);
+	return XMMatrixToFMatrix(FMatrixToXMMatrix() * Other);
 }
 
 FVector4 FMatrix::operator * (const FVector4& Other) const
@@ -315,112 +299,29 @@ FMatrix& FMatrix::operator *= (const FMatrix& Other)
 
 FMatrix& FMatrix::operator *= (float Other) 
 {
-	M[0][0] *= Other; M[0][1] *= Other; M[0][2] *= Other; M[0][3] *= Other;
-	M[1][0] *= Other; M[1][1] *= Other; M[1][2] *= Other; M[1][3] *= Other;
-	M[2][0] *= Other; M[2][1] *= Other; M[2][2] *= Other; M[2][3] *= Other;
-	M[3][0] *= Other; M[3][1] *= Other; M[3][2] *= Other; M[3][3] *= Other;
-
+	*this = XMMatrixToFMatrix(FMatrixToXMMatrix() * Other);
 	return *this;
 } 
 
 FMatrix FMatrix::operator + (const FMatrix& Other) const
 {
-	FMatrix Result;
-	Result.M[0][0] = M[0][0] + Other[0][0];
-	Result.M[0][1] = M[0][1] + Other[0][1]; 
-	Result.M[0][2] = M[0][2] + Other[0][2]; 
-	Result.M[0][3] = M[0][3] + Other[0][3];
-
-	Result.M[1][0] = M[1][0] + Other[1][0];
-	Result.M[1][1] = M[1][1] + Other[1][1];
-	Result.M[1][2] = M[1][2] + Other[1][2];
-	Result.M[1][3] = M[1][3] + Other[1][3];
-
-	Result.M[2][0] = M[2][0] + Other[2][0];
-	Result.M[2][1] = M[2][1] + Other[2][1];
-	Result.M[2][2] = M[2][2] + Other[2][2];
-	Result.M[2][3] = M[2][3] + Other[2][3];
-
-	Result.M[3][0] = M[3][0] + Other[3][0];
-	Result.M[3][1] = M[3][1] + Other[3][1];
-	Result.M[3][2] = M[3][2] + Other[3][2];
-	Result.M[3][3] = M[3][3] + Other[3][3];
-
-	return Result;
+	return XMMatrixToFMatrix(FMatrixToXMMatrix() + Other.FMatrixToXMMatrix());
 }
 
 FMatrix& FMatrix::operator += (const FMatrix& Other)
 {
-	M[0][0] = M[0][0] + Other[0][0];
-	M[0][1] = M[0][1] + Other[0][1];
-	M[0][2] = M[0][2] + Other[0][2];
-	M[0][3] = M[0][3] + Other[0][3];
-
-	M[1][0] = M[1][0] + Other[1][0];
-	M[1][1] = M[1][1] + Other[1][1];
-	M[1][2] = M[1][2] + Other[1][2];
-	M[1][3] = M[1][3] + Other[1][3];
-
-	M[2][0] = M[2][0] + Other[2][0];
-	M[2][1] = M[2][1] + Other[2][1];
-	M[2][2] = M[2][2] + Other[2][2];
-	M[2][3] = M[2][3] + Other[2][3];
-
-	M[3][0] = M[3][0] + Other[3][0];
-	M[3][1] = M[3][1] + Other[3][1];
-	M[3][2] = M[3][2] + Other[3][2];
-	M[3][3] = M[3][3] + Other[3][3];
-
+	*this = XMMatrixToFMatrix(FMatrixToXMMatrix() + Other.FMatrixToXMMatrix());
 	return *this;
 }
 
 FMatrix FMatrix::operator - (const FMatrix& Other) const
 {
-	FMatrix Result;
-	Result.M[0][0] = M[0][0] - Other[0][0];
-	Result.M[0][1] = M[0][1] - Other[0][1];
-	Result.M[0][2] = M[0][2] - Other[0][2];
-	Result.M[0][3] = M[0][3] - Other[0][3];
-
-	Result.M[1][0] = M[1][0] - Other[1][0];
-	Result.M[1][1] = M[1][1] - Other[1][1];
-	Result.M[1][2] = M[1][2] - Other[1][2];
-	Result.M[1][3] = M[1][3] - Other[1][3];
-
-	Result.M[2][0] = M[2][0] - Other[2][0];
-	Result.M[2][1] = M[2][1] - Other[2][1];
-	Result.M[2][2] = M[2][2] - Other[2][2];
-	Result.M[2][3] = M[2][3] - Other[2][3];
-
-	Result.M[3][0] = M[3][0] - Other[3][0];
-	Result.M[3][1] = M[3][1] - Other[3][1];
-	Result.M[3][2] = M[3][2] - Other[3][2];
-	Result.M[3][3] = M[3][3] - Other[3][3];
-
-	return Result;
+	return XMMatrixToFMatrix(FMatrixToXMMatrix() - Other.FMatrixToXMMatrix());
 }
 
 FMatrix& FMatrix::operator -= (const FMatrix& Other)
 {
-	M[0][0] = M[0][0] - Other[0][0];
-	M[0][1] = M[0][1] - Other[0][1];
-	M[0][2] = M[0][2] - Other[0][2];
-	M[0][3] = M[0][3] - Other[0][3];
-
-	M[1][0] = M[1][0] - Other[1][0];
-	M[1][1] = M[1][1] - Other[1][1];
-	M[1][2] = M[1][2] - Other[1][2];
-	M[1][3] = M[1][3] - Other[1][3];
-
-	M[2][0] = M[2][0] - Other[2][0];
-	M[2][1] = M[2][1] - Other[2][1];
-	M[2][2] = M[2][2] - Other[2][2];
-	M[2][3] = M[2][3] - Other[2][3];
-
-	M[3][0] = M[3][0] - Other[3][0];
-	M[3][1] = M[3][1] - Other[3][1];
-	M[3][2] = M[3][2] - Other[3][2];
-	M[3][3] = M[3][3] - Other[3][3];
+	*this = XMMatrixToFMatrix(FMatrixToXMMatrix() - Other.FMatrixToXMMatrix());
 	return *this;
 
 }
