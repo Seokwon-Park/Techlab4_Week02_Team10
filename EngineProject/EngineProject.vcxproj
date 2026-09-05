@@ -182,13 +182,16 @@
     <ClInclude Include="EngineString.h" />
     <ClInclude Include="EngineTimer.h" />
     <ClInclude Include="InputSystem.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="KeyCode.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MouseButton.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="String.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EngineStatics.h" />
     <ClInclude Include="Vector4.h" />
