@@ -1,4 +1,6 @@
 #pragma once
+
+#include "EngineMath.h"
 #include <iostream>
 
 struct FVector {
@@ -28,14 +30,15 @@ public:
 
 	float Size(); // 길이 반환
 	float Length(); // ==  size()
-	void Normalize();
+	float Dot(const FVector& V1) const;
 
 	float& Component(int index);		// 참조자 반환으로 lvalue로 직접 값수정 가능
 	float Component(int index) const;
 
-	float Dot(const FVector& V1) const;
 	FVector Cross(const FVector& V1) const;
 	FVector GetAbs();
+	FVector Normalize();
+
 
 	// float GetMax();
 	//// float GetMin();
@@ -52,14 +55,18 @@ public:
 
 	FVector operator - ();
 	FVector& operator = (const FVector& V1);
+	
 	FVector operator - (const FVector& V1) const;
 	FVector& operator -= (const FVector& V1);
+	
 	FVector operator + (const FVector& V1) const;
 	FVector& operator += (const FVector& V1);
+
 	FVector operator * (const FVector& V1) const;
 	FVector operator * (const float& f) const;
 	FVector& operator *= (const FVector& V1);
 	FVector& operator *= (const float & f);
+	
 	FVector operator / (const FVector& V1) const;
 	FVector operator / (const float& f) const;
 	FVector& operator /= (const FVector& V1);

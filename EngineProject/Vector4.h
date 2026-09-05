@@ -1,6 +1,10 @@
 #pragma once
-#include "Vector.h"
+
+#include "EngineMath.h"
 #include <iostream>
+
+struct FVector;
+struct FMatrix;
 
 struct FVector4 {
 
@@ -27,18 +31,16 @@ struct FVector4 {
 public:
 	/* Public Functions */
 	void Set(float x, float y, float z, float w);
-	// 벡터를 받는 경우 추가
 	void Set(const FVector& V1, float w = 0.0f);
 	void Set(const FVector4& V1);
 
-	float Size(); // 길이 반환
-	float Length(); // ==  size()
-	void Normalize();
-
 	float& Component(int index);		// 참조자 반환으로 lvalue로 직접 값수정 가능
 	float Component(int index) const;
-
+	float Size(); // 길이 반환
+	float Length(); // ==  size()
 	float Dot(const FVector4& V1) const;
+
+	FVector4 Normalize();
 	FVector4 Cross(const FVector4& V1) const;
 	FVector4 GetAbs();
 
@@ -48,8 +50,7 @@ public:
 	// float GetAbsMin();
 
 	// GetSafeNormal
-	// IsNearlyZero
-	// Equals
+
 	// ClampSize
 
 
@@ -57,14 +58,20 @@ public:
 
 	FVector4 operator - ();
 	FVector4& operator = (const FVector4& V1);
+
 	FVector4 operator - (const FVector4& V1) const;
 	FVector4& operator -= (const FVector4& V1);
+
 	FVector4 operator + (const FVector4& V1) const;
 	FVector4& operator += (const FVector4& V1);
+
 	FVector4 operator * (const FVector4& V1) const;
 	FVector4 operator * (const float& f) const;
+	FVector4 operator * (const FMatrix& M) const;
+
 	FVector4& operator *= (const FVector4& V1);
 	FVector4& operator *= (const float& f);
+
 	FVector4 operator / (const FVector4& V1) const;
 	FVector4 operator / (const float& f) const;
 	FVector4& operator /= (const FVector4& V1);
@@ -99,16 +106,3 @@ public:
 
 /* Global Operator */
 std::ostream& operator<<(std::ostream& OS, const FVector4& V);
-
-/* constants */
-//inline static const FVector4 BackwardVector = FVector4(-1.0f, 0.0f, 0.0f);
-//inline static const FVector4 DownVector = FVector4(0.0f, 0.0f, -1.0f);
-//inline static const FVector4 ForwardVector = FVector4(1.0f, 0.0f, 0.0f);
-//inline static const FVector4 LeftVector = FVector4(0.0f, -1.0f, 0.0f);
-//inline static const FVector4 OneVector = FVector4(1.0f, 1.0f, 1.0f);
-//inline static const FVector4 RightVector = FVector4(0.0f, 1.0f, 0.0f);
-//inline static const FVector4 UpVector = FVector4(0.0f, 0.0f, 1.0f);
-//inline static const FVector4 XAxisVector = FVector4(1.0f, 0.0f, 0.0f);
-//inline static const FVector4 YAxisVector = FVector4(0.0f, 1.0f, 0.0f);
-//inline static const FVector4 ZAxisVector = FVector4(0.0f, 0.0f, 1.0f);
-//inline static const FVector4 ZeroVector = FVector4(0.0f, 0.0f, 0.0f);

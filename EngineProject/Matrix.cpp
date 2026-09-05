@@ -1,5 +1,12 @@
 #include "EnginePCH.h"
+
 #include "Matrix.h"
+#include "Vector.h"
+#include "Vector4.h"
+
+/* Constants */
+inline static const FMatrix Identity
+= FMatrix(FVector4(1, 0, 0, 0), FVector4(0, 1, 0, 0), FVector4(0, 0, 1, 0), FVector4(0, 0, 0, 1));
 
 /* Constructor */
 
@@ -17,6 +24,19 @@ FMatrix::FMatrix(const FVector4& InX, const FVector4& InY, const FVector4& InZ, 
 	M[1][0] = InY.X; M[1][1] = InY.Y; M[1][2] = InY.Z; M[1][3] = InY.W;
 	M[2][0] = InZ.X; M[2][1] = InZ.Y; M[2][2] = InZ.Z; M[2][3] = InZ.W;
 	M[3][0] = InW.X; M[3][1] = InW.Y; M[3][2] = InW.Z; M[3][3] = InW.W;
+}
+
+FMatrix::FMatrix(
+	const float& f00, const float& f01, const float& f02, const float& f03,
+	const float& f10, const float& f11, const float& f12, const float& f13,
+	const float& f20, const float& f21, const float& f22, const float& f23,
+	const float& f30, const float& f31, const float& f32, const float& f33
+)
+{
+	M[0][0] = f00; M[0][1] = f01; M[0][2] = f02; M[0][3] = f03;
+	M[1][0] = f10; M[1][1] = f11; M[1][2] = f11; M[1][3] = f13;
+	M[2][0] = f20; M[2][1] = f21; M[2][2] = f22; M[2][3] = f23;
+	M[3][0] = f30; M[3][1] = f31; M[3][2] = f32; M[3][3] = f33;
 }
 
 /* Functions */
@@ -253,6 +273,11 @@ FMatrix FMatrix::operator * (const float& Other) const
 	);
 }
 
+FVector4 FMatrix::operator * (const FVector4& Other) const
+{
+	return TransformFVector4(Other);
+}
+
 FMatrix& FMatrix::operator *= (const FMatrix& Other)
 {
 	FMatrix RM;
@@ -397,6 +422,8 @@ FMatrix& FMatrix::operator -= (const FMatrix& Other)
 	return *this;
 
 }
+
+
 
 /* Global Operator */
 std::ostream& operator << (std::ostream& OS, const FMatrix& M )

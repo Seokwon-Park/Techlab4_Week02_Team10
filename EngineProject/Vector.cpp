@@ -1,7 +1,5 @@
 #include "EnginePCH.h"
 #include "Vector.h"
-
-#include <limits>
 #include <cmath>
 #include <assert.h>
 
@@ -52,12 +50,18 @@ float FVector::Length()
 	return sqrt(sum);
 }
 
-void FVector::Normalize()
+FVector FVector::Normalize()
 {
-	float size = this->Size();
-	X /= size;
-	Y /= size;
-	Z /= size;
+	float size = Size();
+
+	if (!FMath::IsNearlyZero(size))
+	{
+		X /= size;
+		Y /= size;
+		Z /= size;
+	}
+
+	return*this;
 }
 
 float& FVector::Component(int index)

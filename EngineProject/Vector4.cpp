@@ -1,7 +1,9 @@
 #include "EnginePCH.h"
-#include "Vector4.h"
 
-//#include <limits>
+#include "Vector4.h"
+#include "Vector.h"
+#include "Matrix.h"	
+
 #include <cmath>
 #include <assert.h>
 
@@ -81,13 +83,19 @@ float FVector4::Length()
 	return sqrt(sum);
 }
 
-void FVector4::Normalize()
+FVector4 FVector4::Normalize()
 {
-	float size = this->Size();
-	X /= size;
-	Y /= size;
-	Z /= size;
-	W /= size;
+	float size = Size();
+	
+	if (!FMath::IsNearlyZero(size))
+	{
+		X /= size;
+		Y /= size;
+		Z /= size;
+		W /= size;
+	}
+
+	return* this;
 }
 
 float& FVector4::Component(int index)
@@ -182,6 +190,21 @@ FVector4 FVector4::operator * (const FVector4& V1) const
 	return FVector4(X * V1.X, Y * V1.Y, Z * V1.Z, W * V1.W);
 }
 
+FVector4 FVector4::operator * (const float& f) const
+{
+	return FVector4(X * f, Y * f, Z * f, W * f);
+}
+
+FVector4 FVector4::operator * (const FMatrix& M) const
+{
+	return FVector4(
+		X * M[0][0] + Y * M[1][0] + Z * M[2][0] + W * M[3][0],
+		X * M[0][1] + Y * M[1][1] + Z * M[2][1] + W * M[3][1],
+		X * M[0][2] + Y * M[1][2] + Z * M[2][2] + W * M[3][2],
+		X * M[0][3] + Y * M[1][3] + Z * M[2][3] + W * M[3][3]
+	);
+}
+
 FVector4& FVector4::operator *= (const FVector4& V1)
 {
 	X *= V1.X;
@@ -198,11 +221,6 @@ FVector4& FVector4::operator *= (const float& f)
 	Z *= f;
 	W *= f;
 	return *this;
-}
-
-FVector4 FVector4::operator * (const float& f) const
-{
-	return FVector4(X * f, Y * f, Z * f, W * f);
 }
 
 FVector4 FVector4::operator / (const FVector4& V1) const
