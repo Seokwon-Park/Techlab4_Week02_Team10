@@ -1,6 +1,9 @@
 #pragma once
 
 #include "EngineMath.h"
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 struct FVector;
 struct FVector4;
@@ -20,6 +23,13 @@ public:
 	);
 
 public:
+	void SetAxes(const FVector4& Axis0, const FVector4& Axis1, const FVector4& Axis2, const FVector4& Axis3);
+	void SetAxis(int i, const FVector& Axis);
+	void GetUnitAxis(FVector4& X, FVector4& Y, FVector4& Z) const;
+
+	XMMATRIX FMatrixToXMMatrix() const;
+	FMatrix XMMatrixToFMatrix(const XMMATRIX& Matrix) const;
+
 	FVector4 GetColumn(int i) const;
 	FVector4 GetOrigin();
 	FVector4 GetScaledAxis(FVector4& X, FVector4& Y, FVector4& Z) const; 
@@ -31,17 +41,27 @@ public:
 	FMatrix ApplyScale(float Scale) const;
 	FMatrix GetTransposed() const;
 	FMatrix Inverse() const;
+	
+	// 월드 공간 행렬 생성 함수
+	FMatrix MakeWorld();
 
+	// 뷰행렬 생성 함수
+	FMatrix MakeView(const FVector& Eye, const FVector& Target, const FVector& Up);
+	// 투영행렬 생성 함수
+	FMatrix MakePerspective(float FovY, float AspectRatio, float NearZ, float FarZ);
+	FMatrix MakeOrthographic(float FovY, float AspectRatio, float NearZ, float FarZ);
+	
 	
 	float Determinant() const;
 	
 	void SetColumn(int i, FVector4 Value);
 	void SetIdentity();
 	void SetOrigin(const FVector& NewOrigin);
+
+
+
 	
-	// void GetUnitAxis(FVector4& X, FVector4& Y, FVector4& Z) const;
-	//void SetAxes(const FVector4* Axis0, const FVector4* Axis1, const FVector4* Axis2, const FVector4* Axis3);
-	//void SetAxis(int i, const FVector& Axis);
+	// 
 	//void To3x4MatrixTranspose(float* Out) const;
 	// FMatrix TransposeAdjoint();
 

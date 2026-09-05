@@ -41,6 +41,35 @@ FMatrix::FMatrix(
 
 /* Functions */
 
+XMMATRIX FMatrix::FMatrixToXMMatrix() const
+{
+	return XMMATRIX(
+		M[0][0], M[0][1], M[0][2], M[0][3],
+		M[1][0], M[1][1], M[1][2], M[1][3],
+		M[2][0], M[2][1], M[2][2], M[2][3],
+		M[3][0], M[3][1], M[3][2], M[3][3]
+	);
+}
+
+FMatrix FMatrix::XMMatrixToFMatrix(const XMMATRIX& Matrix) const
+{
+	FMatrix Result;
+
+	DirectX::XMFLOAT4X4 Temp;
+	DirectX::XMStoreFloat4x4(&Temp, Matrix);
+
+	for (int Row = 0; Row < 4; ++Row)
+	{
+		for (int Col = 0; Col < 4; ++Col)
+		{
+			Result.M[Row][Col] = Temp.m[Row][Col];
+		}
+	}
+
+	return Result;
+}
+
+
 FMatrix FMatrix::ApplyScale(float Scale) const
 {
 	return FMatrix(
@@ -58,73 +87,17 @@ FVector4 FMatrix::GetOrigin()
 
 FMatrix FMatrix::GetTransposed() const
 {
-	FMatrix Result;
-	Result.M[0][0] = M[0][0]; Result.M[0][1] = M[1][0]; Result.M[0][2] = M[2][0]; Result.M[0][3] = M[3][0];
-	Result.M[1][0] = M[0][1]; Result.M[1][1] = M[1][1]; Result.M[1][2] = M[2][1]; Result.M[1][3] = M[3][1];
-	Result.M[2][0] = M[0][2]; Result.M[2][1] = M[1][2]; Result.M[2][2] = M[2][2]; Result.M[2][3] = M[3][2];
-	Result.M[3][0] = M[0][3]; Result.M[3][1] = M[1][3]; Result.M[3][2] = M[2][3]; Result.M[3][3] = M[3][3];
-
-	return Result;
+	return XMMatrixToFMatrix(XMMatrixTranspose(FMatrixToXMMatrix()));
 }
 
 float FMatrix::Determinant() const
 {
-	float SubFactor00 = M[1][1] * (M[2][2] * M[3][3] - M[2][3] * M[3][2])
-		- M[1][2] * (M[2][1] * M[3][3] - M[2][3] * M[3][1])
-		+ M[1][3] * (M[2][1] * M[3][2] - M[2][2] * M[3][1]);
-
-	float SubFactor01 = M[1][0] * (M[2][2] * M[3][3] - M[2][3] * M[3][2])
-		- M[1][2] * (M[2][0] * M[3][3] - M[2][3] * M[3][0])
-		+ M[1][3] * (M[2][0] * M[3][2] - M[2][2] * M[3][0]);
-
-	float SubFactor02 = M[1][0] * (M[2][1] * M[3][3] - M[2][3] * M[3][1])
-		- M[1][1] * (M[2][0] * M[3][3] - M[2][3] * M[3][0])
-		+ M[1][3] * (M[2][0] * M[3][1] - M[2][1] * M[3][0]);
-
-	float SubFactor03 = M[1][0] * (M[2][1] * M[3][2] - M[2][2] * M[3][1])
-		- M[1][1] * (M[2][0] * M[3][2] - M[2][2] * M[3][0])
-		+ M[1][2] * (M[2][0] * M[3][1] - M[2][1] * M[3][0]);
-
-	return (M[0][0] * SubFactor00) - (M[0][1] * SubFactor01) + (M[0][2] * SubFactor02) - (M[0][3] * SubFactor03);
+	return XMVectorGetX(XMMatrixDeterminant(FMatrixToXMMatrix()));
 }
 
 FMatrix FMatrix::Inverse() const
 {
-	const float Det = Determinant();
-
-	if (FMath::IsNearlyZero(Det))
-	{
-		return Identity;
-	}
-
-	const float InvDet = 1.0f / Det;
-	FMatrix Result;
-
-	// Row 0
-	Result.M[0][0] = (M[1][1] * (M[2][2] * M[3][3] - M[2][3] * M[3][2]) - M[1][2] * (M[2][1] * M[3][3] - M[2][3] * M[3][1]) + M[1][3] * (M[2][1] * M[3][2] - M[2][2] * M[3][1])) * InvDet;
-	Result.M[0][1] = -(M[0][1] * (M[2][2] * M[3][3] - M[2][3] * M[3][2]) - M[0][2] * (M[2][1] * M[3][3] - M[2][3] * M[3][1]) + M[0][3] * (M[2][1] * M[3][2] - M[2][2] * M[3][1])) * InvDet;
-	Result.M[0][2] = (M[0][1] * (M[1][2] * M[3][3] - M[1][3] * M[3][2]) - M[0][2] * (M[1][1] * M[3][3] - M[1][3] * M[3][1]) + M[0][3] * (M[1][1] * M[3][2] - M[1][2] * M[3][1])) * InvDet;
-	Result.M[0][3] = -(M[0][1] * (M[1][2] * M[2][3] - M[1][3] * M[2][2]) - M[0][2] * (M[1][1] * M[2][3] - M[1][3] * M[2][1]) + M[0][3] * (M[1][1] * M[2][2] - M[1][2] * M[2][1])) * InvDet;
-
-	// Row 1
-	Result.M[1][0] = -(M[1][0] * (M[2][2] * M[3][3] - M[2][3] * M[3][2]) - M[1][2] * (M[2][0] * M[3][3] - M[2][3] * M[3][0]) + M[1][3] * (M[2][0] * M[3][2] - M[2][2] * M[3][0])) * InvDet;
-	Result.M[1][1] = (M[0][0] * (M[2][2] * M[3][3] - M[2][3] * M[3][2]) - M[0][2] * (M[2][0] * M[3][3] - M[2][3] * M[3][0]) + M[0][3] * (M[2][0] * M[3][2] - M[2][2] * M[3][0])) * InvDet;
-	Result.M[1][2] = -(M[0][0] * (M[1][2] * M[3][3] - M[1][3] * M[3][2]) - M[0][2] * (M[1][0] * M[3][3] - M[1][3] * M[3][0]) + M[0][3] * (M[1][0] * M[3][2] - M[1][2] * M[3][0])) * InvDet;
-	Result.M[1][3] = (M[0][0] * (M[1][2] * M[2][3] - M[1][3] * M[2][2]) - M[0][2] * (M[1][0] * M[2][3] - M[1][3] * M[2][0]) + M[0][3] * (M[1][0] * M[2][2] - M[1][2] * M[2][0])) * InvDet;
-
-	// Row 2
-	Result.M[2][0] = (M[1][0] * (M[2][1] * M[3][3] - M[2][3] * M[3][1]) - M[1][1] * (M[2][0] * M[3][3] - M[2][3] * M[3][0]) + M[1][3] * (M[2][0] * M[3][1] - M[2][1] * M[3][0])) * InvDet;
-	Result.M[2][1] = -(M[0][0] * (M[2][1] * M[3][3] - M[2][3] * M[3][1]) - M[0][1] * (M[2][0] * M[3][3] - M[2][3] * M[3][0]) + M[0][3] * (M[2][0] * M[3][1] - M[2][1] * M[3][0])) * InvDet;
-	Result.M[2][2] = (M[0][0] * (M[1][1] * M[3][3] - M[1][3] * M[3][1]) - M[0][1] * (M[1][0] * M[3][3] - M[1][3] * M[3][0]) + M[0][3] * (M[1][0] * M[3][1] - M[1][1] * M[3][0])) * InvDet;
-	Result.M[2][3] = -(M[0][0] * (M[1][1] * M[2][3] - M[1][3] * M[2][1]) - M[0][1] * (M[1][0] * M[2][3] - M[1][3] * M[2][0]) + M[0][3] * (M[1][0] * M[2][1] - M[1][1] * M[2][0])) * InvDet;
-
-	// Row 3
-	Result.M[3][0] = -(M[1][0] * (M[2][1] * M[3][2] - M[2][2] * M[3][1]) - M[1][1] * (M[2][0] * M[3][2] - M[2][2] * M[3][0]) + M[1][2] * (M[2][0] * M[3][1] - M[2][1] * M[3][0])) * InvDet;
-	Result.M[3][1] = (M[0][0] * (M[2][1] * M[3][2] - M[2][2] * M[3][1]) - M[0][1] * (M[2][0] * M[3][2] - M[2][2] * M[3][0]) + M[0][2] * (M[2][0] * M[3][1] - M[2][1] * M[3][0])) * InvDet;
-	Result.M[3][2] = -(M[0][0] * (M[1][1] * M[3][2] - M[1][2] * M[3][1]) - M[0][1] * (M[1][0] * M[3][2] - M[1][2] * M[3][0]) + M[0][2] * (M[1][0] * M[3][1] - M[1][1] * M[3][0])) * InvDet;
-	Result.M[3][3] = (M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1]) - M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0]) + M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0])) * InvDet;
-
-	return Result;
+	return XMMatrixToFMatrix(XMMatrixInverse(&XMMatrixDeterminant(FMatrixToXMMatrix()), FMatrixToXMMatrix()));
 }
 
 FVector4 FMatrix::InverseTransformPosition(const FVector& V) const
@@ -181,6 +154,52 @@ FVector4 FMatrix::TransformVector(const FVector& V) const
 	return TransformFVector4(FVector4(V.X, V.Y, V.Z, 0.0f));
 }
 
+void FMatrix::SetAxes(const FVector4& Axis0, const FVector4& Axis1, const FVector4& Axis2, const FVector4& Axis3)
+{
+	M[0][0] = Axis0.X; M[0][1] = Axis0.Y; M[0][2] = Axis0.Z; M[0][3] = Axis0.W;
+	M[1][0] = Axis0.X; M[1][1] = Axis0.Y; M[1][2] = Axis0.Z; M[1][3] = Axis0.W;
+	M[2][0] = Axis0.X; M[2][1] = Axis0.Y; M[2][2] = Axis0.Z; M[2][3] = Axis0.W;
+	M[3][0] = Axis0.X; M[3][1] = Axis0.Y; M[3][2] = Axis0.Z; M[3][3] = Axis0.W;
+}
+
+void FMatrix::SetAxis(int i, const FVector& Axis)
+{
+	M[i][0] = Axis.X;
+	M[i][1] = Axis.Y;
+	M[i][2] = Axis.Z;
+}
+
+void FMatrix::GetUnitAxis(FVector4& X, FVector4& Y, FVector4& Z) const
+{
+	X = X.Normalize();
+	Y = Y.Normalize();
+	Z = Z.Normalize();
+}
+
+FMatrix FMatrix::MakeView(const FVector& Eye, const FVector& Target, const FVector& Up)
+{
+	XMVECTOR XEye = Eye.FVectorToXMVector();
+	XMVECTOR XTarget = Target.FVectorToXMVector();
+	XMVECTOR XUp = Up.FVectorToXMVector();
+
+	XMMATRIX View = XMMatrixLookAtLH(XEye, XTarget, XUp);
+
+	return XMMatrixToFMatrix(View);
+}
+
+FMatrix FMatrix::MakePerspective(float FovY, float AspectRatio, float NearZ, float FarZ)
+{
+	XMMATRIX Projection = XMMatrixPerspectiveFovLH(FovY, AspectRatio, NearZ, FarZ);
+	return XMMatrixToFMatrix(Projection);
+}
+
+FMatrix FMatrix::MakeOrthographic(float FovY, float AspectRatio, float NearZ, float FarZ)
+{
+	XMMATRIX Projection = XMMatrixOrthographicLH(FovY, AspectRatio, NearZ, FarZ);
+	return XMMatrixToFMatrix(Projection);
+}
+
+
 /* Operator */
 
 FMatrix& FMatrix::operator = (const FMatrix& Other)
@@ -232,35 +251,10 @@ bool FMatrix::operator != (const FMatrix& Other) const
 
 FMatrix FMatrix::operator * (const FMatrix& Other) const
 {
-	// Other의 전치 행렬 반환
-	FMatrix RM;
-	FMatrix TM = Other.GetTransposed();
-
-	// Row 0
-	RM.M[0][0] = M[0][0] * TM.M[0][0] + M[0][1] * TM.M[0][1] + M[0][2] * TM.M[0][2] + M[0][3] * TM.M[0][3];
-	RM.M[0][1] = M[0][0] * TM.M[1][0] + M[0][1] * TM.M[1][1] + M[0][2] * TM.M[1][2] + M[0][3] * TM.M[1][3];
-	RM.M[0][2] = M[0][0] * TM.M[2][0] + M[0][1] * TM.M[2][1] + M[0][2] * TM.M[2][2] + M[0][3] * TM.M[2][3];
-	RM.M[0][3] = M[0][0] * TM.M[3][0] + M[0][1] * TM.M[3][1] + M[0][2] * TM.M[3][2] + M[0][3] * TM.M[3][3];
-
-	// Row 1
-	RM.M[1][0] = M[1][0] * TM.M[0][0] + M[1][1] * TM.M[0][1] + M[1][2] * TM.M[0][2] + M[1][3] * TM.M[0][3];
-	RM.M[1][1] = M[1][0] * TM.M[1][0] + M[1][1] * TM.M[1][1] + M[1][2] * TM.M[1][2] + M[1][3] * TM.M[1][3];
-	RM.M[1][2] = M[1][0] * TM.M[2][0] + M[1][1] * TM.M[2][1] + M[1][2] * TM.M[2][2] + M[1][3] * TM.M[2][3];
-	RM.M[1][3] = M[1][0] * TM.M[3][0] + M[1][1] * TM.M[3][1] + M[1][2] * TM.M[3][2] + M[1][3] * TM.M[3][3];
-
-	// Row 2
-	RM.M[2][0] = M[2][0] * TM.M[0][0] + M[2][1] * TM.M[0][1] + M[2][2] * TM.M[0][2] + M[2][3] * TM.M[0][3];
-	RM.M[2][1] = M[2][0] * TM.M[1][0] + M[2][1] * TM.M[1][1] + M[2][2] * TM.M[1][2] + M[2][3] * TM.M[1][3];
-	RM.M[2][2] = M[2][0] * TM.M[2][0] + M[2][1] * TM.M[2][1] + M[2][2] * TM.M[2][2] + M[2][3] * TM.M[2][3];
-	RM.M[2][3] = M[2][0] * TM.M[3][0] + M[2][1] * TM.M[3][1] + M[2][2] * TM.M[3][2] + M[2][3] * TM.M[3][3];
-
-	// Row 3
-	RM.M[3][0] = M[3][0] * TM.M[0][0] + M[3][1] * TM.M[0][1] + M[3][2] * TM.M[0][2] + M[3][3] * TM.M[0][3];
-	RM.M[3][1] = M[3][0] * TM.M[1][0] + M[3][1] * TM.M[1][1] + M[3][2] * TM.M[1][2] + M[3][3] * TM.M[1][3];
-	RM.M[3][2] = M[3][0] * TM.M[2][0] + M[3][1] * TM.M[2][1] + M[3][2] * TM.M[2][2] + M[3][3] * TM.M[2][3];
-	RM.M[3][3] = M[3][0] * TM.M[3][0] + M[3][1] * TM.M[3][1] + M[3][2] * TM.M[3][2] + M[3][3] * TM.M[3][3];
-
-	return RM;
+	XMMATRIX M1 = FMatrixToXMMatrix();
+	XMMATRIX M2 = Other.FMatrixToXMMatrix();
+	
+	return XMMatrixToFMatrix(XMMatrixMultiply(M1, M2));
 }
 
 FMatrix FMatrix::operator * (const float& Other) const 

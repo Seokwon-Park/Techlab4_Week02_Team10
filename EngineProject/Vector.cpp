@@ -31,6 +31,13 @@ FVector::FVector(const FVector& V1)
 	Z = V1.Z;
 }
 
+/* Functions */
+XMVECTOR FVector::FVectorToXMVector() const
+{
+	return XMVectorSet(X, Y, Z, 0.0f);
+}
+
+
 void FVector::Set(float x, float y, float z)
 {
 	X = x;
@@ -40,18 +47,27 @@ void FVector::Set(float x, float y, float z)
 
 float FVector::Size()
 {
+	/*XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR Result = XMVector3Length(A);
+	return XMVectorGetX(Result);*/
 	float sum = X * X + Y * Y + Z * Z;
 	return sqrt(sum);
 }
 
 float FVector::Length()
 {
+	/*XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR Result = XMVector3Length(A);
+	return XMVectorGetX(Result);*/
 	float sum = X * X + Y * Y + Z * Z;
 	return sqrt(sum);
 }
 
 FVector FVector::Normalize()
 {
+	/*XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR Result = XMVector3Normalize(A);
+	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result));*/
 	float size = Size();
 
 	if (!FMath::IsNearlyZero(size))
@@ -82,14 +98,48 @@ float FVector::Component(int index) const
 	return 0.0f;				// 이외의 경우에서 0을 반환 (임시)
 }
 
+FVector FVector::Add(const FVector& V1) const
+{
+	XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
+
+	XMVECTOR Result = XMVectorAdd(A, B);
+	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result));
+
+	//return X * V1.X + Y * V1.Y + Z * V1.Z;
+}
+
+FVector FVector::Subtract(const FVector& V1) const
+{
+	XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
+
+	XMVECTOR Result = XMVectorSubtract(A, B);
+	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result));
+
+	//return X * V1.X + Y * V1.Y + Z * V1.Z;
+}
+
 float FVector::Dot(const FVector& V1) const
 {
-	return X * V1.X + Y * V1.Y + Z * V1.Z;
+	XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
+
+	XMVECTOR Result = XMVector3Dot(A, B);
+	return XMVectorGetX(Result);
+
+	//return X * V1.X + Y * V1.Y + Z * V1.Z;
 }
 
 FVector FVector::Cross(const FVector& V1) const
 {
-	return FVector(Y*V1.Z - Z*V1.Y, Z*V1.X - X*V1.Z, X*V1.Y - Y * V1.X);
+	XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
+
+	XMVECTOR Result = XMVector3Cross(A, B);
+	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result) );
+
+	//return FVector(Y*V1.Z - Z*V1.Y, Z*V1.X - X*V1.Z, X*V1.Y - Y * V1.X);
 }
 
 

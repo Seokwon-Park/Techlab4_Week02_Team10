@@ -1,7 +1,10 @@
 #pragma once
 
 #include "EngineMath.h"
+#include <DirectXMath.h>
 #include <iostream>
+
+using namespace DirectX;
 
 struct FVector {
 
@@ -27,6 +30,7 @@ public:
 public:
 /* Public Functions */
 	void Set(float x, float y, float z);
+	XMVECTOR FVectorToXMVector() const;
 
 	float Size(); // 길이 반환
 	float Length(); // ==  size()
@@ -35,6 +39,9 @@ public:
 	float& Component(int index);		// 참조자 반환으로 lvalue로 직접 값수정 가능
 	float Component(int index) const;
 
+	FVector Add(const FVector& V1) const;
+	FVector Subtract(const FVector& V1) const;
+	
 	FVector Cross(const FVector& V1) const;
 	FVector GetAbs();
 	FVector Normalize();

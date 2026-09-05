@@ -47,6 +47,14 @@ FVector4::FVector4(const FVector& V1, float w)
 	W = w;
 }
 
+/* Functions */
+
+XMVECTOR FVector4::FVectorToXMVector() const
+{
+	return XMVectorSet(X, Y, Z, 0.0f);
+}
+
+
 void FVector4::Set(float x, float y, float z, float w)
 {
 	X = x;
