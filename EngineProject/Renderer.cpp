@@ -161,18 +161,18 @@ ID3D11Buffer* FRenderer::CreateVertexBuffer(void* InVertices, UINT InByteWidth)
 ID3D11Buffer* FRenderer::CreateIndexBuffer(void* InIndices, UINT InByteWidth)
 {
 	// Create a vertex buffer
-	D3D11_BUFFER_DESC vertexbufferdesc = {};
-	vertexbufferdesc.ByteWidth = InByteWidth;
-	vertexbufferdesc.Usage = D3D11_USAGE_IMMUTABLE;
-	vertexbufferdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	D3D11_BUFFER_DESC indexbufferdesc = {};
+	indexbufferdesc.ByteWidth = InByteWidth;
+	indexbufferdesc.Usage = D3D11_USAGE_IMMUTABLE;
+	indexbufferdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-	D3D11_SUBRESOURCE_DATA vertexbufferSRD = { InIndices };
+	D3D11_SUBRESOURCE_DATA indexbufferSRD = { InIndices };
 
-	ID3D11Buffer* vertexBuffer;
+	ID3D11Buffer* indexBuffer;
 
-	HRESULT hr = Device->CreateBuffer(&vertexbufferdesc, &vertexbufferSRD, &vertexBuffer);
+	HRESULT hr = Device->CreateBuffer(&indexbufferdesc, &indexbufferSRD, &indexBuffer);
 
-	return vertexBuffer;
+	return indexBuffer;
 }
 
 void FRenderer::Prepare()
@@ -203,10 +203,11 @@ void FRenderer::Prepare()
 	FRenderer::GetInstance().RenderPrimitive(vertexBuffer, sizeof(FVertexSimple), sizeof(Triangle)/sizeof(FVertexSimple));*/
 }
 
-void FRenderer::RenderPrimitive(ID3D11Buffer* pBuffer, UINT InStride, UINT InNumVertices)
+void FRenderer::RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices, ID3D11Buffer* pIndexBuffer, UINT InNumIndices, UINT InStride)
 {
 	UINT offset = 0;
-	DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &InStride, &offset);
+	DeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &InStride, &offset);
+	DeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	DeviceContext->Draw(InNumVertices, 0);
 }
 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "SceneComponent.h"
+#include "../Shader.h"
+#include "../Mesh.h"
 
 enum class EPrimitiveType
 {
@@ -17,6 +19,6 @@ public:
 	EPrimitiveType GetType() const { return Type; }
 private:
 	EPrimitiveType Type;
-	//FShader* Shader;
-	//FMesh* Mesh;
+	TSharedPtr<FShader> Shader;
+	TSharedPtr<FMesh> Mesh;
 };

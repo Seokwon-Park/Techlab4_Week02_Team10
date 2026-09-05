@@ -42,7 +42,7 @@ public:
 	ID3D11Buffer* CreateIndexBuffer(void* InIndices, UINT InByteWidth);
 
 	void Prepare();
-	void RenderPrimitive(ID3D11Buffer* pBuffer, UINT InStride, UINT InNumVertices);
+	void RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices, ID3D11Buffer* pIndexBuffer, UINT InNumIndices, UINT InStride);
 	void Render();
 
 	void Shutdown();
