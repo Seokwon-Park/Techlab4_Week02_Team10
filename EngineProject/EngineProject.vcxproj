@@ -190,7 +190,7 @@
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="KeyCode.h" />
-    <ClInclude Include="Math.h" />
+    <ClInclude Include="EngineMath.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MouseButton.h" />
     <ClInclude Include="Object.h" />
