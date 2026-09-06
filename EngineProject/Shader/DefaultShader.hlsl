@@ -1,3 +1,8 @@
+cbuffer constants : register(b0)
+{
+    matrix MVP;
+};
+
 struct VS_INPUT
 {
 	float3 position : POSITION;

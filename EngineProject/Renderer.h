@@ -28,6 +28,7 @@ public:
 	void CreateFrameBuffer();
 	void CreateRasterizerState();
 	void CreateDepthStencilBufferAndState();
+	void CreateConstantBuffer();
 
 	inline ID3D11Device* GetDevice() const { return Device.Get(); }
 	ID3D11DeviceContext* GetDeviceContext();
@@ -39,6 +40,7 @@ public:
 	ID3D11Buffer* CreateVertexBuffer(const void* InVertices, UINT InByteWidth);
 	ID3D11Buffer* CreateIndexBuffer(const uint32* InIndices, UINT InByteWidth);
 
+	void UpdateConstantBuffer(const FMatrix& MVP);
 	void BindShader(FShader* InShader);
 	void BindBuffer(FMesh* InMesh);
 	void Draw(int IndexCount);
@@ -50,6 +52,11 @@ public:
 	void Shutdown();
 
 private:
+	// Camera 
+	struct FConstants
+	{
+		FMatrix MVP;
+	};
 
 	Microsoft::WRL::ComPtr<ID3D11Device> Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> DeviceContext;
