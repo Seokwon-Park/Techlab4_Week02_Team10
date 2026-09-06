@@ -1,15 +1,18 @@
 #pragma once
 
+#pragma once
+
 #include "EngineMath.h"
 #include <DirectXMath.h>
 
 using namespace DirectX;
 
+
 struct FVector;
 struct FVector4;
 
 // Row Vector sys
-struct FMatrix{
+struct FMatrix {
 	float M[4][4];
 
 public:
@@ -27,11 +30,11 @@ public:
 	void SetAxis(int i, const FVector& Axis);
 	void GetUnitAxis(FVector4& X, FVector4& Y, FVector4& Z) const;
 
-	XMMATRIX FMatrixToXMMatrix() const;
+	//XMMATRIX FMatrixToXMMatrix() const;
 
 	FVector4 GetColumn(int i) const;
 	FVector4 GetOrigin();
-	FVector4 GetScaledAxis(FVector4& X, FVector4& Y, FVector4& Z) const; 
+	FVector4 GetScaledAxis(FVector4& X, FVector4& Y, FVector4& Z) const;
 	FVector4 TransformFVector4(const FVector4& V) const;
 	FVector4 TransformPosition(const FVector& V) const;
 	FVector4 TransformVector(const FVector& V) const;
@@ -40,11 +43,11 @@ public:
 	FMatrix ApplyScale(float Scale) const;
 	FMatrix GetTransposed() const;
 	FMatrix Inverse() const;
-	
-	FMatrix Multiply(const FMatrix& Other);
-	
+
+	FMatrix Multiply(const FMatrix& Other) const;
+
 	float Determinant() const;
-	
+
 	void SetColumn(int i, FVector4 Value);
 	void SetIdentity();
 	void SetOrigin(const FVector& NewOrigin);
@@ -57,8 +60,8 @@ public:
 
 	/* Statics */
 
-	static XMMATRIX FMatrixToXMMatrix(const FMatrix& M);
-	static FMatrix XMMatrixToFMatrix(const XMMATRIX& Matrix);
+	//static XMMATRIX FMatrixToXMMatrix(const FMatrix& M);
+	//static FMatrix XMMatrixToFMatrix(const XMMATRIX& Matrix);
 
 /* Operator */
 

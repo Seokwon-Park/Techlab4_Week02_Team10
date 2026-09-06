@@ -69,9 +69,6 @@
     <ClCompile Include="CameraActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Component\CameraComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Picking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -82,6 +79,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MatrixRegister.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -146,19 +146,10 @@
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
@@ -197,18 +188,25 @@
     <ClInclude Include="Quat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VectorRegister.h">
+    <ClInclude Include="Math\EngineMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VectorRegister_SSE.h">
+    <ClInclude Include="Math\MatrixRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MatrixRegister.h">
+    <ClInclude Include="Math\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Vector.h">
+    <ClInclude Include="Math\Vector4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\VectorRegister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\VectorRegister_SSE.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

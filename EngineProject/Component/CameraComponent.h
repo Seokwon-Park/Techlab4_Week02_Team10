@@ -1,8 +1,7 @@
 #pragma once
 
 #include "SceneComponent.h"
-#include "../Matrix.h"
-#include "../Vector.h"
+#include "../Math/EngineMath.h"
 
 class UCameraComponent : public USceneComponent
 {
@@ -28,7 +27,7 @@ public:
 
 	void SetTransform(FVector vector);
 	void SetScale(FVector vector);
-	void SetRotation(FVector vector);
+	//void SetRotation(FVector vector);
 	void SetFOV(float FoV);
 	void SetAspectRatio(float Ratio);
 	void SetNearClipPlane(float NearPlane);

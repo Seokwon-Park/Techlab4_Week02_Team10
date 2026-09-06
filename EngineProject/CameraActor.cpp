@@ -22,12 +22,12 @@ void ACameraActor::BeginPlay()
 
 void ACameraActor::Tick(float DeltaTime)
 {
-	CameraComponent->TickComponent(DeltaTime);
+	/*CameraComponent->TickComponent(DeltaTime);
 
 	for (auto& i : SceneComponents)
 	{
 		i->TickComponent(DeltaTime);
-	}
+	}*/
 }
 
 void ACameraActor::AddCameraComponent()

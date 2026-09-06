@@ -1,5 +1,5 @@
 #include "EnginePCH.h"
-#include "MatrixRegister.h"
+#include "Math/MatrixRegister.h"
 
 using namespace VectorSIMD;
 
@@ -32,7 +32,7 @@ float FMatrixRegister::Determinant3x3(FVectorRegister A, FVectorRegister B, FVec
 	return VectorSIMD::Dot(A, Cross);
 }
 
-inline float FMatrixRegister::Determinant() const
+float FMatrixRegister::Determinant() const
 {
 	const FVectorRegister& A = R[0];
 	const FVectorRegister& B = R[1];
@@ -40,23 +40,23 @@ inline float FMatrixRegister::Determinant() const
 	const FVectorRegister& D = R[3];
 
 	// C00 = +(fgh / jkl / nop)
-	FVectorRegister M00 = Swizzle<1, 2, 3, 3>(B);
-	FVectorRegister M01 = Swizzle<1, 2, 3, 3>(C);
-	FVectorRegister M02 = Swizzle<1, 2, 3, 3>(D);
+	FVectorRegister M00 = VectorSIMD::Swizzle<1, 2, 3, 3>(B);
+	FVectorRegister M01 = VectorSIMD::Swizzle<1, 2, 3, 3>(C);
+	FVectorRegister M02 = VectorSIMD::Swizzle<1, 2, 3, 3>(D);
 
 	float C00 = Determinant3x3(M00, M01, M02);
 
 	// C01 = -(egh / ikl / mop)
-	FVectorRegister M10 = Shuffle<0, 2, 3, 3>(B, B);
-	FVectorRegister M11 = Shuffle<0, 2, 3, 3>(C, C);
-	FVectorRegister M12 = Shuffle<0, 2, 3, 3>(D, D);
+	FVectorRegister M10 = VectorSIMD::Shuffle<0, 2, 3, 3>(B, B);
+	FVectorRegister M11 = VectorSIMD::Shuffle<0, 2, 3, 3>(C, C);
+	FVectorRegister M12 = VectorSIMD::Shuffle<0, 2, 3, 3>(D, D);
 
 	float C01 = -Determinant3x3(M10, M11, M12);
 
 	// C02 = +(efh / ijl / mnp)
-	FVectorRegister M20 = Shuffle<0, 1, 3, 3>(B, B);
-	FVectorRegister M21 = Shuffle<0, 1, 3, 3>(C, C);
-	FVectorRegister M22 = Shuffle<0, 1, 3, 3>(D, D);
+	FVectorRegister M20 = VectorSIMD::Shuffle<0, 1, 3, 3>(B, B);
+	FVectorRegister M21 = VectorSIMD::Shuffle<0, 1, 3, 3>(C, C);
+	FVectorRegister M22 = VectorSIMD::Shuffle<0, 1, 3, 3>(D, D);
 
 	float C02 = Determinant3x3(M20, M21, M22);
 
@@ -76,23 +76,23 @@ FMatrixRegister FMatrixRegister::Inverse() const
 	const FVectorRegister& D = R[3];
 
 	// C00 = +(fgh / jkl / nop)
-	FVectorRegister M00 = Swizzle<1, 2, 3, 3>(B);
-	FVectorRegister M01 = Swizzle<1, 2, 3, 3>(C);
-	FVectorRegister M02 = Swizzle<1, 2, 3, 3>(D);
+	FVectorRegister M00 = VectorSIMD::Swizzle<1, 2, 3, 3>(B);
+	FVectorRegister M01 = VectorSIMD::Swizzle<1, 2, 3, 3>(C);
+	FVectorRegister M02 = VectorSIMD::Swizzle<1, 2, 3, 3>(D);
 
 	float C00 = Determinant3x3(M00, M01, M02);
 
 	// C01 = -(egh / ikl / mop)
-	FVectorRegister M10 = Shuffle<0, 2, 3, 3>(B, B);
-	FVectorRegister M11 = Shuffle<0, 2, 3, 3>(C, C);
-	FVectorRegister M12 = Shuffle<0, 2, 3, 3>(D, D);
+	FVectorRegister M10 = VectorSIMD::Shuffle<0, 2, 3, 3>(B, B);
+	FVectorRegister M11 = VectorSIMD::Shuffle<0, 2, 3, 3>(C, C);
+	FVectorRegister M12 = VectorSIMD::Shuffle<0, 2, 3, 3>(D, D);
 
 	float C01 = -Determinant3x3(M10, M11, M12);
 
 	// C02 = +(efh / ijl / mnp)
-	FVectorRegister M20 = Shuffle<0, 1, 3, 3>(B, B);
-	FVectorRegister M21 = Shuffle<0, 1, 3, 3>(C, C);
-	FVectorRegister M22 = Shuffle<0, 1, 3, 3>(D, D);
+	FVectorRegister M20 = VectorSIMD::Shuffle<0, 1, 3, 3>(B, B);
+	FVectorRegister M21 = VectorSIMD::Shuffle<0, 1, 3, 3>(C, C);
+	FVectorRegister M22 = VectorSIMD::Shuffle<0, 1, 3, 3>(D, D);
 
 	float C02 = Determinant3x3(M20, M21, M22);
 
@@ -116,24 +116,24 @@ FMatrixRegister FMatrixRegister::Inverse() const
 	FVectorRegister C2;
 	FVectorRegister C3;
 
-	float C10 =-Determinant3x3(Swizzle<1, 2, 3, 3>(A), Swizzle<1, 2, 3, 3>(C), Swizzle<1, 2, 3, 3>(D));
-	float C11 = Determinant3x3(Shuffle<0, 2, 3, 3>(A, A), Shuffle<0, 2, 3, 3>(C, C), Shuffle<0, 2, 3, 3>(D, D));
-	float C12 = -Determinant3x3(Shuffle<0, 1, 3, 3>(A, A), Shuffle<0, 1, 3, 3>(C, C), Shuffle<0, 1, 3, 3>(D, D));
+	float C10 =-Determinant3x3(VectorSIMD::Swizzle<1, 2, 3, 3>(A), VectorSIMD::Swizzle<1, 2, 3, 3>(C), VectorSIMD::Swizzle<1, 2, 3, 3>(D));
+	float C11 = Determinant3x3(VectorSIMD::Shuffle<0, 2, 3, 3>(A, A), VectorSIMD::Shuffle<0, 2, 3, 3>(C, C), VectorSIMD::Shuffle<0, 2, 3, 3>(D, D));
+	float C12 = -Determinant3x3(VectorSIMD::Shuffle<0, 1, 3, 3>(A, A), VectorSIMD::Shuffle<0, 1, 3, 3>(C, C), VectorSIMD::Shuffle<0, 1, 3, 3>(D, D));
 	float C13 = Determinant3x3(A, C, D);
-	float C20 = Determinant3x3(Swizzle<1, 2, 3, 3>(A), Swizzle<1, 2, 3, 3>(B), Swizzle<1, 2, 3, 3>(D));
-	float C21 = -Determinant3x3(Shuffle<0, 2, 3, 3>(A, A), Shuffle<0, 2, 3, 3>(B, B), Shuffle<0, 2, 3, 3>(D, D));
-	float C22 = Determinant3x3(Shuffle<0, 1, 3, 3>(A, A), Shuffle<0, 1, 3, 3>(B, B), Shuffle<0, 1, 3, 3>(D, D));
+	float C20 = Determinant3x3(VectorSIMD::Swizzle<1, 2, 3, 3>(A), VectorSIMD::Swizzle<1, 2, 3, 3>(B), VectorSIMD::Swizzle<1, 2, 3, 3>(D));
+	float C21 = -Determinant3x3(VectorSIMD::Shuffle<0, 2, 3, 3>(A, A), VectorSIMD::Shuffle<0, 2, 3, 3>(B, B), VectorSIMD::Shuffle<0, 2, 3, 3>(D, D));
+	float C22 = Determinant3x3(VectorSIMD::Shuffle<0, 1, 3, 3>(A, A), VectorSIMD::Shuffle<0, 1, 3, 3>(B, B), VectorSIMD::Shuffle<0, 1, 3, 3>(D, D));
 	float C23 = -Determinant3x3(A, B, D);
-	float C30 = -Determinant3x3(Swizzle<1, 2, 3, 3>(A), Swizzle<1, 2, 3, 3>(B), Swizzle<1, 2, 3, 3>(C));
-	float C31 = Determinant3x3(Shuffle<0, 2, 3, 3>(A, A), Shuffle<0, 2, 3, 3>(B, B), Shuffle<0, 2, 3, 3>(C, C));
-	float C32 = -Determinant3x3(Shuffle<0, 1, 3, 3>(A, A), Shuffle<0, 1, 3, 3>(B, B), Shuffle<0, 1, 3, 3>(C, C));
+	float C30 = -Determinant3x3(VectorSIMD::Swizzle<1, 2, 3, 3>(A), VectorSIMD::Swizzle<1, 2, 3, 3>(B), VectorSIMD::Swizzle<1, 2, 3, 3>(C));
+	float C31 = Determinant3x3(VectorSIMD::Shuffle<0, 2, 3, 3>(A, A), VectorSIMD::Shuffle<0, 2, 3, 3>(B, B), VectorSIMD::Shuffle<0, 2, 3, 3>(C, C));
+	float C32 = -Determinant3x3(VectorSIMD::Shuffle<0, 1, 3, 3>(A, A), VectorSIMD::Shuffle<0, 1, 3, 3>(B, B), VectorSIMD::Shuffle<0, 1, 3, 3>(C, C));
 	float C33 = Determinant3x3(A, B, C);
 	
 	return FMatrixRegister(
-		Mul(SetVal(C00, C10, C20, C30),SetVal(InvDet)),
-		Mul(SetVal(C01, C11, C21, C31), SetVal(InvDet)),
-		Mul(SetVal(C02, C12, C22, C32), SetVal(InvDet)),
-		Mul(SetVal(C03, C13, C23, C33), SetVal(InvDet))
+		Mul(VectorSIMD::SetVal(C00, C10, C20, C30), VectorSIMD::SetVal(InvDet)),
+		Mul(VectorSIMD::SetVal(C01, C11, C21, C31), VectorSIMD::SetVal(InvDet)),
+		Mul(VectorSIMD::SetVal(C02, C12, C22, C32), VectorSIMD::SetVal(InvDet)),
+		Mul(VectorSIMD::SetVal(C03, C13, C23, C33), VectorSIMD::SetVal(InvDet))
 	);
 
 }

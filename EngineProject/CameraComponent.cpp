@@ -1,7 +1,6 @@
-#include "../EnginePCH.h"
-#include "CameraComponent.h"
-#include "../InputSystem.h"
-
+#include "EnginePCH.h"
+#include "Component/CameraComponent.h"
+#include "InputSystem.h"
 
 UCameraComponent::UCameraComponent()
 {
@@ -10,11 +9,13 @@ UCameraComponent::UCameraComponent()
 
 void UCameraComponent::BeginPlay()
 {
-
+    Super::BeginPlay();
 }
 
 void UCameraComponent::TickComponent(float DeltaTime)
 {
+    Super::TickComponent(DeltaTime);
+
     if (FInputSystem::IsKeyPressed(EKeyCode::W))
     {
         Transform.X += CameraSpeed * DeltaTime;
@@ -44,10 +45,10 @@ void UCameraComponent::SetScale(FVector vector)
     Scale = vector;
 }
 
-void UCameraComponent::SetRotation(FVector vector)
-{
-    
-}
+//void UCameraComponent::SetRotation(FVector vector)
+//{
+//    
+//}
 
 void UCameraComponent::SetFOV(float FoV)
 {
