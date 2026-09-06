@@ -24,7 +24,9 @@ public:
 
 	bool SaveScene(const FString& Path);
 	bool LoadScene(const FString& Path);
+
+	void GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue);
 private:
 	TArray<AActor*> Actors;
-	
+	TArray<UPrimitiveComponent*> PrimitiveComponents;
 };

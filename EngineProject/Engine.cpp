@@ -65,11 +65,13 @@ void Engine::Run()
 
 		MainWindow->ProcessMessage(bIsRunning);
 		World->Tick(DeltaTime);
-		
+
+		TQueue<FRenderPacket> RenderQueue;
+		World->GatherRenderPackets(RenderQueue);
 		FInputSystem::UpdateInputStates();
 
 		Renderer->BeginFrame();
-
+		Renderer->RenderAll(RenderQueue);
 		Renderer->EndFrame();
 	}
 }
