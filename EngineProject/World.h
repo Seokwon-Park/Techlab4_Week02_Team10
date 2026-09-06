@@ -29,11 +29,13 @@ public:
 	bool LoadScene(const FString& Path);
 
 	inline void AddPrimitive(UPrimitiveComponent* Primitive) { PrimitiveComponents.push_back(Primitive); }
+
+	void GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue);
+
 private:
 	TArray<AActor*> Actors;
 
 	TQueue<AActor*> BeginPlayList;
 	
-	void GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue);
 	TArray<UPrimitiveComponent*> PrimitiveComponents;
 };
