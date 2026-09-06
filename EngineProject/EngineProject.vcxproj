@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -114,7 +114,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)ThirdParty\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,6 +143,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
     <ClCompile Include="CameraActor.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Class.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="DefaultShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Engine.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -157,6 +159,7 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="EngineTimer.cpp" />
+    <ClCompile Include="ImGuiRenderer.cpp" />
     <ClCompile Include="InputSystem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -174,6 +177,27 @@
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_dx11.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_win32.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\ImGui\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\ImGui\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\ImGui\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\ImGui\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\ImGui\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="Vector4.cpp" />
@@ -184,9 +208,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="CameraActor.h" />
     <ClInclude Include="Casts.h" />
     <ClInclude Include="Component\ActorComponent.h" />
+    <ClInclude Include="Editor\EditorPanel.h" />
+    <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="ImGuiRenderer.h" />
     <ClInclude Include="Math\EngineMath.h" />
     <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\MatrixRegister.h" />
@@ -217,6 +245,14 @@
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="ThirdParty\ImGui\imconfig.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui_internal.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_textedit.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_truetype.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EngineStatics.h" />

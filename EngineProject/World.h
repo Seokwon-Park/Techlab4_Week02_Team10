@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "Component/PrimitiveComponent.h"
 #include "Transform.h"
+#include "Renderer.h"
 
 
 class UWorld : public UObject
@@ -22,9 +23,17 @@ public:
 
 	void Tick(float DeltaTime);
 
+	void OnRender(FRenderer* Renderer);
+
 	bool SaveScene(const FString& Path);
 	bool LoadScene(const FString& Path);
+
+	inline void AddPrimitive(UPrimitiveComponent* Primitive) { Primitives.push_back(Primitive); }
 private:
 	TArray<AActor*> Actors;
+
+	TQueue<AActor*> BeginPlayList;
+
+	TArray<UPrimitiveComponent*> Primitives;
 	
 };

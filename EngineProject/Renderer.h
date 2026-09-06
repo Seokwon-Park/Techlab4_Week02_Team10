@@ -32,6 +32,7 @@ public:
 	void CreateRasterizerState();
 	void CreateDepthStencilBufferAndState();
 
+	inline ID3D11Device* GetDevice() const { return Device.Get(); }
 	ID3D11DeviceContext* GetDeviceContext();
 
 	FShader* CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
@@ -51,7 +52,7 @@ public:
 	void Shutdown();
 
 private:
-	
+
 	Microsoft::WRL::ComPtr<ID3D11Device> Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> DeviceContext;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> SwapChain;
@@ -67,5 +68,5 @@ private:
 	Microsoft::WRL::ComPtr <ID3D11Buffer> ConstantBuffer;
 	D3D11_VIEWPORT ViewportInfo;
 
-	FLOAT ClearColor[4] = {0.1f, 0.1f, 0.1f, 1.0f };
+	FLOAT ClearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
 };

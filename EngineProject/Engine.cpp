@@ -43,6 +43,12 @@ bool Engine::Init(HINSTANCE hInstance)
 	// Create Renderer
 	Renderer = MakeUnique<FRenderer>();
 	Renderer->Create(MainWindow->GetHandle());
+
+	ImGuiRenderer = MakeUnique<FImGuiRenderer>();
+	ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext());
+
+	EditorUI = MakeUnique<FEditorUI>();
+	EditorUI->Init();
 	
 	// Do Sth
 	World = new UWorld();
@@ -70,6 +76,12 @@ void Engine::Run()
 
 		Renderer->BeginFrame();
 
+		ImGuiRenderer->Begin();
+
+		ImGui::ShowDemoWindow();
+		EditorUI->OnRender();
+
+		ImGuiRenderer->End();
 		Renderer->EndFrame();
 	}
 }

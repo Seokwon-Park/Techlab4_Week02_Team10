@@ -6,6 +6,7 @@
 void FRenderer::BeginFrame()
 {
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV.Get(), ClearColor);
+	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), nullptr);
 }
 
 void FRenderer::EndFrame()
