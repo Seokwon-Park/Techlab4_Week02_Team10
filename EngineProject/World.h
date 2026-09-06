@@ -28,7 +28,7 @@ public:
 	bool SaveScene(const FString& Path);
 	bool LoadScene(const FString& Path);
 
-	inline void AddPrimitive(UPrimitiveComponent* Primitive) { Primitives.push_back(Primitive); }
+	inline void AddPrimitive(UPrimitiveComponent* Primitive) { PrimitiveComponents.push_back(Primitive); }
 private:
 	TArray<AActor*> Actors;
 
