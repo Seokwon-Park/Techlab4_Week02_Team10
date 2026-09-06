@@ -1,7 +1,5 @@
 #include "EnginePCH.h"
-#include "Vector.h"
-
-#include <limits>
+#include "Math/Vector.h"
 #include <cmath>
 #include <assert.h>
 
@@ -33,6 +31,13 @@ FVector::FVector(const FVector& V1)
 	Z = V1.Z;
 }
 
+/* Functions */
+XMVECTOR FVector::FVectorToXMVector() const
+{
+	return XMVectorSet(X, Y, Z, 0.0f);
+}
+
+
 void FVector::Set(float x, float y, float z)
 {
 	X = x;
@@ -52,12 +57,18 @@ float FVector::Length()
 	return sqrt(sum);
 }
 
-void FVector::Normalize()
+FVector FVector::Normalize()
 {
-	float size = this->Size();
-	X /= size;
-	Y /= size;
-	Z /= size;
+	float size = Size();
+
+	if (!FMath::IsNearlyZero(size))
+	{
+		X /= size;
+		Y /= size;
+		Z /= size;
+	}
+
+	return*this;
 }
 
 float& FVector::Component(int index)
@@ -78,21 +89,54 @@ float FVector::Component(int index) const
 	return 0.0f;				// 이외의 경우에서 0을 반환 (임시)
 }
 
+// SIMD 연산
+FVector FVector::Add(const FVector& V1) const
+{
+	XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
+
+	XMVECTOR Result = XMVectorAdd(A, B);
+	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result));
+
+	//return FVector(X * V1.X, Y * V1.Y, Z * V1.Z);
+}
+
+FVector FVector::Subtract(const FVector& V1) const
+{
+	XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
+
+	XMVECTOR Result = XMVectorSubtract(A, B);
+	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result));
+}
+
 float FVector::Dot(const FVector& V1) const
 {
+	/*XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
+
+	XMVECTOR Result = XMVector3Dot(A, B);
+	return XMVectorGetX(Result);*/
+
 	return X * V1.X + Y * V1.Y + Z * V1.Z;
 }
 
 FVector FVector::Cross(const FVector& V1) const
 {
+	/*XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
+	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
+
+	XMVECTOR Result = XMVector3Cross(A, B);
+	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result) );*/
+
 	return FVector(Y*V1.Z - Z*V1.Y, Z*V1.X - X*V1.Z, X*V1.Y - Y * V1.X);
 }
 
 
 FVector FVector::GetAbs() {
-	float AbsX = 0.0f;
-	float AbsY = 0.0f;
-	float AbsZ = 0.0f;
+	float AbsX = X;
+	float AbsY = Y;
+	float AbsZ = Z;
 	if (X < 0) AbsX = -X;
 	if (Y < 0) AbsY = -Y;
 	if (Z < 0) AbsZ = -Z;
@@ -156,8 +200,8 @@ FVector& FVector::operator *= (const FVector& V1)
 FVector& FVector::operator *= (const float& f)
 {
 	X *= f;
-	Y -= f;
-	Z -= f;
+	Y *= f;
+	Z *= f;
 	return *this;
 }
 
@@ -179,17 +223,24 @@ FVector FVector::operator / (const float& f) const
 
 FVector& FVector::operator /= (const FVector& V1)
 {
-	X /= V1.X;
-	Y /= V1.Y;
-	Z /= V1.Z;
+	const float InvX = 1.0f / V1.X;
+	const float InvY = 1.0f / V1.Y;
+	const float InvZ = 1.0f / V1.Z;
+
+	X *= InvX;
+	Y *= InvY;
+	Z *= InvZ;
+	
 	return *this;
 }
 
 FVector& FVector::operator /= (const float& f)
 {
-	X /= f;
-	Y /= f;
-	Z /= f;
+	const float InvF = 1.0f / f;
+	X *= InvF;
+	Y *= InvF;
+	Z *= InvF;
+
 	return *this;
 }
 
@@ -201,28 +252,22 @@ FVector FVector::operator ^ (const FVector& V1) const
 
 bool FVector::operator == (const FVector& V1) const
 {
-	if (this->X == V1.X && this->Z == V1.Z && this->Y == V1.Y)
-		return true;
-	else
-		return false;
+	return (X == V1.X) && (Y == V1.Y) && (Z == V1.Z);
 }
 
 bool FVector::operator != (const FVector& V1) const
 {
-	if (this->X == V1.X && this->Z == V1.Z && this->Y == V1.Y)
-		return false;
-	else
-		return true;
+	return !(*this == V1);
 }
 
 float FVector::operator[] (int Index) const
 {
-	return this->Component(Index);
+	return V[Index];
 }
 
 float& FVector::operator[] (int Index) 
 {
-	return this->Component(Index);
+	return V[Index];
 }
 
 /* Global Operator */
@@ -234,6 +279,16 @@ std::ostream& operator << (std::ostream & OS, const FVector & V)
 
 
 /* Static Functions */
+
+static XMVECTOR FVectorToXMVector(FVector V)
+{
+	return XMVectorSet(V.X, V.Y, V.Z, 0.0f);
+}
+
+static FVector XMVectorToFVector(XMVECTOR Vector)
+{
+	return FVector(XMVectorGetX(Vector), XMVectorGetY(Vector), XMVectorGetZ(Vector));
+}
 
 float FVector::DotProduct(const FVector& V1, const FVector& V2)
 {

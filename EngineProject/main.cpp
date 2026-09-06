@@ -3,6 +3,10 @@
 #include <Windows.h>
 #include "Engine.h"
 
+#include "Math/EngineMath.h"
+#include <assert.h>
+
+
 int main()
 {
     HINSTANCE hInstance = GetModuleHandle(nullptr);
@@ -13,9 +17,9 @@ int main()
     engine->Run();
     engine->Shutdown();
 
+	return 0;
 
-
-    return 0;
+    
 }
 
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,

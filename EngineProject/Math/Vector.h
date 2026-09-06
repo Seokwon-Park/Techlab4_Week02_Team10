@@ -1,11 +1,23 @@
 #pragma once
+
+#include "EngineMath.h"
+#include <DirectXMath.h>
 #include <iostream>
 
+using namespace DirectX;
+
 struct FVector {
-	float X;
-	float Y;
-	float Z;
-	const int NumComponents = 3;
+
+	union
+	{
+		float V[4];
+		struct
+		{
+			float X;
+			float Y;
+			float Z;
+		};
+	};
 
 public:
 /* Constructor */
@@ -18,17 +30,22 @@ public:
 public:
 /* Public Functions */
 	void Set(float x, float y, float z);
+	XMVECTOR FVectorToXMVector() const;
 
 	float Size(); // 길이 반환
 	float Length(); // ==  size()
-	void Normalize();
+	float Dot(const FVector& V1) const;
 
 	float& Component(int index);		// 참조자 반환으로 lvalue로 직접 값수정 가능
 	float Component(int index) const;
 
-	float Dot(const FVector& V1) const;
+	FVector Add(const FVector& V1) const;
+	FVector Subtract(const FVector& V1) const;
+	
 	FVector Cross(const FVector& V1) const;
 	FVector GetAbs();
+	FVector Normalize();
+
 
 	// float GetMax();
 	//// float GetMin();
@@ -45,14 +62,18 @@ public:
 
 	FVector operator - ();
 	FVector& operator = (const FVector& V1);
+	
 	FVector operator - (const FVector& V1) const;
 	FVector& operator -= (const FVector& V1);
+	
 	FVector operator + (const FVector& V1) const;
 	FVector& operator += (const FVector& V1);
+
 	FVector operator * (const FVector& V1) const;
 	FVector operator * (const float& f) const;
 	FVector& operator *= (const FVector& V1);
 	FVector& operator *= (const float & f);
+	
 	FVector operator / (const FVector& V1) const;
 	FVector operator / (const float& f) const;
 	FVector& operator /= (const FVector& V1);
@@ -67,6 +88,9 @@ public:
 	float& operator[] (int Index);
 
 /* Static */
+	static XMVECTOR FVectorToXMVector(FVector V);
+	static FVector XMVectorToFVector(XMVECTOR Vector);
+
 	static float DotProduct(const FVector& V1, const FVector& V2);
 	static FVector CrossProduct(const FVector& V1, const FVector& V2);
 	static float Distance(const FVector& V1, const FVector& V2); // == Dist()
