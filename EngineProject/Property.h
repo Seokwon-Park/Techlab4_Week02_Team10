@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EngineString.h"
-#include "Vector.h"
+#include "Math/EngineMath.h"
 
 enum class EPropertyType { Unknown, Float, Int, String, Bool, Vector };
 

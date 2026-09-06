@@ -7,6 +7,8 @@
 
 #include "World.h"
 #include "Renderer.h"
+#include "Editor/EditorUI.h"
+#include "ImGuiRenderer.h"
 
 class Engine
 {
@@ -21,6 +23,8 @@ private:
 
 	UWorld* World;
 
+	TUniquePtr<FEditorUI> EditorUI;
 	TUniquePtr<FRenderer> Renderer;
+	TUniquePtr<FImGuiRenderer> ImGuiRenderer;
 };
 
