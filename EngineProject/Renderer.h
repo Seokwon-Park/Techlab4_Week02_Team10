@@ -8,7 +8,8 @@
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 
-class FShader;
+#include "Shader.h"
+#include "Mesh.h"
 
 struct FVertexSimple
 {	// test
@@ -20,13 +21,9 @@ struct FVertexSimple
 
 class FRenderer
 {
-	// 마이어스 Singleton
-private:
-	FRenderer() = default;
 public:
-	FRenderer(const FRenderer& src) = delete;
-	FRenderer& operator= (const FRenderer& src) = delete;
-	static FRenderer& GetInstance();
+	void BeginFrame();
+	void EndFrame();
 
 	void Create(HWND hWindow);
 
@@ -34,16 +31,20 @@ public:
 	void CreateFrameBuffer();
 	void CreateRasterizerState();
 	void CreateDepthStencilBufferAndState();
-	void SwapBuffer();
 
-	void CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
+	FShader* CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
+	FMesh* CreateMesh(const void* Vertices, uint32 VertexCount, uint32 Stride,
+		const uint32* Indices = nullptr, uint32 IndexCount = 0);
 
-	ID3D11Buffer* CreateVertexBuffer(void* InVertices, UINT InByteWidth);
-	ID3D11Buffer* CreateIndexBuffer(void* InIndices, UINT InByteWidth);
+	ID3D11Buffer* CreateVertexBuffer(const void* InVertices, UINT InByteWidth);
+	ID3D11Buffer* CreateIndexBuffer(const uint32* InIndices, UINT InByteWidth);
+
+	void BindShader(FShader* InShader);
+	void BindBuffer(FMesh* InMesh);
+	void Draw(int IndexCount);
 
 	void Prepare();
 	void RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices, ID3D11Buffer* pIndexBuffer, UINT InNumIndices, UINT InStride);
-	void Render();
 
 	void Shutdown();
 

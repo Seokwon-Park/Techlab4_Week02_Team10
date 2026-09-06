@@ -20,5 +20,7 @@ private:
 	TUniquePtr<Window> MainWindow;
 
 	UWorld* World;
+
+	TUniquePtr<FRenderer> Renderer;
 };
 

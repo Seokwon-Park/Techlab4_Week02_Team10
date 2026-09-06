@@ -1,11 +1,16 @@
 #include "EnginePCH.h"
 #include "Renderer.h"
 #include "Shader.h"
+#include "Mesh.h"
 
-FRenderer& FRenderer::GetInstance()
+void FRenderer::BeginFrame()
 {
-	static FRenderer Renderer;
-	return Renderer;
+	DeviceContext->ClearRenderTargetView(FrameBufferRTV.Get(), ClearColor);
+}
+
+void FRenderer::EndFrame()
+{
+	SwapChain->Present(1, 0);
 }
 
 void FRenderer::Create(HWND hWindow)
@@ -18,13 +23,13 @@ void FRenderer::Create(HWND hWindow)
 	CreateDepthStencilBufferAndState();
 
 	// 임시 셰이더 프로그램 컴파일 로직
-	FShader* shader = new FShader;
-	shader->Init(L"Shader/DefaultShader.hlsl", "mainVS", "mainPS", sizeof(FVertexSimple));
-	shader->Create(&(FRenderer::GetInstance()));
+	//FShader* shader = new FShader;
+	//shader->Init(L"Shader/DefaultShader.hlsl", "mainVS", "mainPS", sizeof(FVertexSimple));
+	//shader->Create(this);
 
-	DeviceContext->VSSetShader(shader->VertexShader.Get(), nullptr, 0);
-	DeviceContext->PSSetShader(shader->PixelShader.Get(), nullptr, 0);
-	DeviceContext->IASetInputLayout(shader->InputLayout.Get());
+	//DeviceContext->VSSetShader(shader->VertexShader.Get(), nullptr, 0);
+	//DeviceContext->PSSetShader(shader->PixelShader.Get(), nullptr, 0);
+	//DeviceContext->IASetInputLayout(shader->InputLayout.Get());
 }
 
 
@@ -116,54 +121,66 @@ void FRenderer::CreateDepthStencilBufferAndState()
 }
 
 
-void FRenderer::SwapBuffer()
+FShader* FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize)
 {
-	SwapChain->Present(1, 0);
-}
+	FShader* shader = new FShader;
 
-void FRenderer::CreateShader(FShader* InShader, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize)
-{
 	ID3DBlob* VertexShaderCSO;
 
 	ID3DBlob* ErrorBlob;
-	HRESULT hr = D3DCompileFromFile(InShader->File, nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorBlob);
+	HRESULT hr = D3DCompileFromFile(FileName, nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorBlob);
 	
-	Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, InShader->VertexShader.GetAddressOf());
+	Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, shader->VertexShader.GetAddressOf());
 
 	ID3DBlob* PixelShaderCSO;
-	D3DCompileFromFile(InShader->File, nullptr, nullptr, InShader->PixelFunctionName, "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
-	Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, InShader->PixelShader.GetAddressOf());
+	D3DCompileFromFile(FileName, nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
+	Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, shader->PixelShader.GetAddressOf());
 
 	hr = Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
-		VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(InShader->InputLayout));
+		VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(shader->InputLayout));
 
 	VertexShaderCSO->Release();
 	PixelShaderCSO->Release();
+
+	return shader;
 }
 
-ID3D11Buffer* FRenderer::CreateVertexBuffer(void* InVertices, UINT InByteWidth)
+FMesh* FRenderer::CreateMesh(const void* Vertices, uint32 VertexCount, uint32 Stride, const uint32* Indices, uint32 IndexCount)
+{
+	FMesh* mesh = new FMesh;
+	mesh->VertexStride = Stride;
+	CreateVertexBuffer(Vertices, Stride * VertexCount);
+	if (nullptr == Indices)	// 정점만 존재하는 메시
+	{
+		return mesh;
+	}
+	CreateIndexBuffer(Indices, sizeof(uint32) * IndexCount);
+	return mesh;
+}
+
+ID3D11Buffer* FRenderer::CreateVertexBuffer(const void* InVertices, UINT InByteWidth)
 {
 	// Create a vertex buffer
-	D3D11_BUFFER_DESC vertexbufferdesc = {};
-	vertexbufferdesc.ByteWidth = InByteWidth;
-	vertexbufferdesc.Usage = D3D11_USAGE_IMMUTABLE;
-	vertexbufferdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	D3D11_BUFFER_DESC VertexBufferDesc = {};
+	VertexBufferDesc.ByteWidth = InByteWidth;
+	VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA vertexbufferSRD = { InVertices };
 
 	ID3D11Buffer* vertexBuffer;
 
-	HRESULT hr = Device->CreateBuffer(&vertexbufferdesc, &vertexbufferSRD, &vertexBuffer);
+	HRESULT hr = Device->CreateBuffer(&VertexBufferDesc, &vertexbufferSRD, &vertexBuffer);
 
 	return vertexBuffer;
 }
 
-ID3D11Buffer* FRenderer::CreateIndexBuffer(void* InIndices, UINT InByteWidth)
+ID3D11Buffer* FRenderer::CreateIndexBuffer(const uint32* InIndices, UINT InByteWidth)
 {
-	// Create a vertex buffer
+	// Create a index buffer
 	D3D11_BUFFER_DESC indexbufferdesc = {};
 	indexbufferdesc.ByteWidth = InByteWidth;
-	indexbufferdesc.Usage = D3D11_USAGE_IMMUTABLE;
+	indexbufferdesc.Usage = D3D11_USAGE_DEFAULT;
 	indexbufferdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA indexbufferSRD = { InIndices };
@@ -175,10 +192,31 @@ ID3D11Buffer* FRenderer::CreateIndexBuffer(void* InIndices, UINT InByteWidth)
 	return indexBuffer;
 }
 
+void FRenderer::BindShader(FShader* InShader)
+{
+	DeviceContext->VSSetShader(InShader->VertexShader.Get(), nullptr, 0);
+	DeviceContext->PSSetShader(InShader->PixelShader.Get(), nullptr, 0);
+	DeviceContext->IASetInputLayout(InShader->InputLayout.Get());
+}
+
+void FRenderer::BindBuffer(FMesh* InMesh)
+{
+	UINT offset = 0;
+	UINT Stride = InMesh->VertexStride;
+	DeviceContext->IASetVertexBuffers(0, 1, InMesh->VertexBuffer.GetAddressOf(), &Stride, &offset);
+	if (nullptr != InMesh->IndexBuffer.Get())
+	{
+		DeviceContext->IASetIndexBuffer(InMesh->IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	}
+}
+
+void FRenderer::Draw(int IndexCount)
+{
+
+}
+
 void FRenderer::Prepare()
 {
-	DeviceContext->ClearRenderTargetView(FrameBufferRTV.Get(), ClearColor);
-
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
 	DeviceContext->RSSetViewports(1, &ViewportInfo);
@@ -209,11 +247,6 @@ void FRenderer::RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices,
 	DeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &InStride, &offset);
 	DeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	DeviceContext->Draw(InNumVertices, 0);
-}
-
-void FRenderer::Render()
-{
-	SwapBuffer();
 }
 
 

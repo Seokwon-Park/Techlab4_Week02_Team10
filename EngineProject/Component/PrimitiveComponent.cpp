@@ -4,7 +4,7 @@
 
 void UPrimitiveComponent::Render()
 {
-	// 렌더링 테스트용 임시 버텍스 버퍼, 인덱스 버퍼
+	// 렌더링 테스트용 임시 버텍스 버퍼, 인덱스 버퍼, 메시 생성
     float vertices[] = {
         // 앞면 (Front, Z = -0.5)
         -0.5f, -0.5f, -0.5f, // 0: 좌하단
@@ -35,12 +35,5 @@ void UPrimitiveComponent::Render()
     };
 
 
-    Mesh->Create(vertices, 8, indices, ARRAYSIZE(indices), 3);
-
-	FRenderer::GetInstance().RenderPrimitive(
-		Mesh->GetVertexBuffer(), Mesh->GetNumVertices(),
-		Mesh->GetIndexBuffer(), Mesh->GetNumIndices(),		
-		Mesh->GetStride());
-	
-
+    
 }
