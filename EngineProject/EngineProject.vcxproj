@@ -114,6 +114,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,6 +146,7 @@
     <ClCompile Include="CameraActor.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Class.cpp" />
+    <ClCompile Include="Component\PrimitiveComponent.cpp" />
     <ClCompile Include="DefaultShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -163,6 +165,7 @@
     </ClCompile>
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="MatrixRegister.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Object.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -191,6 +194,7 @@
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Math\VectorRegister.h" />
     <ClInclude Include="Math\VectorRegister_SSE.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Picking.h" />
     <ClInclude Include="Property.h" />
     <ClInclude Include="Quat.h" />
