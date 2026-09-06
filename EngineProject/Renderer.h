@@ -32,6 +32,8 @@ public:
 	void CreateRasterizerState();
 	void CreateDepthStencilBufferAndState();
 
+	ID3D11DeviceContext* GetDeviceContext();
+
 	FShader* CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
 	FMesh* CreateMesh(const void* Vertices, uint32 VertexCount, uint32 Stride,
 		const uint32* Indices = nullptr, uint32 IndexCount = 0);
