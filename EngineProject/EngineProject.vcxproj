@@ -162,11 +162,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="MatrixRegister.cpp" />
     <ClCompile Include="Object.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Picking.cpp" />
+    <ClCompile Include="Quat.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -182,8 +184,10 @@
     <ClInclude Include="Casts.h" />
     <ClInclude Include="Component\ActorComponent.h" />
     <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="MatrixRegister.h" />
     <ClInclude Include="Picking.h" />
     <ClInclude Include="Property.h" />
+    <ClInclude Include="Quat.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Component\CubeComponent.h" />
     <ClInclude Include="Component\PrimitiveComponent.h" />
@@ -208,7 +212,9 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EngineStatics.h" />
+    <ClInclude Include="VectorRegister.h" />
     <ClInclude Include="Vector4.h" />
+    <ClInclude Include="VectorRegister_SSE.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

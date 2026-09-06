@@ -64,7 +64,25 @@ FVector4 FMatrix::GetOrigin()
 
 FMatrix FMatrix::GetTransposed() const
 {
-	return XMMatrixToFMatrix(XMMatrixTranspose(FMatrixToXMMatrix()));
+	FVectorRegister R[4];
+	R[0] = Load(M[0]);
+	R[1] = Load(M[1]);
+	R[2] = Load(M[2]);
+	R[3] = Load(M[3]);
+
+	Transpose(R[0], R[1], R[2], R[3]);
+	float Result[4][4];
+	Store(Result[0], R[0]);
+	Store(Result[1], R[1]);
+	Store(Result[2], R[2]);
+	Store(Result[3], R[3]);
+	
+	return FMatrix(
+		Result[0][0], Result[0][1], Result[0][2], Result[0][3],
+		Result[1][0], Result[1][1], Result[1][2], Result[1][3],
+		Result[2][0], Result[2][1], Result[2][2], Result[2][3],
+		Result[3][0], Result[3][1], Result[3][2], Result[3][3]
+	);
 }
 
 float FMatrix::Determinant() const

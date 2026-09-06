@@ -1,5 +1,10 @@
 #pragma once
 #include <cmath>
+#include "Vector.h"
+#include "Vector4.h"
+#include "Matrix.h"
+#include "VectorRegister.h"
+#include "MatrixRegister.h"
 
 namespace FMath
 {
