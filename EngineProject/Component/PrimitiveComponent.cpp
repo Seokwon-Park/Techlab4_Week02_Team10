@@ -2,7 +2,7 @@
 #include "PrimitiveComponent.h"
 #include "../Renderer.h"
 
-void UPrimitiveComponent::Render()
+void UPrimitiveComponent::SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue)
 {
 	// 렌더링 테스트용 임시 버텍스 버퍼, 인덱스 버퍼, 메시 생성
     float vertices[] = {
@@ -33,7 +33,9 @@ void UPrimitiveComponent::Render()
         // 아랫면 (Bottom)
         4, 0, 1,  1, 5, 4
     };
-
-
-    
+    FRenderPacket rp;
+    rp.mesh = Mesh.get();
+    rp.shader = Shader.get();
+    //rp.transform = 
+    RenderQueue.push(rp);    
 }
