@@ -143,6 +143,8 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CameraActor.cpp" />
+    <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Class.cpp" />
     <ClCompile Include="Component\PrimitiveComponent.cpp" />
     <ClCompile Include="DefaultShader.hlsl">
@@ -162,12 +164,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="MatrixRegister.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Object.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Picking.cpp" />
+    <ClCompile Include="Quat.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -183,9 +187,17 @@
     <ClInclude Include="Casts.h" />
     <ClInclude Include="Component\ActorComponent.h" />
     <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="Math\EngineMath.h" />
+    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\MatrixRegister.h" />
+    <ClInclude Include="Math\Vector.h" />
+    <ClInclude Include="Math\Vector4.h" />
+    <ClInclude Include="Math\VectorRegister.h" />
+    <ClInclude Include="Math\VectorRegister_SSE.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Picking.h" />
     <ClInclude Include="Property.h" />
+    <ClInclude Include="Quat.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Component\CubeComponent.h" />
     <ClInclude Include="Component\PrimitiveComponent.h" />
@@ -200,8 +212,6 @@
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="KeyCode.h" />
-    <ClInclude Include="EngineMath.h" />
-    <ClInclude Include="Matrix.h" />
     <ClInclude Include="MouseButton.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.h" />
@@ -210,12 +220,8 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EngineStatics.h" />
-    <ClInclude Include="Vector4.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="World.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

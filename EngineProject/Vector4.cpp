@@ -1,7 +1,8 @@
 #include "EnginePCH.h"
-#include "Vector4.h"
 
-//#include <limits>
+#include "Math/Vector4.h"
+
+
 #include <cmath>
 #include <assert.h>
 
@@ -45,6 +46,14 @@ FVector4::FVector4(const FVector& V1, float w)
 	W = w;
 }
 
+/* Functions */
+
+XMVECTOR FVector4::FVector4ToXMVector() const
+{
+	return XMVectorSet(X, Y, Z, W);
+}
+
+
 void FVector4::Set(float x, float y, float z, float w)
 {
 	X = x;
@@ -81,13 +90,19 @@ float FVector4::Length()
 	return sqrt(sum);
 }
 
-void FVector4::Normalize()
+FVector4 FVector4::Normalize()
 {
-	float size = this->Size();
-	X /= size;
-	Y /= size;
-	Z /= size;
-	W /= size;
+	float size = Size();
+	
+	if (!FMath::IsNearlyZero(size))
+	{
+		X /= size;
+		Y /= size;
+		Z /= size;
+		W /= size;
+	}
+
+	return* this;
 }
 
 float& FVector4::Component(int index)
@@ -122,10 +137,10 @@ FVector4 FVector4::Cross(const FVector4& V1) const
 
 
 FVector4 FVector4::GetAbs() {
-	float AbsX = 0.0f;
-	float AbsY = 0.0f;
-	float AbsZ = 0.0f;
-	float AbsW = 0.0f;
+	float AbsX = X;
+	float AbsY = Y;
+	float AbsZ = Z;
+	float AbsW = W;
 	if (X < 0) AbsX = -X;
 	if (Y < 0) AbsY = -Y;
 	if (Z < 0) AbsZ = -Z;
@@ -182,6 +197,21 @@ FVector4 FVector4::operator * (const FVector4& V1) const
 	return FVector4(X * V1.X, Y * V1.Y, Z * V1.Z, W * V1.W);
 }
 
+FVector4 FVector4::operator * (const float& f) const
+{
+	return FVector4(X * f, Y * f, Z * f, W * f);
+}
+
+FVector4 FVector4::operator * (const FMatrix& M) const
+{
+	return FVector4(
+		X * M[0][0] + Y * M[1][0] + Z * M[2][0] + W * M[3][0],
+		X * M[0][1] + Y * M[1][1] + Z * M[2][1] + W * M[3][1],
+		X * M[0][2] + Y * M[1][2] + Z * M[2][2] + W * M[3][2],
+		X * M[0][3] + Y * M[1][3] + Z * M[2][3] + W * M[3][3]
+	);
+}
+
 FVector4& FVector4::operator *= (const FVector4& V1)
 {
 	X *= V1.X;
@@ -198,11 +228,6 @@ FVector4& FVector4::operator *= (const float& f)
 	Z *= f;
 	W *= f;
 	return *this;
-}
-
-FVector4 FVector4::operator * (const float& f) const
-{
-	return FVector4(X * f, Y * f, Z * f, W * f);
 }
 
 FVector4 FVector4::operator / (const FVector4& V1) const
@@ -237,33 +262,27 @@ FVector4& FVector4::operator /= (const float& f)
 // 스트림 출력 연산자와 함께 사용할 시 괄호로 묶을 것
 FVector4 FVector4::operator ^ (const FVector4& V1) const
 {
-	return this->Cross(V1);
+	return Cross(V1);
 }
 
 bool FVector4::operator == (const FVector4& V1) const
 {
-	if (this->X == V1.X && this->Y == V1.Y && this->Z == V1.Z && this->W == V1.Z)
-		return true;
-	else
-		return false;
+	return (X == V1.X) && (Y == V1.Y) && (Z == V1.Z) && (W == V1.W);
 }
 
 bool FVector4::operator != (const FVector4& V1) const
 {
-	if (this->X == V1.X && this->Y == V1.Y && this->Z == V1.Z && this->W == V1.W)
-		return false;
-	else
-		return true;
+	return !(*this == V1);
 }
 
 float FVector4::operator[] (int Index) const
 {
-	return this->Component(Index);
+	return V[Index];
 }
 
 float& FVector4::operator[] (int Index)
 {
-	return this->Component(Index);
+	return V[Index];
 }
 
 /* Global Operator */
@@ -275,6 +294,17 @@ std::ostream& operator << (std::ostream& OS, const FVector4& V)
 
 
 /* Static Functions */
+
+static XMVECTOR FVector4ToXMVector(FVector4 V)
+{
+	return XMVectorSet(V.X, V.Y, V.Z, V.W);
+}
+
+static FVector4 XMVectorToFVector4(XMVECTOR Vector)
+{
+	return FVector4(XMVectorGetX(Vector), XMVectorGetY(Vector), XMVectorGetZ(Vector), XMVectorGetW(Vector));
+}
+
 
 float FVector4::DotProduct(const FVector4& V1, const FVector4& V2)
 {
