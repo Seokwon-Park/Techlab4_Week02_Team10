@@ -244,6 +244,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderPacket.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_win32.h" />

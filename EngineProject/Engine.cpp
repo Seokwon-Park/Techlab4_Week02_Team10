@@ -71,7 +71,9 @@ void Engine::Run()
 
 		MainWindow->ProcessMessage(bIsRunning);
 		World->Tick(DeltaTime);
-		
+
+		TQueue<FRenderPacket> RenderQueue;
+		World->GatherRenderPackets(RenderQueue);
 		FInputSystem::UpdateInputStates();
 
 		Renderer->BeginFrame();
@@ -82,6 +84,7 @@ void Engine::Run()
 		EditorUI->OnRender();
 
 		ImGuiRenderer->End();
+		Renderer->RenderAll(RenderQueue);
 		Renderer->EndFrame();
 	}
 }

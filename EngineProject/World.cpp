@@ -105,3 +105,11 @@ bool UWorld::LoadScene(const FString& Path)
 {
 	return false;
 }
+
+void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
+{
+	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+	{
+		Primitive->SubmitToRenderQueue(RenderQueue);
+	}
+}

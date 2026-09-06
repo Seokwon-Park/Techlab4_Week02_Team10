@@ -33,7 +33,7 @@ private:
 	TArray<AActor*> Actors;
 
 	TQueue<AActor*> BeginPlayList;
-
-	TArray<UPrimitiveComponent*> Primitives;
 	
+	void GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue);
+	TArray<UPrimitiveComponent*> PrimitiveComponents;
 };
