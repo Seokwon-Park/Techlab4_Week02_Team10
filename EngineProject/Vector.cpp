@@ -45,30 +45,28 @@ void FVector::Set(float x, float y, float z)
 	Z = z;
 }
 
-float FVector::Size()
+float FVector::Size() const
 {
 	float sum = X * X + Y * Y + Z * Z;
 	return sqrt(sum);
 }
 
-float FVector::Length()
+float FVector::Length() const
 {
 	float sum = X * X + Y * Y + Z * Z;
 	return sqrt(sum);
 }
 
-FVector FVector::Normalize()
+FVector FVector::Normalize() const
 {
 	float size = Size();
 
 	if (!FMath::IsNearlyZero(size))
 	{
-		X /= size;
-		Y /= size;
-		Z /= size;
+		return FVector(X / size, Y / size, Z / size);
 	}
 
-	return*this;
+	return *this;
 }
 
 float& FVector::Component(int index)

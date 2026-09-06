@@ -8,16 +8,13 @@
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 
-#include "Shader.h"
-#include "Mesh.h"
+#include "RenderPacket.h"
 
 struct FVertexSimple
 {	// test
 	float x, y, z;
 	float r, g, b, a;
 };
-
-
 
 class FRenderer
 {
@@ -32,6 +29,7 @@ public:
 	void CreateRasterizerState();
 	void CreateDepthStencilBufferAndState();
 
+	inline ID3D11Device* GetDevice() const { return Device.Get(); }
 	ID3D11DeviceContext* GetDeviceContext();
 
 	FShader* CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
@@ -48,10 +46,11 @@ public:
 	void Prepare();
 	void RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices, ID3D11Buffer* pIndexBuffer, UINT InNumIndices, UINT InStride);
 
+	void RenderAll(TQueue<FRenderPacket>& InQueue);
 	void Shutdown();
 
 private:
-	
+
 	Microsoft::WRL::ComPtr<ID3D11Device> Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> DeviceContext;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> SwapChain;
@@ -67,5 +66,5 @@ private:
 	Microsoft::WRL::ComPtr <ID3D11Buffer> ConstantBuffer;
 	D3D11_VIEWPORT ViewportInfo;
 
-	FLOAT ClearColor[4] = {0.1f, 0.1f, 0.1f, 1.0f };
+	FLOAT ClearColor[4] = {0.3f, 0.3f, 0.3f, 1.0f };
 };

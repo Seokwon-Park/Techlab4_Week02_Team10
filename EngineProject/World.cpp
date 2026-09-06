@@ -45,19 +45,32 @@ AActor* UWorld::SpawnActor(FClass* Class, const FTransform* UserTransformPtr)
 	if (!Class->IsChildOf(AActor::StaticClass())) return nullptr;
 	const FTransform UserTransform = UserTransformPtr ? *UserTransformPtr : FTransform::Identity;
 	AActor* NewActor = Cast<AActor>(FObjectFactory::ConstructObject(Class));
+	NewActor->World = this;
 	if (!NewActor) return nullptr;
 	//TODO :
 	//NewActor->...
 	Actors.push_back(NewActor);
+	BeginPlayList.push(NewActor);
 	return NewActor;
 }
 
 void UWorld::Tick(float DeltaTime)
 {
+	while (!BeginPlayList.empty())
+	{
+		BeginPlayList.front()->BeginPlay();
+		BeginPlayList.pop();
+	}
+
 	for (AActor* Actor : Actors)
 	{
 		Actor->Tick(DeltaTime);
 	}
+}
+
+void UWorld::OnRender(FRenderer* Renderer)
+{
+	// Rendering
 }
 
 bool UWorld::SaveScene(const FString& Path)
@@ -91,4 +104,12 @@ bool UWorld::SaveScene(const FString& Path)
 bool UWorld::LoadScene(const FString& Path)
 {
 	return false;
+}
+
+void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
+{
+	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+	{
+		Primitive->SubmitToRenderQueue(RenderQueue);
+	}
 }

@@ -6,6 +6,8 @@
 void FRenderer::BeginFrame()
 {
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV.Get(), ClearColor);
+	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), nullptr);
+	DeviceContext->RSSetViewports(1, &ViewportInfo);
 }
 
 void FRenderer::EndFrame()
@@ -63,13 +65,8 @@ void FRenderer::CreateDeviceAndSwapChain(HWND hWindow)
 
 void FRenderer::CreateFrameBuffer()
 {
-	SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)FrameBuffer.GetAddressOf());
-
-	D3D11_RENDER_TARGET_VIEW_DESC FrameBufferRTVDesc = {};
-	FrameBufferRTVDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-	FrameBufferRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-
-	Device->CreateRenderTargetView(FrameBuffer.Get(), &FrameBufferRTVDesc, FrameBufferRTV.GetAddressOf());
+	SwapChain->GetBuffer(0, IID_PPV_ARGS(FrameBuffer.GetAddressOf()));
+	Device->CreateRenderTargetView(FrameBuffer.Get(), nullptr, FrameBufferRTV.GetAddressOf());
 }
 
 
@@ -217,21 +214,16 @@ void FRenderer::BindBuffer(FMesh* InMesh)
 
 void FRenderer::Draw(int IndexCount)
 {
-
+	DeviceContext->Draw(IndexCount, 0);
 }
 
 void FRenderer::Prepare()
 {
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	
-	DeviceContext->RSSetViewports(1, &ViewportInfo);
-
-	DeviceContext->RSSetState(RasterizerState.Get());
-
 	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), nullptr);
-
+	DeviceContext->RSSetViewports(1, &ViewportInfo);
+	DeviceContext->RSSetState(RasterizerState.Get());
 	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
-
 	DeviceContext->OMSetDepthStencilState(DepthStencilState.Get(), 1);
 
 	// 임시 버텍스 버퍼 생성 로직
@@ -254,6 +246,25 @@ void FRenderer::RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices,
 	DeviceContext->Draw(InNumVertices, 0);
 }
 
+
+void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue)
+{
+	while (true)
+	{
+		if (InQueue.empty())
+		{
+			return;
+		}
+
+		FRenderPacket rp = InQueue.front();
+
+		BindShader(rp.shader);
+		BindBuffer(rp.mesh);
+		Draw(rp.mesh->NumVertices);
+
+		InQueue.pop();
+	}
+}
 
 void FRenderer::Shutdown()
 {

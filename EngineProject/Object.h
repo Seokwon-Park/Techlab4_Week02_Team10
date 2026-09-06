@@ -8,7 +8,7 @@
 // Property Reflection
 
 #define REFLECT_START(ClassName) \
-private: \
+public: \
 	inline static void RegisterProperties(FClass* InClass) \
 	{
 

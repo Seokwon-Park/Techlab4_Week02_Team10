@@ -32,8 +32,8 @@ public:
 	void Set(float x, float y, float z);
 	XMVECTOR FVectorToXMVector() const;
 
-	float Size(); // 길이 반환
-	float Length(); // ==  size()
+	float Size() const; // 길이 반환
+	float Length() const; // ==  size()
 	float Dot(const FVector& V1) const;
 
 	float& Component(int index);		// 참조자 반환으로 lvalue로 직접 값수정 가능
@@ -44,7 +44,7 @@ public:
 	
 	FVector Cross(const FVector& V1) const;
 	FVector GetAbs();
-	FVector Normalize();
+	FVector Normalize() const;
 
 
 	// float GetMax();

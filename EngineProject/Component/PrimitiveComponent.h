@@ -3,6 +3,7 @@
 #include "SceneComponent.h"
 #include "../Shader.h"
 #include "../Mesh.h"
+#include "RenderPacket.h"
 
 enum class EPrimitiveType
 {
@@ -17,7 +18,7 @@ class UPrimitiveComponent :public USceneComponent
 	REFLECT_START(ClassName)
 		REFLECT_END()
 public:
-	void Render();
+	void SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue);
 
 	EPrimitiveType GetType() const { return Type; }
 private:
