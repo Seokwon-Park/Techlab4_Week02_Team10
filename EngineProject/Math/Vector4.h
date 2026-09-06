@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EngineMath.h"
-#include <DirectXMath.h>
+
 #include <iostream>
 
 using namespace DirectX;
@@ -42,8 +42,6 @@ public:
 	float Size(); // 길이 반환
 	float Length(); // ==  size()
 	float Dot(const FVector4& V1) const;
-
-	XMVECTOR FVector4ToXMVector() const;
 
 	FVector4 Normalize();
 	FVector4 Cross(const FVector4& V1) const;
@@ -90,9 +88,6 @@ public:
 	float operator[] (int Index) const;
 	float& operator[] (int Index);
 
-	/* Static */
-	static XMVECTOR FVector4ToXMVector(FVector4 V);
-	static FVector4 XMVectorToFVector4(XMVECTOR Vector);
 
 	static float DotProduct(const FVector4& V1, const FVector4& V2);
 	static FVector4 CrossProduct(const FVector4& V1, const FVector4& V2);

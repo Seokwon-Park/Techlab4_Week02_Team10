@@ -17,4 +17,13 @@ bool FClass::IsChildOf(FClass* BaseClass) const
 	return false;
 }
 
+UObject* FClass::GetDefaultObject() 
+{
+	if (!DefaultObject)
+	{
+		DefaultObject = Constructor();
+	}
+	return DefaultObject;
+}
+
 
