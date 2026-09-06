@@ -120,6 +120,11 @@ void FRenderer::CreateDepthStencilBufferAndState()
 	Device->CreateDepthStencilState(&DepthStencilDesc, DepthStencilState.GetAddressOf());
 }
 
+ID3D11DeviceContext* FRenderer::GetDeviceContext()
+{
+	return DeviceContext.Get();
+}
+
 
 FShader* FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize)
 {
