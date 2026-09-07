@@ -23,7 +23,6 @@ FQuat FRotator::Quaternion() const
 	return FQuat::MakeFromEuler(PRad, YRad, RRad);
 }
 
-// 이건 필요가 없음
 FMatrix FRotator::RotationMatrix() const
 {
 	return Quaternion().ToFMatrix();

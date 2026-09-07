@@ -140,6 +140,25 @@ FRotator FQuat::ToFRotator() const
 {
 	FRotator ResultRotator;
 
+	// Pitch
+	const float SinPitch = 2.0f * (W * Y - Z * X);
+
+	// Gimbal Lock 방지를 위해 [-1, 1] 범위로 Clamp
+	const float ClampedSinPitch = FMath::Clamp(SinPitch, -1.0f, 1.0f);
+
+	ResultRotator.Pitch = asinf(ClampedSinPitch);
+
+	// Roll
+	ResultRotator.Roll = atan2f( 2.0f * (W * X + Y * Z), 1.0f - 2.0f * (X * X + Y * Y));
+
+	// Yaw
+	ResultRotator.Yaw = atan2f( 2.0f * (W * Z + X * Y), 1.0f - 2.0f * (Y * Y + Z * Z));
+
+	// Radian -> Degree
+	ResultRotator.Pitch = FMath::RadiansToDegrees(ResultRotator.Pitch);
+	ResultRotator.Yaw = FMath::RadiansToDegrees(ResultRotator.Yaw);
+	ResultRotator.Roll = FMath::RadiansToDegrees(ResultRotator.Roll);
+
 	return ResultRotator;
 }
 

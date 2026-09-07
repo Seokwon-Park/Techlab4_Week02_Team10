@@ -43,9 +43,10 @@ void UCameraComponent::TickComponent(float DeltaTime)
         float DeltaYaw = FInputSystem::GetMouseDeltaX() * MouseSensitivity;
 
         FQuat DeltaQ = FRotator(DeltaPitch, DeltaYaw, 0.0f).Quaternion();
-        FQuat Q = transform.Rotation.Normalize();
+        FQuat Q = transform.Rotation.Quaternion().Normalize();
+        FQuat Result = Q * DeltaQ;
 
-        transform.Rotation = Q * DeltaQ;
+        transform.Rotation = Result.ToFRotator(); ;
     }
     
     //FQuat NewQ = DeltaQ * Q;
@@ -61,7 +62,7 @@ void UCameraComponent::TickComponent(float DeltaTime)
 
 }
 
-void UCameraComponent::SetTransform(FVector vector)
+void UCameraComponent::SetLocation(FVector vector)
 {
     transform.Location = vector;
 }
@@ -96,7 +97,7 @@ void UCameraComponent::SetFarClipPlane(float FarPlane)
 	FarClipPlane = FarPlane;
 }
 
-FVector UCameraComponent::GetTransform()
+FVector UCameraComponent::GetLocation()
 {
 	return transform.Location;
 }
@@ -106,7 +107,7 @@ FVector UCameraComponent::GetScale()
     return transform.Scale;
 }
 
-FQuat UCameraComponent::GetRotation()
+FRotator UCameraComponent::GetRotation()
 {
     return transform.Rotation;
 }
@@ -140,7 +141,7 @@ FMatrix UCameraComponent::GetViewMatrix() const
     return GetWorldMatrix().Inverse();
 }
 
-FMatrix UCameraComponent::GetProjectionMatrix() const
+FMatrix UCameraComponent::GetPerspectiveMatrix() const
 {
 	const float HalfFOV = FOV * 0.5f;
 
@@ -159,7 +160,29 @@ FMatrix UCameraComponent::GetProjectionMatrix() const
 	);
 }
 
+FMatrix UCameraComponent::GetOrthogonalMatrix() const
+{
+    const float Width = OrthoWidth;
+    const float Height = Width / AspectRatio;
+
+    const float XScale = 2.0f / Width;
+    const float YScale = 2.0f / Height;
+
+    const float ZScale = 1.0f / (FarClipPlane - NearClipPlane);
+    const float ZOffset = -NearClipPlane / (FarClipPlane - NearClipPlane);
+
+    return FMatrix(
+        0.0f, 0.0f, ZScale, 0.0f,
+        XScale, 0.0f, 0.0f, 0.0f,
+        0.0f, YScale, 0.0f, 0.0f,
+        0.0f, 0.0f, ZOffset, 1.0f
+    );
+}
+
 FMatrix UCameraComponent::GetViewProjectionMatrix() const
 {
-    return GetViewMatrix() * GetProjectionMatrix();
+    if (bIsOrthogonal)
+        return GetViewMatrix() * GetOrthogonalMatrix();
+    
+    return GetViewMatrix() * GetPerspectiveMatrix();
 }

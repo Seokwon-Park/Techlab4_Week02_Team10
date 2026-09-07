@@ -3,7 +3,7 @@
 
 FMatrix USceneComponent::GetWorldMatrix() const
 {
-    FMatrix RotationMatrix = transform.Rotation.ToFMatrix();
+    FMatrix RotationMatrix = transform.Rotation.Quaternion().ToFMatrix();
 
     FMatrix WorldMatrix = FMatrix(
         RotationMatrix[0][0] * transform.Scale.X,

@@ -20,13 +20,14 @@ public:
 	float AspectRatio = 16.0f / 9.0f;
 	float NearClipPlane = 0.1f;
 	float FarClipPlane = 10000.0f;
-	bool bisPerspective = true;
+	bool bIsOrthogonal = false;
+	float OrthoWidth = 1920.0f;
 
 public:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime) override;
 
-	void SetTransform(FVector vector);
+	void SetLocation(FVector vector);
 	void SetScale(FVector vector);
 	//void SetRotation(FVector vector);
 	void SetFOV(float FoV);
@@ -34,12 +35,13 @@ public:
 	void SetNearClipPlane(float NearPlane);
 	void SetFarClipPlane(float FarPlane);
 
-	FVector GetTransform();
+	FVector GetLocation();
 	FVector GetScale();
-	FQuat GetRotation();
+	FRotator GetRotation();
 
 	FMatrix GetViewMatrix() const;
-	FMatrix GetProjectionMatrix() const;
+	FMatrix GetOrthogonalMatrix() const;
+	FMatrix GetPerspectiveMatrix() const;
 	FMatrix GetViewProjectionMatrix() const;
 
 private:

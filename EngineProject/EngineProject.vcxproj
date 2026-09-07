@@ -264,6 +264,7 @@
     <ClInclude Include="ThirdParty\ImGui\imstb_textedit.h" />
     <ClInclude Include="ThirdParty\ImGui\imstb_truetype.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="TVector.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EngineStatics.h" />
     <ClInclude Include="Window.h" />

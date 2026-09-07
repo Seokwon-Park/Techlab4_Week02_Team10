@@ -17,11 +17,11 @@ FVector::FVector(float x, float y, float z)
 	Z = z;
 }
 
-FVector::FVector(float t)
+FVector::FVector(float f)
 {
-	X = t;
-	Y = t;
-	Z = t;
+	X = f;
+	Y = f;
+	Z = f;
 }
 
 FVector::FVector(const FVector& V1)

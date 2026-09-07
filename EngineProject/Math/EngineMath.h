@@ -27,4 +27,14 @@ namespace FMath
 		if (Value > Max) return Max;
 		return Value;
 	}
+
+	static inline float RadiansToDegrees(float Radian)
+	{
+		return Radian * (180.0f / PI);
+	}
+
+	static inline float DegreesToRadians(float Degree)
+	{
+		return Degree * (PI / 180.0f);
+	}
 }
