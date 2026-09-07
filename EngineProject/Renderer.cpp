@@ -248,7 +248,6 @@ void FRenderer::BindBuffer(FMesh* InMesh)
 void FRenderer::Draw(int IndexCount)
 {
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
 	DeviceContext->DrawIndexed(IndexCount, 0, 0);
 }
 
