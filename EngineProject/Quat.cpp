@@ -162,6 +162,33 @@ FRotator FQuat::ToFRotator() const
 	return ResultRotator;
 }
 
+FVector FQuat::GetForwardVector() const
+{
+	return FVector(
+		1.0f - 2.0f * (Y * Y + Z * Z),
+		2.0f * (X * Y + W * Z),
+		2.0f * (X * Z - W * Y)
+	);
+}
+
+FVector FQuat::GetRightVector() const
+{
+	return FVector(
+		2.0f * (X * Y - W * Z),
+		1.0f - 2.0f * (X * X + Z * Z),
+		2.0f * (Y * Z + W * X)
+	);
+}
+
+FVector FQuat::GetUpVector() const
+{
+	return FVector(
+		2.0f * (X * Z + W * Y),
+		2.0f * (Y * Z - W * X),
+		1.0f - 2.0f * (X * X + Y * Y)
+	);
+}
+
 /* Statics */
 
 FQuat FQuat::Identity()

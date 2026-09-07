@@ -16,28 +16,30 @@ void UCameraComponent::TickComponent(float DeltaTime)
 {
     Super::TickComponent(DeltaTime);
 
-    if (FInputSystem::IsKeyPressed(EKeyCode::W))
+    FQuat Q = transform.Rotation.Quaternion().Normalize();
+
+    if (FInputSystem::IsKeyDown(EKeyCode::W))
     {
-        transform.Location.X += CameraSpeed * DeltaTime;
+        transform.Location += Q.GetForwardVector() * CameraSpeed * DeltaTime;
     }
-    if (FInputSystem::IsKeyPressed(EKeyCode::A))
+    if (FInputSystem::IsKeyDown(EKeyCode::A))
     {
-        transform.Location.Y -= CameraSpeed * DeltaTime;
+        transform.Location -= Q.GetRightVector() * CameraSpeed * DeltaTime;
     }
-    if (FInputSystem::IsKeyPressed(EKeyCode::S))
+    if (FInputSystem::IsKeyDown(EKeyCode::S))
     {
-        transform.Location.X -= CameraSpeed * DeltaTime;
+        transform.Location -= Q.GetForwardVector() * CameraSpeed * DeltaTime;
     }
-    if (FInputSystem::IsKeyPressed(EKeyCode::D))
+    if (FInputSystem::IsKeyDown(EKeyCode::D))
     {
-        transform.Location.Y += CameraSpeed * DeltaTime;
+        transform.Location += Q.GetRightVector() * CameraSpeed * DeltaTime;
     }
 
     // if 마우스 키 다운이고 다른 클릭이 없다 이면
     //      마우스 키를 위치를 받아와서
     //      DeltaPitch Yaw에 저장
 
-    if (FInputSystem::IsMousePressed(EMouseButton::Right))
+    if (FInputSystem::IsMouseDown(EMouseButton::Right))
     {
         float DeltaPitch = FInputSystem::GetMouseDeltaY() * MouseSensitivity;
         float DeltaYaw = FInputSystem::GetMouseDeltaX() * MouseSensitivity;
@@ -114,49 +116,25 @@ FRotator UCameraComponent::GetRotation()
 
 FMatrix UCameraComponent::GetViewMatrix() const
 {
-    /*FMatrix RotationMatrix = transform.Rotation.RotationMatrix();
-
-    fmatrix worldmatrix = fmatrix(
-        rotationmatrix[0][0] * transform.scale.x,
-        rotationmatrix[0][1] * transform.scale.x,
-        rotationmatrix[0][2] * transform.scale.x,
-        0.0f,
-
-        rotationmatrix[1][0] * transform.scale.y,
-        rotationmatrix[1][1] * transform.scale.y,
-        rotationmatrix[1][2] * transform.scale.y,
-        0.0f,
-
-        rotationmatrix[2][0] * transform.scale.z,
-        rotationmatrix[2][1] * transform.scale.z,
-        rotationmatrix[2][2] * transform.scale.z,
-        0.0f,
-
-        transform.location.x,
-        transform.location.y,
-        transform.location.z,
-        1.0f
-    );*/
-
     return GetWorldMatrix().Inverse();
 }
 
 FMatrix UCameraComponent::GetPerspectiveMatrix() const
 {
-	const float HalfFOV = FOV * 0.5f;
+	const float HalfFOV = FMath::DegreesToRadians(FOV) * 0.5f;
 
 	const float YScale = 1.0f / tan(HalfFOV);
 	const float XScale = YScale / AspectRatio;
 
 	// Reversed-Z
-	const float C = -NearClipPlane / (FarClipPlane - NearClipPlane);
-	const float D = NearClipPlane * FarClipPlane / (FarClipPlane - NearClipPlane);
+	const float ZScale = -NearClipPlane / (FarClipPlane - NearClipPlane);
+	const float ZOffset = NearClipPlane * FarClipPlane / (FarClipPlane - NearClipPlane);
 
 	return FMatrix(
-		0.0f, 0.0f, C, 1.0f,
+		0.0f, 0.0f, ZScale, 1.0f,
 		XScale, 0.0f, 0.0f, 0.0f,
 		0.0f, YScale, 0.0f, 0.0f,
-		0.0f, 0.0f, D, 0.0f
+		0.0f, 0.0f, ZOffset, 0.0f
 	);
 }
 

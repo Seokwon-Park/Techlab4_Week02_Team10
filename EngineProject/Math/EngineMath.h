@@ -11,7 +11,7 @@
 
 namespace FMath
 {
-	static float PI = std::acosf(-1);
+	//static float PI = std::acosf(-1);
 
 	static inline bool IsNearlyZero(float Value, float ErrorTolerance = 1e-4f)
 	{
