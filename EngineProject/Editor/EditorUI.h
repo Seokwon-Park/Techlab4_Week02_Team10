@@ -11,9 +11,12 @@ public:
 	template <typename T>
 	T* AddEditorPanel()
 	{
-		TUniquePtr<T> newPanel = MakeUnqiue<T>();
-		Panels.push_back(newPanel);
-		return newPanel.get();
+		TUniquePtr<T> newPanel = MakeUnique<T>();
+		T* Ret = newPanel.get();
+		Ret->Init();
+		Panels.push_back(std::move(newPanel));
+		
+		return Ret;
 	}
 private:
 	TArray<TUniquePtr<IEditorPanel>> Panels;
