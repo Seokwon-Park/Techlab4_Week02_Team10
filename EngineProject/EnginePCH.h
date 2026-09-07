@@ -7,6 +7,7 @@
 #include "EngineString.h"
 #include "Casts.h"
 #include "Math/EngineMath.h"
+#include "EngineLog.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;

@@ -36,6 +36,6 @@ void UPrimitiveComponent::SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue
     FRenderPacket rp;
     rp.mesh = Mesh.get();
     rp.shader = Shader.get();
-    //rp.transform = 
+    rp.model = GetWorldMatrix(); 
     RenderQueue.push(rp);    
 }

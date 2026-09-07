@@ -7,6 +7,8 @@
 
 #include "ObjectFactory.h"
 
+
+
 #include "Component/SceneComponent.h"
 #include "World.h"
 
@@ -51,11 +53,14 @@ bool Engine::Init(HINSTANCE hInstance)
 	ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext());
 
 	EditorUI = MakeUnique<FEditorUI>();
+	ConsolePanel = EditorUI->AddEditorPanel<FConsolePanel>();
+	
 	EditorUI->Init();
 	
+
 	// Do Sth
 	World = new UWorld();
-	return World->Init();
+	bIsRunning = World->Init();
 
 	bIsRunning = true;
 
@@ -67,6 +72,8 @@ void Engine::Run()
 	EngineTimer::Init();
 
 	//World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
+
+	LOG(Info, "{}", "Hello, World!");
 	World->SaveScene("A");
 	while (bIsRunning)
 	{
@@ -75,6 +82,11 @@ void Engine::Run()
 
 		MainWindow->ProcessMessage(bIsRunning);
 		World->Tick(DeltaTime);
+
+		if (FInputSystem::IsKeyPressed(EKeyCode::A))
+		{
+			LOG(Info, "{}", "Hello, World!");
+		}
 
 		TQueue<FRenderPacket> RenderQueue;
 		World->GatherRenderPackets(RenderQueue);

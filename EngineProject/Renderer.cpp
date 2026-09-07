@@ -296,7 +296,7 @@ void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)
 		// rp.Transform 과 Camera VP 행렬 곱
 		// 행렬곱의 결과 (MVP Matrix) Constant Buffer 업데이트 필요
 		FMatrix MVP;
-		// MVP = M * VP;
+		MVP = rp.model * VP;
 		UpdateConstantBuffer(MVP);
 		Draw(rp.mesh->NumVertices);
 
