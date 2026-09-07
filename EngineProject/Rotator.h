@@ -15,6 +15,9 @@ struct FRotator
 		};
 	};
 	FRotator();
+	FRotator(float P, float Y, float R);
+
+	static FRotator Identitiy;
 
 	FQuat Quaternion() const;
 	FMatrix RotationMatrix() const;

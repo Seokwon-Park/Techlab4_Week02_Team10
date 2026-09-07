@@ -2,18 +2,19 @@
 
 #include "SceneComponent.h"
 #include "../Math/EngineMath.h"
+#include "../Rotator.h"
 
 class UCameraComponent : public USceneComponent
 {
 	DECLARE_CLASS(UCameraComponent, USceneComponent)
 public:
-	UCameraComponent();
+	UCameraComponent() = default;
 //private:
 //	FTransform transform; // <- USceneComponent 상속
 protected:
-	FVector Transform = FVector(0, 0, 0);
+	/*FVector Location = FVector(0, 0, 0);
 	FVector Scale = FVector(1, 1, 1);
-	FMatrix Rotation = Identity;
+	FRotator Rotation = FRotator(0, 0, 0);*/
 public:
 	float FOV = 90.0f;
 	float AspectRatio = 16.0f / 9.0f;
@@ -35,10 +36,11 @@ public:
 
 	FVector GetTransform();
 	FVector GetScale();
-	FMatrix GetRotation();
+	FRotator GetRotation();
 
 	FMatrix GetViewMatrix() const;
 	FMatrix GetProjectionMatrix() const;
+	FMatrix GetViewProjectionMatrix() const;
 
 private:
 	const float CameraSpeed = 1.0f;

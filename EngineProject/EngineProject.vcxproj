@@ -173,6 +173,8 @@
     <ClCompile Include="Picking.cpp" />
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Rotator.cpp" />
+    <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -208,6 +210,7 @@
     <ClInclude Include="CameraActor.h" />
     <ClInclude Include="Casts.h" />
     <ClInclude Include="Component\ActorComponent.h" />
+    <ClInclude Include="Component\CameraComponent.h" />
     <ClInclude Include="Editor\EditorPanel.h" />
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="GeometryGenerator.h" />
