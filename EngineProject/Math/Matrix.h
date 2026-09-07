@@ -2,12 +2,6 @@
 
 #pragma once
 
-#include "EngineMath.h"
-#include <DirectXMath.h>
-
-using namespace DirectX;
-
-
 struct FVector;
 struct FVector4;
 

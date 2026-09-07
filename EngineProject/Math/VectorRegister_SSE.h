@@ -19,6 +19,11 @@ namespace VectorSIMD
 	inline void StoreAligned(float* Ptr, FVectorRegister V) { _mm_store_ps(Ptr, V); }
 
 	inline FVectorRegister SetZero() { return _mm_setzero_ps(); }
+	inline FVectorRegister SetWZero(FVectorRegister A)
+	{
+		return _mm_and_ps(A, _mm_castsi128_ps( _mm_set_epi32(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF)));
+	}
+
 	inline FVectorRegister SetVal(float F) { return _mm_set1_ps(F); }
 	inline FVectorRegister SetVal(float X, float Y, float Z, float W) { return _mm_setr_ps(X, Y, Z, W); }
 	
@@ -166,7 +171,16 @@ namespace VectorSIMD
 	{
 		FVectorRegister LenSq = Dot4(A, A);
 		FVectorRegister InvLen = Rsqrt(LenSq);
+		// return Mul(A, InvLen);
+
+		// InvLen = InvLen * (3 - LenSq * InvLen * InvLen) * 0.5
+		FVectorRegister Half = SetVal(0.5f);
+		FVectorRegister Three = SetVal(3.0f);
+
+		InvLen = Mul(Mul(Half, InvLen), Sub(Three, Mul( LenSq, Mul(InvLen, InvLen))));
+
 		return Mul(A, InvLen);
+
 	}
 
 	// Matrix 관련
