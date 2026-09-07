@@ -16,7 +16,7 @@ public: \
     InClass->AddProperty<decltype(ThisClass::PropertyName)>(#PropertyName, offsetof(ThisClass, PropertyName));
 
 #define REFLECT_END()\
-	}\
+	};\
 private:
 
 #define DECLARE_CLASS(ClassName, SuperClassName)                        \

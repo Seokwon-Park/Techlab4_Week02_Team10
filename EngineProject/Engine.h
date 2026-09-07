@@ -32,5 +32,10 @@ private:
 	TUniquePtr<FImGuiRenderer> ImGuiRenderer;
 
 	inline static FConsolePanel* ConsolePanel = nullptr;
+
+	ID3D11Buffer* vb;
+	ID3D11Buffer* ib;
+	FShader* Shader;
+	TSharedPtr<FMesh> Mesh;
 };
 

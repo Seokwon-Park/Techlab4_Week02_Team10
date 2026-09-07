@@ -124,7 +124,8 @@ void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
 {
 	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 	{
-		Primitive->SubmitToRenderQueue(RenderQueue);
+		if (Primitive)
+			Primitive->SubmitToRenderQueue(RenderQueue);
 	}
 }
 
