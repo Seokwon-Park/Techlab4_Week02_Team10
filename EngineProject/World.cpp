@@ -4,6 +4,8 @@
 #include "ObjectFactory.h"
 #include "EngineStatics.h"
 
+#include "CameraActor.h"
+
 namespace
 {
 	FString PrimitiveTypeToString(EPrimitiveType Type)
@@ -37,6 +39,18 @@ UWorld::~UWorld()
 		delete Actor;
 	}
 	Actors.clear();
+}
+
+bool UWorld::Init()
+{
+	// Spawn Actor로 카메라 생성하고 세팅하기
+	ACameraActor* GetCamera = SpawnActor<ACameraActor>(nullptr);
+	if (GetCamera)
+	{
+		SetMainCamera(GetCamera);
+		return true;
+	}
+	return false;	//false여야 함
 }
 
 AActor* UWorld::SpawnActor(FClass* Class, const FTransform* UserTransformPtr)
@@ -112,4 +126,17 @@ void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
 	{
 		Primitive->SubmitToRenderQueue(RenderQueue);
 	}
+}
+
+
+// 카메라 관련 추가
+
+void UWorld::SetMainCamera(ACameraActor* Camera)
+{
+	MainCamera = Camera;
+}
+
+ACameraActor* UWorld::GetMainCamera() const
+{
+	return MainCamera;
 }

@@ -179,6 +179,7 @@
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Rotator.cpp" />
+    <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

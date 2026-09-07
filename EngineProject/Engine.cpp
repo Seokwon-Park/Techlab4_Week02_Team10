@@ -15,6 +15,9 @@
 #include "Renderer.h"
 #include "Picking.h"
 
+#include "CameraActor.h"
+#include "Component/CameraComponent.h"
+
 void* operator new(uint64 Size)
 {
 	void* Ptr = malloc(Size);
@@ -57,6 +60,7 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	// Do Sth
 	World = new UWorld();
+	bIsRunning = World->Init();
 
 	bIsRunning = true;
 
@@ -97,7 +101,7 @@ void Engine::Run()
 
 		ImGuiRenderer->End();
 
-		FMatrix VP;	// 카메라 VP 행렬
+		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();	// 카메라 VP 행렬
 		Renderer->RenderAll(RenderQueue, VP);
 		Renderer->EndFrame();
 	}

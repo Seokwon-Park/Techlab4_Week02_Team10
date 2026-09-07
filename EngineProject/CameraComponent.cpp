@@ -2,10 +2,10 @@
 #include "Component/CameraComponent.h"
 #include "InputSystem.h"
 
-UCameraComponent::UCameraComponent()
-{
-
-}
+//UCameraComponent::UCameraComponent()
+//{
+//
+//}
 
 void UCameraComponent::BeginPlay()
 {
@@ -18,31 +18,34 @@ void UCameraComponent::TickComponent(float DeltaTime)
 
     if (FInputSystem::IsKeyPressed(EKeyCode::W))
     {
-        Transform.X += CameraSpeed * DeltaTime;
+        transform.Location.X += CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyPressed(EKeyCode::A))
     {
-        Transform.Y -= CameraSpeed * DeltaTime;
+        transform.Location.Y -= CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyPressed(EKeyCode::S))
     {
-        Transform.X -= CameraSpeed * DeltaTime;
+        transform.Location.X -= CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyPressed(EKeyCode::D))
     {
-        Transform.Y += CameraSpeed * DeltaTime;
+        transform.Location.Y += CameraSpeed * DeltaTime;
     }
+
+
+    // 뷰 행렬, 투영 행렬 갱신
 
 }
 
 void UCameraComponent::SetTransform(FVector vector)
 {
-    Transform = vector;
+    transform.Location = vector;
 }
 
 void UCameraComponent::SetScale(FVector vector)
 {
-    Scale = vector;
+    transform.Scale = vector;
 }
 
 //void UCameraComponent::SetRotation(FVector vector)
@@ -72,44 +75,46 @@ void UCameraComponent::SetFarClipPlane(float FarPlane)
 
 FVector UCameraComponent::GetTransform()
 {
-	return Transform;
+	return transform.Location;
 }
 
 FVector UCameraComponent::GetScale()
 {
-    return Scale;
+    return transform.Scale;
 }
 
-FMatrix UCameraComponent::GetRotation()
+FRotator UCameraComponent::GetRotation()
 {
-    return Rotation;
+    return transform.Rotation;
 }
 
 FMatrix UCameraComponent::GetViewMatrix() const
 {
-    FMatrix WorldMatrix = FMatrix(
-        Rotation.M[0][0] * Scale.X,
-        Rotation.M[0][1] * Scale.X,
-        Rotation.M[0][2] * Scale.X,
+    /*FMatrix RotationMatrix = transform.Rotation.RotationMatrix();
+
+    fmatrix worldmatrix = fmatrix(
+        rotationmatrix[0][0] * transform.scale.x,
+        rotationmatrix[0][1] * transform.scale.x,
+        rotationmatrix[0][2] * transform.scale.x,
         0.0f,
 
-        Rotation.M[1][0] * Scale.Y,
-        Rotation.M[1][1] * Scale.Y,
-        Rotation.M[1][2] * Scale.Y,
+        rotationmatrix[1][0] * transform.scale.y,
+        rotationmatrix[1][1] * transform.scale.y,
+        rotationmatrix[1][2] * transform.scale.y,
         0.0f,
 
-        Rotation.M[2][0] * Scale.Z,
-        Rotation.M[2][1] * Scale.Z,
-        Rotation.M[2][2] * Scale.Z,
+        rotationmatrix[2][0] * transform.scale.z,
+        rotationmatrix[2][1] * transform.scale.z,
+        rotationmatrix[2][2] * transform.scale.z,
         0.0f,
 
-        Transform.X,
-        Transform.Y,
-        Transform.Z,
+        transform.location.x,
+        transform.location.y,
+        transform.location.z,
         1.0f
-    );
+    );*/
 
-    return WorldMatrix.Inverse();
+    return GetWorldMatrix().Inverse();
 }
 
 FMatrix UCameraComponent::GetProjectionMatrix() const
@@ -129,4 +134,9 @@ FMatrix UCameraComponent::GetProjectionMatrix() const
 		0.0f, YScale, 0.0f, 0.0f,
 		0.0f, 0.0f, D, 0.0f
 	);
+}
+
+FMatrix UCameraComponent::GetViewProjectionMatrix() const
+{
+    return GetViewMatrix() * GetProjectionMatrix();
 }
