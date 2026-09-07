@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "EngineMath.h"
-
 struct FVector;
 struct FVector4;
 

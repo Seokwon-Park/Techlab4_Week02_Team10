@@ -1,6 +1,5 @@
 #pragma once
 
-#include "EngineMath.h"
 #include <DirectXMath.h>
 #include <iostream>
 

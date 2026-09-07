@@ -1,7 +1,5 @@
 #pragma once
 
-#include "EngineMath.h"
-
 #include <iostream>
 
 using namespace DirectX;

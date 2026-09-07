@@ -1,7 +1,11 @@
 #pragma once
-#include "EngineMath.h"
+
+#include "VectorRegister.h"
 
 using FQuatRegister = FVectorRegister;
+
+struct FVector;
+struct FMatrix;
 
 struct FQuat
 {

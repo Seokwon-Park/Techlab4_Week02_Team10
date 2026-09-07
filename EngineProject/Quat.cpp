@@ -97,15 +97,7 @@ FVector FQuat::RotateVector(const FVector& V) const
 	FVectorRegister Vec = VectorSIMD::Load(V.V);
 
 	// Q.xyz
-	FVectorRegister Qv = VectorSIMD::And(
-		Q,
-		VectorSIMD::SetVal(
-			*reinterpret_cast<const float*>(0xFFFFFFFF),
-			*reinterpret_cast<const float*>(0xFFFFFFFF),
-			*reinterpret_cast<const float*>(0xFFFFFFFF),
-			0.0f
-		)
-	);
+	FVectorRegister Qv = Qv = VectorSIMD::SetWZero(Q);
 
 	// T = 2 * cross(Q.xyz, V)
 	FVectorRegister T = VectorSIMD::Mul( VectorSIMD::SetVal(2.0f), VectorSIMD::Cross3(Qv, Vec));
