@@ -35,6 +35,8 @@ public:
 	void SetNearClipPlane(float NearPlane);
 	void SetFarClipPlane(float FarPlane);
 
+	float* GetFOV();
+
 	FVector GetLocation();
 	FVector GetScale();
 	FRotator GetRotation();

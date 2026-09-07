@@ -54,6 +54,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	EditorUI = MakeUnique<FEditorUI>();
 	ConsolePanel = EditorUI->AddEditorPanel<FConsolePanel>();
 	// PropertyPanel Add
+	PropertyPanel = EditorUI->AddEditorPanel<FPropertyPanel>();
+	ControlPanel = EditorUI->AddEditorPanel<FControlPanel>();
 	EditorUI->Init();
 
 
@@ -96,6 +98,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
 
+	PropertyPanel->transform = Actor->GetRootComponent()->GetTransform();
+	ControlPanel->FControlPanel::World = World;
 	bIsRunning = true;
 	
 	return true;

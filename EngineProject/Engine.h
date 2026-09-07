@@ -11,6 +11,8 @@
 
 #include "Editor/EditorUI.h"
 #include "Editor/ConsolePanel.h"
+#include "Editor/PropertyPanel.h"
+#include "Editor/ControlPanel.h"
 
 class Engine
 {
@@ -32,6 +34,8 @@ private:
 	TUniquePtr<FImGuiRenderer> ImGuiRenderer;
 
 	inline static FConsolePanel* ConsolePanel = nullptr;
+	inline static FPropertyPanel* PropertyPanel = nullptr;
+	inline static FControlPanel* ControlPanel = nullptr;
 
 	ID3D11Buffer* vb;
 	ID3D11Buffer* ib;

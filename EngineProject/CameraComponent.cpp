@@ -80,6 +80,11 @@ void UCameraComponent::SetFOV(float FoV)
 	FOV = FoV;
 }
 
+float* UCameraComponent::GetFOV()
+{
+    return &FOV;
+}
+
 void UCameraComponent::SetAspectRatio(float Ratio)
 {
 	AspectRatio = Ratio;

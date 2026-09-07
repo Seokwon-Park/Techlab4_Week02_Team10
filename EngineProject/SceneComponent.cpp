@@ -29,3 +29,8 @@ FMatrix USceneComponent::GetWorldMatrix() const
 
     return WorldMatrix;
 }
+
+FTransform* USceneComponent::GetTransform()
+{
+    return &transform;
+}
