@@ -223,6 +223,7 @@ void FRenderer::UpdateConstantBuffer(const FMatrix& MVP)
 			constant->MVP = TransMVP;
 		}
 		DeviceContext->Unmap(ConstantBuffer.Get(), 0);
+		DeviceContext->VSSetConstantBuffers(0, 1, ConstantBuffer.GetAddressOf());
 	}
 }
 
