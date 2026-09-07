@@ -1,3 +1,8 @@
+cbuffer constants : register(b0)
+{
+    matrix MVP;
+};
+
 struct VS_INPUT
 {
 	float3 position : POSITION;
@@ -13,8 +18,8 @@ struct PS_INPUT
 PS_INPUT mainVS(VS_INPUT input)
 {
 	PS_INPUT output;
-	
-	output.position = float4(input.position, 1.0f);
+    
+    output.position = mul(float4(input.position, 1.0f), MVP);
 	output.color = input.color;
 	return output;
 }

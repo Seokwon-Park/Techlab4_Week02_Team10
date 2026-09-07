@@ -84,7 +84,9 @@ void Engine::Run()
 		EditorUI->OnRender();
 
 		ImGuiRenderer->End();
-		Renderer->RenderAll(RenderQueue);
+
+		FMatrix VP;	// 카메라 VP 행렬
+		Renderer->RenderAll(RenderQueue, VP);
 		Renderer->EndFrame();
 	}
 }

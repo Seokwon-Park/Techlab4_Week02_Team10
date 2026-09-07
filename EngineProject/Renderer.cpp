@@ -23,11 +23,15 @@ void FRenderer::Create(HWND hWindow)
 
 	CreateRasterizerState();
 	CreateDepthStencilBufferAndState();
+	CreateConstantBuffer();
 
 	// 임시 셰이더 프로그램 컴파일 로직
-	//FShader* shader = new FShader;
-	//shader->Init(L"Shader/DefaultShader.hlsl", "mainVS", "mainPS", sizeof(FVertexSimple));
-	//shader->Create(this);
+	//D3D11_INPUT_ELEMENT_DESC layout[] =
+	//{
+	//	{"POSITION" , 0 , DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	//	{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	//};
+	//FShader* shader = CreateShader(L"Shader/DefaultShader.hlsl", layout, 2);
 
 	//DeviceContext->VSSetShader(shader->VertexShader.Get(), nullptr, 0);
 	//DeviceContext->PSSetShader(shader->PixelShader.Get(), nullptr, 0);
@@ -117,6 +121,18 @@ void FRenderer::CreateDepthStencilBufferAndState()
 	Device->CreateDepthStencilState(&DepthStencilDesc, DepthStencilState.GetAddressOf());
 }
 
+void FRenderer::CreateConstantBuffer()
+{
+	D3D11_BUFFER_DESC constantbufferdesc = {};
+
+	constantbufferdesc.ByteWidth = sizeof(FConstants) + 0xf & 0xfffffff0;
+	constantbufferdesc.Usage = D3D11_USAGE_DYNAMIC;	// will be updated from CPU every frame
+	constantbufferdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	constantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	Device->CreateBuffer(&constantbufferdesc, nullptr, &ConstantBuffer);
+}
+
 ID3D11DeviceContext* FRenderer::GetDeviceContext()
 {
 	return DeviceContext.Get();
@@ -194,6 +210,22 @@ ID3D11Buffer* FRenderer::CreateIndexBuffer(const uint32* InIndices, UINT InByteW
 	return indexBuffer;
 }
 
+void FRenderer::UpdateConstantBuffer(const FMatrix& MVP)
+{
+	if (ConstantBuffer)
+	{
+		D3D11_MAPPED_SUBRESOURCE constantbufferMSR;
+		FConstants constants;
+		DeviceContext->Map(ConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &constantbufferMSR);
+		FConstants* constant = (FConstants*)constantbufferMSR.pData;
+		{
+			FMatrix TransMVP = MVP.GetTransposed();
+			constant->MVP = TransMVP;
+		}
+		DeviceContext->Unmap(ConstantBuffer.Get(), 0);
+	}
+}
+
 void FRenderer::BindShader(FShader* InShader)
 {
 	DeviceContext->VSSetShader(InShader->VertexShader.Get(), nullptr, 0);
@@ -247,7 +279,7 @@ void FRenderer::RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices,
 }
 
 
-void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue)
+void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)
 {
 	while (true)
 	{
@@ -260,6 +292,12 @@ void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue)
 
 		BindShader(rp.shader);
 		BindBuffer(rp.mesh);
+
+		// rp.Transform 과 Camera VP 행렬 곱
+		// 행렬곱의 결과 (MVP Matrix) Constant Buffer 업데이트 필요
+		FMatrix MVP;
+		// MVP = M * VP;
+		UpdateConstantBuffer(MVP);
 		Draw(rp.mesh->NumVertices);
 
 		InQueue.pop();
