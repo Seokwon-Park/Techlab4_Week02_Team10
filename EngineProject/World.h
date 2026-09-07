@@ -6,7 +6,7 @@
 #include "Transform.h"
 #include "Renderer.h"
 
-struct ACameraActor;
+class ACameraActor;
 
 class UWorld : public UObject
 {

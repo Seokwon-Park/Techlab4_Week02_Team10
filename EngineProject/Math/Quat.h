@@ -4,7 +4,9 @@
 
 using FQuatRegister = FVectorRegister;
 
-struct FVector;
+template<typename T>
+struct TVector;
+//struct FVector;
 struct FMatrix;
 struct FRotator;
 

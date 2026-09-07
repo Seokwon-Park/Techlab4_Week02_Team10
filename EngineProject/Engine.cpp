@@ -60,10 +60,10 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	// Do Sth
 	World = new UWorld();
-	bIsRunning = World->Init();
+	World->Init();	//return bool
 
 	bIsRunning = true;
-
+	
 	return true;
 }
 

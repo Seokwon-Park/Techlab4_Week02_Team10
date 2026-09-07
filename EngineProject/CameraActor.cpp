@@ -10,6 +10,8 @@ ACameraActor::ACameraActor()
 
 ACameraActor::~ACameraActor()
 {
+	delete CameraComponent;
+
 	for (auto& i : SceneComponents)
 	{
 		delete i;

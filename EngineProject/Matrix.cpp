@@ -34,16 +34,6 @@ FMatrix::FMatrix(
 
 /* Functions */
 
-//XMMATRIX FMatrix::FMatrixToXMMatrix() const
-//{
-//	return XMMATRIX(
-//		M[0][0], M[0][1], M[0][2], M[0][3],
-//		M[1][0], M[1][1], M[1][2], M[1][3],
-//		M[2][0], M[2][1], M[2][2], M[2][3],
-//		M[3][0], M[3][1], M[3][2], M[3][3]
-//	);
-//}
-
 FMatrix FMatrix::ApplyScale(float Scale) const
 {
 	return FMatrix(
@@ -80,12 +70,12 @@ FVector4 FMatrix::InverseTransformPosition(const FVector& V) const
 	return InvMatrix.TransformPosition(V);
 }
 
-FVector4 FMatrix::GetColumn(int i) const
+FVector4 FMatrix::GetColumn(int32 i) const
 {
 	return FVector4(M[0][i], M[1][i], M[2][i], M[3][i]);
 }
 
-void FMatrix::SetColumn(int i, FVector4 Value)
+void FMatrix::SetColumn(int32 i, FVector4 Value)
 {
 	M[0][i] = Value[0];
 	M[1][i] = Value[1];
@@ -142,7 +132,7 @@ void FMatrix::SetAxes(const FVector4& Axis0, const FVector4& Axis1, const FVecto
 	M[3][0] = Axis3.X; M[3][1] = Axis3.Y; M[3][2] = Axis3.Z; M[3][3] = Axis3.W;
 }
 
-void FMatrix::SetAxis(int i, const FVector& Axis)
+void FMatrix::SetAxis(int32 i, const FVector& Axis)
 {
 	M[i][0] = Axis.X;
 	M[i][1] = Axis.Y;
@@ -200,12 +190,12 @@ FMatrix FMatrix::operator - ()
 	return M.ToFMatrix();
 }
 
-const float* FMatrix::operator[] (int Index) const
+const float* FMatrix::operator[] (int32 Index) const
 {
 	return M[Index];
 }
 
-float* FMatrix::operator[] (int Index)
+float* FMatrix::operator[] (int32 Index)
 {
 	return M[Index];
 }

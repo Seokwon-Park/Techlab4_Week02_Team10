@@ -37,25 +37,16 @@ void UCameraComponent::TickComponent(float DeltaTime)
     //      마우스 키를 위치를 받아와서
     //      DeltaPitch Yaw에 저장
 
-    if (FInputSystem::IsMousePressed(EMouseButton::Left))
+    if (FInputSystem::IsMousePressed(EMouseButton::Right))
     {
         float DeltaPitch = FInputSystem::GetMouseDeltaY() * MouseSensitivity;
         float DeltaYaw = FInputSystem::GetMouseDeltaX() * MouseSensitivity;
-        Pitch = Pitch + DeltaPitch;
-        Yaw = Yaw + DeltaYaw;
-        
-        Pitch = FMath::Clamp(Pitch, -89.0f, 89.0f);
 
-        FQuat DeltaQ = FRotator(Pitch, Yaw, 0.0f).Quaternion();
+        FQuat DeltaQ = FRotator(DeltaPitch, DeltaYaw, 0.0f).Quaternion();
         FQuat Q = transform.Rotation.Normalize();
 
         transform.Rotation = Q * DeltaQ;
     }
-
-
-    
-
-    
     
     //FQuat NewQ = DeltaQ * Q;
     // ;

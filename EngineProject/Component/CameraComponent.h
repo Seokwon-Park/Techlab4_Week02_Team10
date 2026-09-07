@@ -22,10 +22,6 @@ public:
 	float FarClipPlane = 10000.0f;
 	bool bisPerspective = true;
 
-	// 입력에 따른 변화량 저장
-	float Pitch = 0.0f;
-	float Yaw = 0.0f;
-
 public:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime) override;

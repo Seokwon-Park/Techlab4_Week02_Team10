@@ -1,6 +1,5 @@
 #pragma once
-
-#pragma once
+#include "Types.h"
 
 struct FVector;
 struct FVector4;
@@ -21,12 +20,12 @@ public:
 
 public:
 	void SetAxes(const FVector4& Axis0, const FVector4& Axis1, const FVector4& Axis2, const FVector4& Axis3);
-	void SetAxis(int i, const FVector& Axis);
+	void SetAxis(int32 i, const FVector& Axis);
 	void GetUnitAxis(FVector4& X, FVector4& Y, FVector4& Z) const;
 
 	//XMMATRIX FMatrixToXMMatrix() const;
 
-	FVector4 GetColumn(int i) const;
+	FVector4 GetColumn(int32 i) const;
 	FVector4 GetOrigin();
 	FVector4 GetScaledAxis(FVector4& X, FVector4& Y, FVector4& Z) const;
 	FVector4 TransformFVector4(const FVector4& V) const;
@@ -42,7 +41,7 @@ public:
 
 	float Determinant() const;
 
-	void SetColumn(int i, FVector4 Value);
+	void SetColumn(int32 i, FVector4 Value);
 	void SetIdentity();
 	void SetOrigin(const FVector& NewOrigin);
 
@@ -62,8 +61,8 @@ public:
 	FMatrix& operator = (const FMatrix& Other);
 	FMatrix operator - ();
 
-	const float* operator[] (int Index) const;
-	float* operator[] (int Index);
+	const float* operator[] (int32 Index) const;
+	float* operator[] (int32 Index);
 
 	bool operator != (const FMatrix& Other) const;
 	bool operator == (const FMatrix& Other) const;
