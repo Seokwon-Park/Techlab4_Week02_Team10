@@ -20,7 +20,7 @@ public:
 	float AspectRatio = 16.0f / 9.0f;
 	float NearClipPlane = 0.1f;
 	float FarClipPlane = 10000.0f;
-	bool bIsOrthogonal = true;
+	bool bIsOrthogonal = false;
 	float OrthoWidth = 16.0f;
 
 public:
@@ -38,6 +38,8 @@ public:
 	FVector GetLocation();
 	FVector GetScale();
 	FRotator GetRotation();
+
+	FVector DeProjection(int32 MouseX, int32 MouseY);
 
 	FMatrix GetViewMatrix() const;
 	FMatrix GetOrthogonalMatrix() const;
