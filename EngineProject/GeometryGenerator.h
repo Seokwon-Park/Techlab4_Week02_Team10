@@ -6,6 +6,32 @@ struct FMeshData
 {
 	TArray<FVertex> Vertices;
 	TArray<uint32> Indices;
+
+	void GetAABB(FVector& OutBoxMin, FVector& OutBoxMax)
+	{
+		if (Vertices.size() == 0)
+		{
+			OutBoxMax = { 0.0f, 0.0f, 0.0f };
+			OutBoxMin = { 0.0f, 0.0f, 0.0f };
+
+			return;
+		}
+
+		FVector Min{ FLT_MAX, FLT_MAX, FLT_MAX };
+		FVector Max{ -FLT_MAX, -FLT_MAX, -FLT_MAX };
+		for (const FVertex& vertex : Vertices)
+		{
+			Min.X = fmin(Min.X, vertex.Position.X);
+			Min.Y = fmin(Min.Y, vertex.Position.Y);
+			Min.Z = fmin(Min.Z, vertex.Position.Z);
+
+			Max.X = fmax(Max.X, vertex.Position.X);
+			Max.Y = fmax(Max.Y, vertex.Position.Y);
+			Max.Z = fmax(Max.Z, vertex.Position.Z);
+		}
+		OutBoxMin = Min;
+		OutBoxMax = Max;
+	}
 };
 
 class FGeometryGenerator
