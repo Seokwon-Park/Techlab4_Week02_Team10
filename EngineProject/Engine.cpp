@@ -53,7 +53,7 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	EditorUI = MakeUnique<FEditorUI>();
 	ConsolePanel = EditorUI->AddEditorPanel<FConsolePanel>();
-
+	// PropertyPanel Add
 	EditorUI->Init();
 
 

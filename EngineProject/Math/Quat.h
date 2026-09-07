@@ -36,6 +36,11 @@ struct FQuat
 	FMatrix ToFMatrix() const;
 	FRotator ToFRotator() const;
 
+	FVector GetForwardVector() const;
+	FVector GetRightVector() const;
+	FVector GetUpVector() const;
+
+
 	/* Static */
 	static FQuat Identity();
 	static FQuat MakeFromAxisAngle(const FVector& Axis, float AngleRadians);
