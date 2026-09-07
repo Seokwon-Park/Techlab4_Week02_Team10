@@ -279,7 +279,7 @@ void FRenderer::RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices,
 }
 
 
-void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue)
+void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)
 {
 	while (true)
 	{
@@ -296,7 +296,7 @@ void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue)
 		// rp.Transform 과 Camera VP 행렬 곱
 		// 행렬곱의 결과 (MVP Matrix) Constant Buffer 업데이트 필요
 		FMatrix MVP;
-		// MVP = M * V * P;
+		// MVP = M * VP;
 		UpdateConstantBuffer(MVP);
 		Draw(rp.mesh->NumVertices);
 

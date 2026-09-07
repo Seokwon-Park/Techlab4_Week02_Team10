@@ -48,7 +48,7 @@ public:
 	void Prepare();
 	void RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices, ID3D11Buffer* pIndexBuffer, UINT InNumIndices, UINT InStride);
 
-	void RenderAll(TQueue<FRenderPacket>& InQueue);
+	void RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP);
 	void Shutdown();
 
 private:
