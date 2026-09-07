@@ -32,6 +32,45 @@ struct FMeshData
 		OutBoxMin = Min;
 		OutBoxMax = Max;
 	}
+
+	void GetWorldAABB(FVector& OutBoxMin, FVector& OutBoxMax, const FMatrix& WorldMatrix)
+	{
+		FVector BoxMin, BoxMax;
+		GetAABB(BoxMin, BoxMax);
+
+		TArray<FVector> Corners = 
+		{
+			{BoxMin.X, BoxMin.Y, BoxMin.Z},
+			{BoxMin.X, BoxMin.Y, BoxMax.Z},
+			{BoxMin.X, BoxMax.Y, BoxMin.Z},
+			{BoxMin.X, BoxMax.Y, BoxMax.Z},
+			{BoxMax.X, BoxMin.Y, BoxMin.Z},
+			{BoxMax.X, BoxMin.Y, BoxMax.Z},
+			{BoxMax.X, BoxMax.Y, BoxMin.Z},
+			{BoxMax.X, BoxMax.Y, BoxMax.Z}
+		};
+
+		FVector Min{ FLT_MAX, FLT_MAX, FLT_MAX };
+		FVector Max{ -FLT_MAX, -FLT_MAX, -FLT_MAX };
+		for (FVector& vertex : Corners)
+		{
+			FVector4 WorldBoxVec4 = FVector4(vertex, 1.0f) * WorldMatrix;
+			vertex.X = WorldBoxVec4.X;
+			vertex.Y = WorldBoxVec4.Y;
+			vertex.Z = WorldBoxVec4.Z;
+
+			Min.X = fmin(Min.X, vertex.X);
+			Min.Y = fmin(Min.Y, vertex.Y);
+			Min.Z = fmin(Min.Z, vertex.Z);
+
+			Max.X = fmax(Max.X, vertex.X);
+			Max.Y = fmax(Max.Y, vertex.Y);
+			Max.Z = fmax(Max.Z, vertex.Z);
+		}
+
+		OutBoxMin = Min;
+		OutBoxMax = Max;
+	}
 };
 
 class FGeometryGenerator
