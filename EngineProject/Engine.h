@@ -8,6 +8,8 @@
 #include "World.h"
 #include "Renderer.h"
 #include "ImGuiRenderer.h"
+#include "Editor/GridRenderer.h"
+#include "Editor/GizmoRenderer.h"
 
 #include "Editor/EditorUI.h"
 #include "Editor/ConsolePanel.h"
@@ -30,12 +32,14 @@ private:
 	TUniquePtr<FEditorUI> EditorUI;
 	TUniquePtr<FRenderer> Renderer;
 	TUniquePtr<FImGuiRenderer> ImGuiRenderer;
+	TUniquePtr<FGridRenderer> GridRenderer;
+	TUniquePtr<FGizmoRenderer> GizmoRenderer;
 
 	inline static FConsolePanel* ConsolePanel = nullptr;
 
-	ID3D11Buffer* vb;
-	ID3D11Buffer* ib;
-	FShader* Shader;
+	TSharedPtr<FVertexBuffer> vb;
+	TSharedPtr<FIndexBuffer> ib;
 	TSharedPtr<FMesh> Mesh;
+	FShader* Shader;
 };
 
