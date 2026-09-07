@@ -1,6 +1,6 @@
 #pragma once
 
-#include <imgui.h>
+#include <ThirdParty/ImGui/imgui.h>
 #include <Windows.h>
 
 #include <d3d11.h>

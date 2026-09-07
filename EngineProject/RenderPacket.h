@@ -4,7 +4,7 @@
 #include "Shader.h"
 
 struct FRenderPacket {
-	FTransform transform;
+	FMatrix model;
 	FMesh* mesh;
 	FShader* shader;
 };

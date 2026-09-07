@@ -7,11 +7,15 @@
 
 #include "ObjectFactory.h"
 
-#include "Component/SceneComponent.h"
+#include "GeometryGenerator.h"
+
 #include "World.h"
 
 #include "Renderer.h"
 #include "Picking.h"
+
+#include "CameraActor.h"
+#include "Component/CameraComponent.h"
 
 void* operator new(uint64 Size)
 {
@@ -48,13 +52,52 @@ bool Engine::Init(HINSTANCE hInstance)
 	ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext());
 
 	EditorUI = MakeUnique<FEditorUI>();
+	ConsolePanel = EditorUI->AddEditorPanel<FConsolePanel>();
+	// PropertyPanel Add
 	EditorUI->Init();
-	
+
+
 	// Do Sth
 	World = new UWorld();
+	World->Init();	//return bool
+
+	FTransform Transform;
+	AActor* Actor = World->SpawnActor(AActor::StaticClass(), &Transform);
+	Actor->AddPrimitiveComponent(EPrimitiveType::Cube);
+
+	FMeshData Data = FGeometryGenerator::CreateCube(1.0f);
+	vb = Renderer->CreateVertexBuffer(Data.Vertices.data(), sizeof(FVertex) * (UINT)Data.Vertices.size());
+	ib = Renderer->CreateIndexBuffer(Data.Indices.data(), sizeof(uint32) * (UINT)Data.Indices.size());
+
+	//TArray<FVertex> Vertices =
+	//{
+	//	{{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // Forward=2, Right=-0.5, Up=0
+	//	{{0.0f,  0.0f, 0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // Forward=2, Right=0,    Up=0.5
+	//	{{0.0f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}, // Forward=2, Right=0.5,  Up=0
+	//};
+
+	//TArray<uint32> Indices = { 0,1,2 };
+
+	//vb = Renderer->CreateVertexBuffer(Vertices.data(), sizeof(FVertex) * (UINT)Vertices.size());
+	//ib = Renderer->CreateIndexBuffer(Indices.data(), sizeof(uint32) * (UINT)Indices.size());
+
+	Mesh = MakeShared<FMesh>();
+	Mesh->VertexBuffer = vb;
+	Mesh->IndexBuffer = ib;
+	Mesh->NumVertices = 24;
+	Mesh->VertexStride = sizeof(FVertex);
+
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{"POSITION" , 0 , DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+	Shader = Renderer->CreateShader(L"Shader/DefaultShader.hlsl", layout, 2);
+	
+	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
 
 	bIsRunning = true;
-
+	
 	return true;
 }
 
@@ -63,7 +106,13 @@ void Engine::Run()
 	EngineTimer::Init();
 
 	//World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
+
+	LOG(Info, "{}", "Hello, World!");
 	World->SaveScene("A");
+
+	FMatrix Mat;
+	Mat.SetIdentity();
+
 	while (bIsRunning)
 	{
 		EngineTimer::Tick();
@@ -72,11 +121,29 @@ void Engine::Run()
 		MainWindow->ProcessMessage(bIsRunning);
 		World->Tick(DeltaTime);
 
+		if (FInputSystem::IsKeyPressed(EKeyCode::A))
+		{
+			LOG(Info, "{}", "Hello, World!");
+		}
+
 		TQueue<FRenderPacket> RenderQueue;
 		World->GatherRenderPackets(RenderQueue);
 		FInputSystem::UpdateInputStates();
 
 		Renderer->BeginFrame();
+
+		//Renderer->BindShader(Shader);
+		//Renderer->BindBuffer(Mesh.get());
+
+		//FTransform transform;
+		//World->GetMainCamera()->GetCameraComponent()->SetTransform(FVector(-1.0f, 0.0f, 0.0f));
+		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();
+		//Renderer->UpdateConstantBuffer(VP);
+		//Renderer->Draw(36);
+
+
+
+		Renderer->RenderAll(RenderQueue, VP);
 
 		ImGuiRenderer->Begin();
 
@@ -85,8 +152,8 @@ void Engine::Run()
 
 		ImGuiRenderer->End();
 
-		FMatrix VP;	// 카메라 VP 행렬
-		Renderer->RenderAll(RenderQueue, VP);
+
+		
 		Renderer->EndFrame();
 	}
 }

@@ -5,6 +5,7 @@
 
 class UWorld;
 
+
 class AActor : public UObject
 {
 	DECLARE_CLASS(AActor, UObject)
@@ -20,15 +21,18 @@ public:
 
 	UWorld* GetWorld() const { return World; }
 
+	UPrimitiveComponent* GetPrimitiveComponent() const { return Primitive; }
+	void AddPrimitiveComponent(EPrimitiveType Type);
+
 	friend class UWorld;
 protected:
-
-private:
-	UWorld* World;
-
-	USceneComponent* Root;
 	TArray<UActorComponent*> Components;
 
+private:
+	UWorld* World = nullptr;
+
+	USceneComponent* Root = nullptr;
+
 	// 임시
-	UPrimitiveComponent* Primitive;
+	UPrimitiveComponent* Primitive = nullptr;
 };

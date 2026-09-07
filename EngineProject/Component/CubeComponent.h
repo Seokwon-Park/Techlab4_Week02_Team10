@@ -8,6 +8,10 @@ class UCubeComponent :public UPrimitiveComponent
 
 	REFLECT_START(ClassName)
 		REFLECT_END()
+
+		UCubeComponent() {};
+	~UCubeComponent() {};
+
 public:
 private:
 

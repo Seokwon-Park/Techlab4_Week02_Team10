@@ -5,7 +5,7 @@
 
 #include "Math/EngineMath.h"
 #include <assert.h>
-
+#define PI 3.141592f
 
 int main()
 {
@@ -17,9 +17,7 @@ int main()
     engine->Run();
     engine->Shutdown();
 
-	return 0;
 
-    
 }
 
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,

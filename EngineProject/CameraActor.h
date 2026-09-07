@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Actor.h"
-#include "Component/CameraComponent.h"
+
+class UCameraComponent;
 	
 class ACameraActor : public AActor
 {
@@ -17,6 +18,5 @@ public:
 	//virtual USceneComponent* GetDefaultAttachComponent(); // override ? <- Need to override Actors one in UE
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	void AddCameraComponent();
-	UCameraComponent* GetCameraComponent(int i); // return CameraComponent subobject
+	UCameraComponent* GetCameraComponent(); // return CameraComponent subobject
 };

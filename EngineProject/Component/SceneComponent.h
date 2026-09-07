@@ -11,7 +11,11 @@ class USceneComponent :public UActorComponent
 		PROPERTY(bVisible)
 	REFLECT_END()
 public:
+	FMatrix GetWorldMatrix() const;
 private:
-	FTransform transform;
+	//FTransform transform;
 	bool bVisible = true;
+protected:
+	// Protected로 이동
+	FTransform transform;
 };

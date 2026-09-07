@@ -5,9 +5,9 @@
 
 FVector::FVector()
 {
-	X = 0.0f;
-	Y = 0.0f;
-	Z = 0.0f;
+	X = 0;
+	Y = 0;
+	Z = 0;
 }
 
 FVector::FVector(float x, float y, float z)
@@ -32,11 +32,6 @@ FVector::FVector(const FVector& V1)
 }
 
 /* Functions */
-XMVECTOR FVector::FVectorToXMVector() const
-{
-	return XMVectorSet(X, Y, Z, 0.0f);
-}
-
 
 void FVector::Set(float x, float y, float z)
 {
@@ -45,33 +40,33 @@ void FVector::Set(float x, float y, float z)
 	Z = z;
 }
 
-float FVector::Size()
+
+float FVector::Size() const
 {
 	float sum = X * X + Y * Y + Z * Z;
 	return sqrt(sum);
 }
 
-float FVector::Length()
+
+float FVector::Length() const
 {
 	float sum = X * X + Y * Y + Z * Z;
 	return sqrt(sum);
 }
 
-FVector FVector::Normalize()
+FVector FVector::Normalize() const
 {
 	float size = Size();
 
 	if (!FMath::IsNearlyZero(size))
 	{
-		X /= size;
-		Y /= size;
-		Z /= size;
+		return FVector(X / size, Y / size, Z / size);
 	}
 
-	return*this;
+	return *this;
 }
 
-float& FVector::Component(int index)
+float& FVector::Component(int32 index)
 {
 	assert(index >= 0 && index <= 2);
 	if (index == 0) return X;
@@ -80,7 +75,7 @@ float& FVector::Component(int index)
 	return X;					// 예외의 경우에서 X를 반환 (임시)
 }
 
-float FVector::Component(int index) const
+float FVector::Component(int32 index) const
 {
 	assert(index >= 0 && index <= 2);
 	if (index == 0) return X;
@@ -89,51 +84,27 @@ float FVector::Component(int index) const
 	return 0.0f;				// 이외의 경우에서 0을 반환 (임시)
 }
 
-// SIMD 연산
 FVector FVector::Add(const FVector& V1) const
 {
-	XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
-	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
-
-	XMVECTOR Result = XMVectorAdd(A, B);
-	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result));
-
-	//return FVector(X * V1.X, Y * V1.Y, Z * V1.Z);
+	return FVector(X + V1.X, Y + V1.Y, Z + V1.Z);
 }
 
 FVector FVector::Subtract(const FVector& V1) const
 {
-	XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
-	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
-
-	XMVECTOR Result = XMVectorSubtract(A, B);
-	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result));
+	return FVector(X - V1.X, Y - V1.Y, Z - V1.Z);
 }
 
 float FVector::Dot(const FVector& V1) const
 {
-	/*XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
-	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
-
-	XMVECTOR Result = XMVector3Dot(A, B);
-	return XMVectorGetX(Result);*/
-
 	return X * V1.X + Y * V1.Y + Z * V1.Z;
 }
 
 FVector FVector::Cross(const FVector& V1) const
 {
-	/*XMVECTOR A = XMVectorSet(X, Y, Z, 0.0f);
-	XMVECTOR B = XMVectorSet(V1.X, V1.Y, V1.Z, 0.0f);
-
-	XMVECTOR Result = XMVector3Cross(A, B);
-	return FVector(XMVectorGetX(Result), XMVectorGetY(Result), XMVectorGetZ(Result) );*/
-
 	return FVector(Y*V1.Z - Z*V1.Y, Z*V1.X - X*V1.Z, X*V1.Y - Y * V1.X);
 }
 
-
-FVector FVector::GetAbs() {
+FVector FVector::GetAbs() const {
 	float AbsX = X;
 	float AbsY = Y;
 	float AbsZ = Z;
@@ -145,12 +116,13 @@ FVector FVector::GetAbs() {
 
 /* Operator */
 
-FVector FVector::operator - () 
+FVector FVector::operator - ()
 {
 	return FVector(-X, -Y, -Z);
 }
 
-FVector& FVector::operator = (const FVector& V1) 
+
+FVector& FVector::operator = (const FVector& V1)
 {
 	X = V1.X;
 	Y = V1.Y;
@@ -216,7 +188,7 @@ FVector FVector::operator / (const FVector& V1) const
 	return FVector(X / V1.X, Y / V1.Y, Z / V1.Z);
 }
 
-FVector FVector::operator / (const float& f) const
+FVector FVector ::operator / (const float& f) const
 {
 	return FVector(X / f, Y / f, Z / f);
 }
@@ -260,18 +232,18 @@ bool FVector::operator != (const FVector& V1) const
 	return !(*this == V1);
 }
 
-float FVector::operator[] (int Index) const
+float FVector::operator[] (int32 Index) const
 {
 	return V[Index];
 }
 
-float& FVector::operator[] (int Index) 
+float& FVector::operator[] (int32 Index)
 {
 	return V[Index];
 }
 
 /* Global Operator */
-std::ostream& operator << (std::ostream & OS, const FVector & V)
+std::ostream& operator << (std::ostream & OS, const FVector& V)
 {
 	OS << "(" << V.X << ", " << V.Y << ", " << V.Z << ")";
 	return OS;
@@ -279,17 +251,6 @@ std::ostream& operator << (std::ostream & OS, const FVector & V)
 
 
 /* Static Functions */
-
-static XMVECTOR FVectorToXMVector(FVector V)
-{
-	return XMVectorSet(V.X, V.Y, V.Z, 0.0f);
-}
-
-static FVector XMVectorToFVector(XMVECTOR Vector)
-{
-	return FVector(XMVectorGetX(Vector), XMVectorGetY(Vector), XMVectorGetZ(Vector));
-}
-
 float FVector::DotProduct(const FVector& V1, const FVector& V2)
 {
 	return V1.Dot(V2);

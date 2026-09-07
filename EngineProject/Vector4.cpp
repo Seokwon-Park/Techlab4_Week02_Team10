@@ -48,12 +48,6 @@ FVector4::FVector4(const FVector& V1, float w)
 
 /* Functions */
 
-XMVECTOR FVector4::FVector4ToXMVector() const
-{
-	return XMVectorSet(X, Y, Z, W);
-}
-
-
 void FVector4::Set(float x, float y, float z, float w)
 {
 	X = x;
@@ -105,7 +99,7 @@ FVector4 FVector4::Normalize()
 	return* this;
 }
 
-float& FVector4::Component(int index)
+float& FVector4::Component(int32 index)
 {
 	assert(index >= 0 && index <= 2);
 	if (index == 0) return X;
@@ -115,7 +109,7 @@ float& FVector4::Component(int index)
 	return X;					// 예외의 경우에서 X를 반환 (임시)
 }
 
-float FVector4::Component(int index) const
+float FVector4::Component(int32 index) const
 {
 	assert(index >= 0 && index <= 2);
 	if (index == 0) return X;
@@ -204,12 +198,14 @@ FVector4 FVector4::operator * (const float& f) const
 
 FVector4 FVector4::operator * (const FMatrix& M) const
 {
-	return FVector4(
+
+	return M.TransformFVector4(*this);
+	/*return FVector4(
 		X * M[0][0] + Y * M[1][0] + Z * M[2][0] + W * M[3][0],
 		X * M[0][1] + Y * M[1][1] + Z * M[2][1] + W * M[3][1],
 		X * M[0][2] + Y * M[1][2] + Z * M[2][2] + W * M[3][2],
 		X * M[0][3] + Y * M[1][3] + Z * M[2][3] + W * M[3][3]
-	);
+	);*/
 }
 
 FVector4& FVector4::operator *= (const FVector4& V1)
@@ -275,12 +271,12 @@ bool FVector4::operator != (const FVector4& V1) const
 	return !(*this == V1);
 }
 
-float FVector4::operator[] (int Index) const
+float FVector4::operator[] (int32 Index) const
 {
 	return V[Index];
 }
 
-float& FVector4::operator[] (int Index)
+float& FVector4::operator[] (int32 Index)
 {
 	return V[Index];
 }
@@ -294,17 +290,6 @@ std::ostream& operator << (std::ostream& OS, const FVector4& V)
 
 
 /* Static Functions */
-
-static XMVECTOR FVector4ToXMVector(FVector4 V)
-{
-	return XMVectorSet(V.X, V.Y, V.Z, V.W);
-}
-
-static FVector4 XMVectorToFVector4(XMVECTOR Vector)
-{
-	return FVector4(XMVectorGetX(Vector), XMVectorGetY(Vector), XMVectorGetZ(Vector), XMVectorGetW(Vector));
-}
-
 
 float FVector4::DotProduct(const FVector4& V1, const FVector4& V2)
 {

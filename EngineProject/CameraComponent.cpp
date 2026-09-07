@@ -2,10 +2,10 @@
 #include "Component/CameraComponent.h"
 #include "InputSystem.h"
 
-UCameraComponent::UCameraComponent()
-{
-
-}
+//UCameraComponent::UCameraComponent()
+//{
+//
+//}
 
 void UCameraComponent::BeginPlay()
 {
@@ -16,33 +16,62 @@ void UCameraComponent::TickComponent(float DeltaTime)
 {
     Super::TickComponent(DeltaTime);
 
-    if (FInputSystem::IsKeyPressed(EKeyCode::W))
+    FQuat Q = transform.Rotation.Quaternion().Normalize();
+
+    if (FInputSystem::IsKeyDown(EKeyCode::W))
     {
-        Transform.X += CameraSpeed * DeltaTime;
+        transform.Location += Q.GetForwardVector() * CameraSpeed * DeltaTime;
     }
-    if (FInputSystem::IsKeyPressed(EKeyCode::A))
+    if (FInputSystem::IsKeyDown(EKeyCode::A))
     {
-        Transform.Y -= CameraSpeed * DeltaTime;
+        transform.Location -= Q.GetRightVector() * CameraSpeed * DeltaTime;
     }
-    if (FInputSystem::IsKeyPressed(EKeyCode::S))
+    if (FInputSystem::IsKeyDown(EKeyCode::S))
     {
-        Transform.X -= CameraSpeed * DeltaTime;
+        transform.Location -= Q.GetForwardVector() * CameraSpeed * DeltaTime;
     }
-    if (FInputSystem::IsKeyPressed(EKeyCode::D))
+    if (FInputSystem::IsKeyDown(EKeyCode::D))
     {
-        Transform.Y += CameraSpeed * DeltaTime;
+        transform.Location += Q.GetRightVector() * CameraSpeed * DeltaTime;
     }
+
+    // if 마우스 키 다운이고 다른 클릭이 없다 이면
+    //      마우스 키를 위치를 받아와서
+    //      DeltaPitch Yaw에 저장
+
+    if (FInputSystem::IsMouseDown(EMouseButton::Right))
+    {
+        float DeltaPitch = FInputSystem::GetMouseDeltaY() * MouseSensitivity;
+        float DeltaYaw = FInputSystem::GetMouseDeltaX() * MouseSensitivity;
+
+        FQuat DeltaQ = FRotator(DeltaPitch, DeltaYaw, 0.0f).Quaternion();
+        FQuat Q = transform.Rotation.Quaternion().Normalize();
+        FQuat Result = Q * DeltaQ;
+
+        transform.Rotation = Result.ToFRotator(); ;
+    }
+    
+    //FQuat NewQ = DeltaQ * Q;
+    // ;
+
+    // Yaw Pitch 를 입력을 통해 반환
+    // DeltaQ는 입력을 통해 반환한 추가 회전을 쿼터니언으로 변환한 것
+    // Q는 현재 카메라 컴포넌트의 로테이터 정보를 쿼터니언으로 변환한 것
+    // NewQ = DeltaQ * Q
+    // NewQ.ToFRotate -> 이걸 카메라 컴포넌트의 로테이터로 업데이트
+
+
 
 }
 
-void UCameraComponent::SetTransform(FVector vector)
+void UCameraComponent::SetLocation(FVector vector)
 {
-    Transform = vector;
+    transform.Location = vector;
 }
 
 void UCameraComponent::SetScale(FVector vector)
 {
-    Scale = vector;
+    transform.Scale = vector;
 }
 
 //void UCameraComponent::SetRotation(FVector vector)
@@ -70,63 +99,68 @@ void UCameraComponent::SetFarClipPlane(float FarPlane)
 	FarClipPlane = FarPlane;
 }
 
-FVector UCameraComponent::GetTransform()
+FVector UCameraComponent::GetLocation()
 {
-	return Transform;
+	return transform.Location;
 }
 
 FVector UCameraComponent::GetScale()
 {
-    return Scale;
+    return transform.Scale;
 }
 
-FMatrix UCameraComponent::GetRotation()
+FRotator UCameraComponent::GetRotation()
 {
-    return Rotation;
+    return transform.Rotation;
 }
 
 FMatrix UCameraComponent::GetViewMatrix() const
 {
-    FMatrix WorldMatrix = FMatrix(
-        Rotation.M[0][0] * Scale.X,
-        Rotation.M[0][1] * Scale.X,
-        Rotation.M[0][2] * Scale.X,
-        0.0f,
-
-        Rotation.M[1][0] * Scale.Y,
-        Rotation.M[1][1] * Scale.Y,
-        Rotation.M[1][2] * Scale.Y,
-        0.0f,
-
-        Rotation.M[2][0] * Scale.Z,
-        Rotation.M[2][1] * Scale.Z,
-        Rotation.M[2][2] * Scale.Z,
-        0.0f,
-
-        Transform.X,
-        Transform.Y,
-        Transform.Z,
-        1.0f
-    );
-
-    return WorldMatrix.Inverse();
+    return GetWorldMatrix().Inverse();
 }
 
-FMatrix UCameraComponent::GetProjectionMatrix() const
+FMatrix UCameraComponent::GetPerspectiveMatrix() const
 {
-	const float HalfFOV = FOV * 0.5f;
+	const float HalfFOV = FMath::DegreesToRadians(FOV) * 0.5f;
 
 	const float YScale = 1.0f / tan(HalfFOV);
 	const float XScale = YScale / AspectRatio;
 
 	// Reversed-Z
-	const float C = -NearClipPlane / (FarClipPlane - NearClipPlane);
-	const float D = NearClipPlane * FarClipPlane / (FarClipPlane - NearClipPlane);
+	const float ZScale = -NearClipPlane / (FarClipPlane - NearClipPlane);
+	const float ZOffset = NearClipPlane * FarClipPlane / (FarClipPlane - NearClipPlane);
 
 	return FMatrix(
-		0.0f, 0.0f, C, 1.0f,
+		0.0f, 0.0f, ZScale, 1.0f,
 		XScale, 0.0f, 0.0f, 0.0f,
 		0.0f, YScale, 0.0f, 0.0f,
-		0.0f, 0.0f, D, 0.0f
+		0.0f, 0.0f, ZOffset, 0.0f
 	);
+}
+
+FMatrix UCameraComponent::GetOrthogonalMatrix() const
+{
+    const float Width = OrthoWidth;
+    const float Height = Width / AspectRatio;
+
+    const float XScale = 2.0f / Width;
+    const float YScale = 2.0f / Height;
+
+    const float ZScale = 1.0f / (FarClipPlane - NearClipPlane);
+    const float ZOffset = -NearClipPlane / (FarClipPlane - NearClipPlane);
+
+    return FMatrix(
+        0.0f, 0.0f, ZScale, 0.0f,
+        XScale, 0.0f, 0.0f, 0.0f,
+        0.0f, YScale, 0.0f, 0.0f,
+        0.0f, 0.0f, ZOffset, 1.0f
+    );
+}
+
+FMatrix UCameraComponent::GetViewProjectionMatrix() const
+{
+    if (bIsOrthogonal)
+        return GetViewMatrix() * GetOrthogonalMatrix();
+    
+    return GetViewMatrix() * GetPerspectiveMatrix();
 }

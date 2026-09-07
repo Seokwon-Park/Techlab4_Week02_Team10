@@ -3,7 +3,7 @@
 
 bool FEditorUI::Init()
 {
-	return false;
+	return true;
 }
 
 void FEditorUI::OnRender()

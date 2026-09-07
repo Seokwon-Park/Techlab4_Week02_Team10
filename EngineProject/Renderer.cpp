@@ -26,16 +26,16 @@ void FRenderer::Create(HWND hWindow)
 	CreateConstantBuffer();
 
 	// 임시 셰이더 프로그램 컴파일 로직
-	//D3D11_INPUT_ELEMENT_DESC layout[] =
-	//{
-	//	{"POSITION" , 0 , DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	//	{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	//};
-	//FShader* shader = CreateShader(L"Shader/DefaultShader.hlsl", layout, 2);
+	/*D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{"POSITION" , 0 , DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+	FShader* shader = CreateShader(L"Shader/DefaultShader.hlsl", layout, 2);
 
-	//DeviceContext->VSSetShader(shader->VertexShader.Get(), nullptr, 0);
-	//DeviceContext->PSSetShader(shader->PixelShader.Get(), nullptr, 0);
-	//DeviceContext->IASetInputLayout(shader->InputLayout.Get());
+	DeviceContext->VSSetShader(shader->VertexShader.Get(), nullptr, 0);
+	DeviceContext->PSSetShader(shader->PixelShader.Get(), nullptr, 0);
+	DeviceContext->IASetInputLayout(shader->InputLayout.Get());*/
 }
 
 
@@ -247,6 +247,7 @@ void FRenderer::BindBuffer(FMesh* InMesh)
 
 void FRenderer::Draw(int IndexCount)
 {
+	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DeviceContext->DrawIndexed(IndexCount, 0, 0);
 }
 
@@ -282,6 +283,8 @@ void FRenderer::RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices,
 
 void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)
 {
+	//DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
+	//DeviceContext->OMSetDepthStencilState(nullptr, 0);
 	while (true)
 	{
 		if (InQueue.empty())
@@ -297,9 +300,9 @@ void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)
 		// rp.Transform 과 Camera VP 행렬 곱
 		// 행렬곱의 결과 (MVP Matrix) Constant Buffer 업데이트 필요
 		FMatrix MVP;
-		// MVP = M * VP;
+		MVP = rp.model * VP;
 		UpdateConstantBuffer(MVP);
-		Draw(rp.mesh->NumVertices);
+		Draw(36);
 
 		InQueue.pop();
 	}

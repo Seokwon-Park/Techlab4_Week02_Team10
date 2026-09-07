@@ -6,12 +6,14 @@
 #include "Transform.h"
 #include "Renderer.h"
 
+class ACameraActor;
 
 class UWorld : public UObject
 {
 public:
 	virtual ~UWorld();
 
+	bool Init();
 	/*UPrimitiveComponent* SpawnPrimitive(FClass* Class);*/
 	AActor* SpawnActor(FClass* Class, const FTransform* Transform);
 
@@ -32,10 +34,17 @@ public:
 
 	void GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue);
 
+	// 카메라 세터, 게터
+	void SetMainCamera(ACameraActor* Camera);
+	ACameraActor* GetMainCamera() const;
+
 private:
 	TArray<AActor*> Actors;
 
 	TQueue<AActor*> BeginPlayList;
 	
 	TArray<UPrimitiveComponent*> PrimitiveComponents;
+
+	//카메라 추가 
+	ACameraActor* MainCamera = nullptr;
 };
