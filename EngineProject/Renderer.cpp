@@ -223,6 +223,7 @@ void FRenderer::UpdateConstantBuffer(const FMatrix& MVP)
 			constant->MVP = TransMVP;
 		}
 		DeviceContext->Unmap(ConstantBuffer.Get(), 0);
+		DeviceContext->VSSetConstantBuffers(0, 1, ConstantBuffer.GetAddressOf());
 	}
 }
 
@@ -246,7 +247,9 @@ void FRenderer::BindBuffer(FMesh* InMesh)
 
 void FRenderer::Draw(int IndexCount)
 {
-	DeviceContext->Draw(IndexCount, 0);
+	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	DeviceContext->DrawIndexed(IndexCount, 0, 0);
 }
 
 void FRenderer::Prepare()
@@ -281,6 +284,8 @@ void FRenderer::RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices,
 
 void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)
 {
+	//DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
+	//DeviceContext->OMSetDepthStencilState(nullptr, 0);
 	while (true)
 	{
 		if (InQueue.empty())
@@ -298,7 +303,7 @@ void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)
 		FMatrix MVP;
 		MVP = rp.model * VP;
 		UpdateConstantBuffer(MVP);
-		Draw(rp.mesh->NumVertices);
+		Draw(36);
 
 		InQueue.pop();
 	}

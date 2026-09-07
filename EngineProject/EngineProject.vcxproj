@@ -148,19 +148,21 @@
     <ClCompile Include="CameraActor.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Class.cpp" />
+    <ClCompile Include="Component\CubeComponent.cpp" />
     <ClCompile Include="Component\PrimitiveComponent.cpp" />
-    <ClCompile Include="DefaultShader.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Editor\ConsolePanel.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
+    <ClCompile Include="Editor\GridRenderer.cpp" />
+    <ClCompile Include="Editor\PropertyPanel.cpp" />
     <ClCompile Include="Engine.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="EnginePCH.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="EngineTimer.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="ImGuiRenderer.cpp" />
     <ClCompile Include="InputSystem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -178,6 +180,7 @@
     <ClCompile Include="Picking.cpp" />
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Render\Vertex.cpp" />
     <ClCompile Include="Rotator.cpp" />
     <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -220,6 +223,8 @@
     <ClInclude Include="Editor\EditorPanel.h" />
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="Editor\GridRenderer.h" />
+    <ClInclude Include="Editor\GuizmoRenderer.h" />
+    <ClInclude Include="Editor\PropertyPanel.h" />
     <ClInclude Include="EngineLog.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="ImGuiRenderer.h" />
@@ -253,6 +258,7 @@
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderPacket.h" />
+    <ClInclude Include="Render\Vertex.h" />
     <ClInclude Include="Rotator.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_dx11.h" />

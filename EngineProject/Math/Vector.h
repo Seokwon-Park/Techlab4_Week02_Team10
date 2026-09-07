@@ -9,7 +9,7 @@ struct FVector {
 
 	union
 	{
-		float V[4];
+		float V[3];
 		struct
 		{
 			float X;

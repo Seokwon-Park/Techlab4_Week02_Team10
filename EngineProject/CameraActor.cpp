@@ -6,6 +6,7 @@
 ACameraActor::ACameraActor()
 {
 	CameraComponent = new UCameraComponent;
+	Components.push_back(CameraComponent);
 }
 
 ACameraActor::~ACameraActor()
