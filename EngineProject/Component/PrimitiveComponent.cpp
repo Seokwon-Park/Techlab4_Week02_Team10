@@ -25,7 +25,7 @@ void UPrimitiveComponent::SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue
 		// 뒷면 (Back)
 		4, 5, 6,  6, 7, 4,
 		// 왼쪽 면 (Left)
-		4, 7, 3,  3, 0, 4,
+		4, 7, 3,  3, 0, 4,	
 		// 오른쪽 면 (Right)
 		1, 2, 6,  6, 5, 1,
 		// 윗면 (Top)
