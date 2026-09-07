@@ -16,11 +16,11 @@ protected:
 	FVector Scale = FVector(1, 1, 1);
 	FRotator Rotation = FRotator(0, 0, 0);*/
 public:
-	float FOV = 30.0f;
+	float FOV = 60.0f;
 	float AspectRatio = 16.0f / 9.0f;
 	float NearClipPlane = 0.1f;
 	float FarClipPlane = 10000.0f;
-	bool bIsOrthogonal = true;
+	bool bIsOrthogonal = false;
 	float OrthoWidth = 16.0f;
 
 public:

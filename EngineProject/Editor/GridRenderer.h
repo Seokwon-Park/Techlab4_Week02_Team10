@@ -8,14 +8,12 @@ class FGridRenderer
 public:
 	~FGridRenderer();
 
-	inline void SetRenderer(FRenderer* InRenderer) { Renderer = InRenderer; }
-
-	bool Init();
-	void OnRender();
+	bool Init(FRenderer* InRenderer);
+	void OnRender(const FMatrix& World, const FMatrix& ViewProj);
 	
 private:
 	FRenderer* Renderer;
 
-	ID3D11Buffer* VB;
-	ID3D11Buffer* IB;
+	TSharedPtr<FVertexBuffer> VB;
+	TSharedPtr<FIndexBuffer> IB;
 };

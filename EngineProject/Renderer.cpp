@@ -106,7 +106,7 @@ void FRenderer::CreateDepthStencilBufferAndState()
 	// Depth test Paramiter
 	DepthStencilDesc.DepthEnable = true;
 	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER;
 
 	// Stencil test Paramiter
 	DepthStencilDesc.StencilEnable = true;
@@ -163,51 +163,29 @@ FShader* FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DE
 	return shader;
 }
 
-FMesh* FRenderer::CreateMesh(const void* Vertices, uint32 VertexCount, uint32 Stride, const uint32* Indices, uint32 IndexCount)
+TSharedPtr<FMesh> FRenderer::CreateMesh(TSharedPtr<FVertexBuffer> VertexBuffer, TSharedPtr<FIndexBuffer> IndexBuffer)
 {
-	FMesh* mesh = new FMesh;
-	mesh->VertexStride = Stride;
-	CreateVertexBuffer(Vertices, Stride * VertexCount);
-	if (nullptr == Indices)	// 정점만 존재하는 메시
-	{
-		return mesh;
-	}
-	CreateIndexBuffer(Indices, sizeof(uint32) * IndexCount);
-	return mesh;
+	TSharedPtr<FMesh> Mesh = MakeShared<FMesh>();
+	
+	Mesh->VertexBuffer = VertexBuffer;
+	Mesh->IndexBuffer = IndexBuffer;
+
+	return Mesh;
 }
 
-ID3D11Buffer* FRenderer::CreateVertexBuffer(const void* InVertices, UINT InByteWidth)
+
+TSharedPtr<FVertexBuffer> FRenderer::CreateVertexBuffer(const void* InVertices, uint32 TotalSize, uint32 Stride)
 {
-	// Create a vertex buffer
-	D3D11_BUFFER_DESC VertexBufferDesc = {};
-	VertexBufferDesc.ByteWidth = InByteWidth;
-	VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	TSharedPtr<FVertexBuffer> Buffer = MakeShared<FVertexBuffer>(Device.Get(), InVertices, TotalSize, Stride);
 
-	D3D11_SUBRESOURCE_DATA vertexbufferSRD = { InVertices };
-
-	ID3D11Buffer* vertexBuffer;
-
-	HRESULT hr = Device->CreateBuffer(&VertexBufferDesc, &vertexbufferSRD, &vertexBuffer);
-
-	return vertexBuffer;
+	return Buffer;
 }
 
-ID3D11Buffer* FRenderer::CreateIndexBuffer(const uint32* InIndices, UINT InByteWidth)
+TSharedPtr<FIndexBuffer> FRenderer::CreateIndexBuffer(const uint32* InIndices, uint32 IndexCount)
 {
-	// Create a index buffer
-	D3D11_BUFFER_DESC indexbufferdesc = {};
-	indexbufferdesc.ByteWidth = InByteWidth;
-	indexbufferdesc.Usage = D3D11_USAGE_DEFAULT;
-	indexbufferdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	TSharedPtr<FIndexBuffer> Buffer = MakeShared<FIndexBuffer>(Device.Get(), InIndices, IndexCount);
 
-	D3D11_SUBRESOURCE_DATA indexbufferSRD = { InIndices };
-
-	ID3D11Buffer* indexBuffer;
-
-	HRESULT hr = Device->CreateBuffer(&indexbufferdesc, &indexbufferSRD, &indexBuffer);
-
-	return indexBuffer;
+	return Buffer;
 }
 
 void FRenderer::UpdateConstantBuffer(const FMatrix& MVP)
@@ -227,6 +205,24 @@ void FRenderer::UpdateConstantBuffer(const FMatrix& MVP)
 	}
 }
 
+void FRenderer::BindVertexBuffer(FVertexBuffer* VertexBuffer)
+{
+	uint32 offset = 0;
+	uint32 Stride = VertexBuffer->GetStride();
+	ID3D11Buffer* Buffer = VertexBuffer->GetBuffer();
+	DeviceContext->IASetVertexBuffers(0, 1, &Buffer, &Stride, &offset);
+}
+
+void FRenderer::BindIndexBuffer(FIndexBuffer* IndexBuffer)
+{
+	DeviceContext->IASetIndexBuffer(IndexBuffer->GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
+}
+
+void FRenderer::SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY Topology)
+{
+	DeviceContext->IASetPrimitiveTopology(Topology);
+}
+
 void FRenderer::BindShader(FShader* InShader)
 {
 	DeviceContext->VSSetShader(InShader->VertexShader.Get(), nullptr, 0);
@@ -234,20 +230,15 @@ void FRenderer::BindShader(FShader* InShader)
 	DeviceContext->IASetInputLayout(InShader->InputLayout.Get());
 }
 
-void FRenderer::BindBuffer(FMesh* InMesh)
+void FRenderer::BindMesh(FMesh* InMesh)
 {
-	UINT offset = 0;
-	UINT Stride = InMesh->VertexStride;
-	DeviceContext->IASetVertexBuffers(0, 1, InMesh->VertexBuffer.GetAddressOf(), &Stride, &offset);
-	if (nullptr != InMesh->IndexBuffer.Get())
-	{
-		DeviceContext->IASetIndexBuffer(InMesh->IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	}
+	BindVertexBuffer(InMesh->VertexBuffer.get());
+	BindIndexBuffer(InMesh->IndexBuffer.get());
 }
 
-void FRenderer::Draw(int IndexCount)
+void FRenderer::DrawIndexed(int IndexCount)
 {
-	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DeviceContext->OMSetDepthStencilState(DepthStencilState.Get(), 1);
 	DeviceContext->DrawIndexed(IndexCount, 0, 0);
 }
 
@@ -258,26 +249,8 @@ void FRenderer::Prepare()
 	DeviceContext->RSSetViewports(1, &ViewportInfo);
 	DeviceContext->RSSetState(RasterizerState.Get());
 	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
-	DeviceContext->OMSetDepthStencilState(DepthStencilState.Get(), 1);
 
-	// 임시 버텍스 버퍼 생성 로직
-	/*FVertexSimple Triangle[]
-	{
-		{0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-		{ 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f },
-		{ -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f }
-	};
 
-	ID3D11Buffer* vertexBuffer = FRenderer::GetInstance().CreateVertexBuffer(Triangle, sizeof(Triangle));
-	FRenderer::GetInstance().RenderPrimitive(vertexBuffer, sizeof(FVertexSimple), sizeof(Triangle)/sizeof(FVertexSimple));*/
-}
-
-void FRenderer::RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices, ID3D11Buffer* pIndexBuffer, UINT InNumIndices, UINT InStride)
-{
-	UINT offset = 0;
-	DeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &InStride, &offset);
-	DeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	DeviceContext->Draw(InNumVertices, 0);
 }
 
 
@@ -295,14 +268,15 @@ void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)
 		FRenderPacket rp = InQueue.front();
 
 		BindShader(rp.shader);
-		BindBuffer(rp.mesh);
+		BindMesh(rp.mesh);
 
 		// rp.Transform 과 Camera VP 행렬 곱
 		// 행렬곱의 결과 (MVP Matrix) Constant Buffer 업데이트 필요
 		FMatrix MVP;
 		MVP = rp.model * VP;
 		UpdateConstantBuffer(MVP);
-		Draw(36);
+		SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		DrawIndexed(rp.mesh->IndexBuffer->GetIndexCount());
 
 		InQueue.pop();
 	}

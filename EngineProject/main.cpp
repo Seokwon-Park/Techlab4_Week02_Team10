@@ -16,8 +16,6 @@ int main()
 
     engine->Run();
     engine->Shutdown();
-
-
 }
 
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
