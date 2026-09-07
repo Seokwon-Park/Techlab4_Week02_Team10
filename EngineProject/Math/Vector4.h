@@ -1,8 +1,7 @@
 #pragma once
 
 #include <iostream>
-
-using namespace DirectX;
+#include "Types.h"
 
 struct FVector;
 struct FMatrix;
@@ -35,8 +34,8 @@ public:
 	void Set(const FVector& V1, float w = 0.0f);
 	void Set(const FVector4& V1);
 
-	float& Component(int index);		// 참조자 반환으로 lvalue로 직접 값수정 가능
-	float Component(int index) const;
+	float& Component(int32 index);		// 참조자 반환으로 lvalue로 직접 값수정 가능
+	float Component(int32 index) const;
 	float Size(); // 길이 반환
 	float Length(); // ==  size()
 	float Dot(const FVector4& V1) const;
@@ -83,8 +82,8 @@ public:
 	bool operator == (const FVector4& V1) const;
 	bool operator != (const FVector4& V1) const;
 
-	float operator[] (int Index) const;
-	float& operator[] (int Index);
+	float operator[] (int32 Index) const;
+	float& operator[] (int32 Index);
 
 
 	static float DotProduct(const FVector4& V1, const FVector4& V2);

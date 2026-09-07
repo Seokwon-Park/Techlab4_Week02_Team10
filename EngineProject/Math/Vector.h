@@ -1,9 +1,7 @@
 #pragma once
 
-#include <DirectXMath.h>
 #include <iostream>
-
-using namespace DirectX;
+#include "Types.h"
 
 struct FVector {
 
@@ -29,20 +27,19 @@ public:
 public:
 /* Public Functions */
 	void Set(float x, float y, float z);
-	XMVECTOR FVectorToXMVector() const;
 
 	float Size() const; // 길이 반환
 	float Length() const; // ==  size()
 	float Dot(const FVector& V1) const;
 
-	float& Component(int index);		// 참조자 반환으로 lvalue로 직접 값수정 가능
-	float Component(int index) const;
+	float& Component(int32 index);		// 참조자 반환으로 lvalue로 직접 값수정 가능
+	float Component(int32 index) const;
 
 	FVector Add(const FVector& V1) const;
 	FVector Subtract(const FVector& V1) const;
 	
 	FVector Cross(const FVector& V1) const;
-	FVector GetAbs();
+	FVector GetAbs() const;
 	FVector Normalize() const;
 
 
@@ -83,13 +80,10 @@ public:
 	bool operator == (const FVector& V1) const;
 	bool operator != (const FVector& V1) const;
 
-	float operator[] (int Index) const;
-	float& operator[] (int Index);
+	float operator[] (int32 Index) const;
+	float& operator[] (int32 Index);
 
 /* Static */
-	static XMVECTOR FVectorToXMVector(FVector V);
-	static FVector XMVectorToFVector(XMVECTOR Vector);
-
 	static float DotProduct(const FVector& V1, const FVector& V2);
 	static FVector CrossProduct(const FVector& V1, const FVector& V2);
 	static float Distance(const FVector& V1, const FVector& V2); // == Dist()
@@ -109,6 +103,7 @@ public:
 };
 
 /* Global Operator */
+template<typename T>
 std::ostream& operator<<(std::ostream& OS, const FVector& V);
 
 /* constants */

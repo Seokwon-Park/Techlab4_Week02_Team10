@@ -99,7 +99,7 @@ FVector4 FVector4::Normalize()
 	return* this;
 }
 
-float& FVector4::Component(int index)
+float& FVector4::Component(int32 index)
 {
 	assert(index >= 0 && index <= 2);
 	if (index == 0) return X;
@@ -109,7 +109,7 @@ float& FVector4::Component(int index)
 	return X;					// 예외의 경우에서 X를 반환 (임시)
 }
 
-float FVector4::Component(int index) const
+float FVector4::Component(int32 index) const
 {
 	assert(index >= 0 && index <= 2);
 	if (index == 0) return X;
@@ -271,12 +271,12 @@ bool FVector4::operator != (const FVector4& V1) const
 	return !(*this == V1);
 }
 
-float FVector4::operator[] (int Index) const
+float FVector4::operator[] (int32 Index) const
 {
 	return V[Index];
 }
 
-float& FVector4::operator[] (int Index)
+float& FVector4::operator[] (int32 Index)
 {
 	return V[Index];
 }

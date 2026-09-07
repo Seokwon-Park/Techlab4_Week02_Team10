@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "Rotator.h"
+#include "Math/EngineMath.h"
 
 FRotator::FRotator()
 {
@@ -14,7 +15,12 @@ FRotator::FRotator(float P, float Y, float R)
 
 FQuat FRotator::Quaternion() const
 {
-	return FQuat::MakeFromEuler(Pitch, Yaw, Roll);
+	// Degree를 Radian으로 변환
+	float PRad = Pitch * (PI / 180.0f);
+	float YRad = Yaw * (PI / 180.0f);
+	float RRad = Roll * (PI / 180.0f);
+	
+	return FQuat::MakeFromEuler(PRad, YRad, RRad);
 }
 
 FMatrix FRotator::RotationMatrix() const

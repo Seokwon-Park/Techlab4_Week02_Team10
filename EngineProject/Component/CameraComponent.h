@@ -20,13 +20,14 @@ public:
 	float AspectRatio = 16.0f / 9.0f;
 	float NearClipPlane = 0.1f;
 	float FarClipPlane = 10000.0f;
-	bool bisPerspective = true;
+	bool bIsOrthogonal = false;
+	float OrthoWidth = 1920.0f;
 
 public:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime) override;
 
-	void SetTransform(FVector vector);
+	void SetLocation(FVector vector);
 	void SetScale(FVector vector);
 	//void SetRotation(FVector vector);
 	void SetFOV(float FoV);
@@ -34,16 +35,18 @@ public:
 	void SetNearClipPlane(float NearPlane);
 	void SetFarClipPlane(float FarPlane);
 
-	FVector GetTransform();
+	FVector GetLocation();
 	FVector GetScale();
 	FRotator GetRotation();
 
 	FMatrix GetViewMatrix() const;
-	FMatrix GetProjectionMatrix() const;
+	FMatrix GetOrthogonalMatrix() const;
+	FMatrix GetPerspectiveMatrix() const;
 	FMatrix GetViewProjectionMatrix() const;
 
 private:
 	const float CameraSpeed = 1.0f;
+	const float MouseSensitivity = 0.1f;
 };
 
 //Engine에서 FSceneView 구조체를 가지고 Tick Component에서 업데이트 or ACameraActor에서 업데이트 카메라 가져오는 함수로 엔진의 루프 안에서

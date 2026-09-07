@@ -50,7 +50,7 @@ bool UWorld::Init()
 		SetMainCamera(GetCamera);
 		return true;
 	}
-	return false;	//false여야 함
+	return false;
 }
 
 AActor* UWorld::SpawnActor(FClass* Class, const FTransform* UserTransformPtr)

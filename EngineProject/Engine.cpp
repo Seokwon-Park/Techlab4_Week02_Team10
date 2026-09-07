@@ -59,7 +59,7 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	// Do Sth
 	World = new UWorld();
-	bIsRunning = World->Init();
+	World->Init();	//return bool
 
 	FTransform Transform;
 	AActor* Actor = World->SpawnActor(AActor::StaticClass(), &Transform);
@@ -97,7 +97,7 @@ bool Engine::Init(HINSTANCE hInstance)
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
 
 	bIsRunning = true;
-
+	
 	return true;
 }
 
