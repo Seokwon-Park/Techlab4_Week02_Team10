@@ -33,8 +33,40 @@ void UCameraComponent::TickComponent(float DeltaTime)
         transform.Location.Y += CameraSpeed * DeltaTime;
     }
 
+    // if 마우스 키 다운이고 다른 클릭이 없다 이면
+    //      마우스 키를 위치를 받아와서
+    //      DeltaPitch Yaw에 저장
 
-    // 뷰 행렬, 투영 행렬 갱신
+    if (FInputSystem::IsMousePressed(EMouseButton::Left))
+    {
+        float DeltaPitch = FInputSystem::GetMouseDeltaY() * MouseSensitivity;
+        float DeltaYaw = FInputSystem::GetMouseDeltaX() * MouseSensitivity;
+        Pitch = Pitch + DeltaPitch;
+        Yaw = Yaw + DeltaYaw;
+        
+        Pitch = FMath::Clamp(Pitch, -89.0f, 89.0f);
+
+        FQuat DeltaQ = FRotator(Pitch, Yaw, 0.0f).Quaternion();
+        FQuat Q = transform.Rotation.Normalize();
+
+        transform.Rotation = Q * DeltaQ;
+    }
+
+
+    
+
+    
+    
+    //FQuat NewQ = DeltaQ * Q;
+    // ;
+
+    // Yaw Pitch 를 입력을 통해 반환
+    // DeltaQ는 입력을 통해 반환한 추가 회전을 쿼터니언으로 변환한 것
+    // Q는 현재 카메라 컴포넌트의 로테이터 정보를 쿼터니언으로 변환한 것
+    // NewQ = DeltaQ * Q
+    // NewQ.ToFRotate -> 이걸 카메라 컴포넌트의 로테이터로 업데이트
+
+
 
 }
 
@@ -83,7 +115,7 @@ FVector UCameraComponent::GetScale()
     return transform.Scale;
 }
 
-FRotator UCameraComponent::GetRotation()
+FQuat UCameraComponent::GetRotation()
 {
     return transform.Rotation;
 }

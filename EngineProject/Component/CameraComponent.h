@@ -22,6 +22,10 @@ public:
 	float FarClipPlane = 10000.0f;
 	bool bisPerspective = true;
 
+	// 입력에 따른 변화량 저장
+	float Pitch = 0.0f;
+	float Yaw = 0.0f;
+
 public:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime) override;
@@ -36,7 +40,7 @@ public:
 
 	FVector GetTransform();
 	FVector GetScale();
-	FRotator GetRotation();
+	FQuat GetRotation();
 
 	FMatrix GetViewMatrix() const;
 	FMatrix GetProjectionMatrix() const;
@@ -44,6 +48,7 @@ public:
 
 private:
 	const float CameraSpeed = 1.0f;
+	const float MouseSensitivity = 0.1f;
 };
 
 //Engine에서 FSceneView 구조체를 가지고 Tick Component에서 업데이트 or ACameraActor에서 업데이트 카메라 가져오는 함수로 엔진의 루프 안에서

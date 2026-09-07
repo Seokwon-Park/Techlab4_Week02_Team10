@@ -6,6 +6,7 @@ using FQuatRegister = FVectorRegister;
 
 struct FVector;
 struct FMatrix;
+struct FRotator;
 
 struct FQuat
 {
@@ -31,6 +32,7 @@ struct FQuat
 	FQuat Normalize() const;
 	FVector RotateVector(const FVector& V) const;
 	FMatrix ToFMatrix() const;
+	FRotator ToFRotator() const;
 
 	/* Static */
 	static FQuat Identity();

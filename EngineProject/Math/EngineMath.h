@@ -7,6 +7,8 @@
 #include "VectorRegister.h"
 #include "MatrixRegister.h"
 
+#define PI 3.141592f
+
 namespace FMath
 {
 	static inline bool IsNearlyZero(float Value, float ErrorTolerance = 1e-4f)
@@ -17,5 +19,12 @@ namespace FMath
 	static inline bool IsNearlyEqual(float Value1, float Value2, float ErrorTolerance = 1e-4f)
 	{
 		return std::abs(Value1 - Value2) <= ErrorTolerance;
+	}
+
+	static inline float Clamp(float Value, float Min, float Max)
+	{
+		if (Value < Min) return Min;
+		if (Value > Max) return Max;
+		return Value;
 	}
 }

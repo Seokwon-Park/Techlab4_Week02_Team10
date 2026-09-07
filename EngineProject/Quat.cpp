@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
 #include "Math/Quat.h"
-
+#include "Rotator.h"
 
 FQuat::FQuat()
 {
@@ -136,6 +136,13 @@ FMatrix FQuat::ToFMatrix() const
 	);
 }
 
+FRotator FQuat::ToFRotator() const
+{
+	FRotator ResultRotator;
+
+	return ResultRotator;
+}
+
 /* Statics */
 
 FQuat FQuat::Identity()
@@ -160,11 +167,11 @@ FQuat FQuat::MakeFromAxisAngle(const FVector& Axis, float AngleRadians)
 	);
 }
 
-FQuat FQuat::MakeFromEuler(float Pitch, float Yaw, float Roll)
+FQuat FQuat::MakeFromEuler(float PitchRadian, float YawRadian, float RollRadian)
 {
-	const float HalfPitch = Pitch * 0.5f;
-	const float HalfYaw = Yaw * 0.5f;
-	const float HalfRoll = Roll * 0.5f;
+	const float HalfPitch = PitchRadian * 0.5f;
+	const float HalfYaw = YawRadian * 0.5f;
+	const float HalfRoll = RollRadian * 0.5f;
 
 	const float SP = sinf(HalfPitch);
 	const float CP = cosf(HalfPitch);
