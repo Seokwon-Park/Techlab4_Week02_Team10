@@ -178,6 +178,7 @@
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Picking.cpp" />
     <ClCompile Include="Quat.cpp" />
+    <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Render\Vertex.cpp" />
     <ClCompile Include="Rotator.cpp" />
