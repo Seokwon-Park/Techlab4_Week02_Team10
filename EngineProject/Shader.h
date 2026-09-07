@@ -1,0 +1,25 @@
+#pragma once
+#include <wrl/client.h>
+#include "Types.h"
+
+class ID3D11VertexShader;
+class ID3D11PixelShader;
+class ID3D11InputLayout;
+
+enum class EShaderType
+{
+	Vertex,
+	Pixel
+};
+
+struct FShader
+{
+	// vs, ps 쌍으로 관리하도록 함
+	
+	// 모든 셰이더 구조체는 ID3D11DeviceChild 의 자식들임
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> VertexShader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> PixelShader;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> InputLayout;
+	 
+	uint32 Stride;
+};

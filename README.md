@@ -1,5 +1,37 @@
 # GAMETECHLAB04 Week02 Team10 Project
 
+## 팀원
+박석원 권성욱 황혜진
+
+## 코딩 규약 (Coding Convention)
+
+### Upper Camel Case
+- Camel Case : 낙타 모양에서 따온 방법으로 첫 글자는 소문자로 시작, 두 번째 단어부터는 대문자로 표현하는 방식으로 많이 사용합니다.
+- Upper Camel Case or Pascal Case : 첫 글자를 대문자로 시작하는 Camel Case
+  
+### 기타 클래스 명명법
+파일 이름에는 접두사 X
+예시) 
+Object.h
+class UObject (O)
+
+UObject.h
+class UObject (X)
+
+- Generic Class 의 접두사 T
+- Structure의 접두사 F
+- Non-Skeleton Mesh - Static Mesh
+- Skeleton Mesh - Skeletal Mesh
+- Effect - Particle
+- 3D Vector - FVector
+- 4D Vector - FVector4
+- 4x4 Matrix - FMatrix
+
+### Object와 Class의 이름은 UE를 따른다.
+- Unreal Engine - Actor, UObject
+- Unity Engine - GameObject, MonoBehaviour
+- CryEngine - Entity
+
 ## 1. 브랜치 구조 및 역할
 
 ### main
@@ -25,7 +57,7 @@
 ## 3. Git 커밋 컨벤션 (Conventional Commits 기반)
 - 커밋 메시지는 제목, 본문, 바닥글 (Footer) 형태로 작성하며, 본문과 바닥글은 선택 사항입니다.
 ```
-<타입>[적용 범위(선택)]: <제목>
+<타입>:<제목>
 
 [본문(선택)]
 
@@ -70,13 +102,6 @@
 ## 5. 이슈(Issue) 템플릿
 1. 기능 제안 (.github/ISSUE_TEMPLATE/feature_request.md)
 ```
----
-name: Feature Request
-about: 새로운 기능 제안
-title: '[FEAT] '
-labels: enhancement
----
-
 ## 🚀 기능 설명
 - 제안하려는 기능에 대해 명확하고 간결하게 설명합니다.
 

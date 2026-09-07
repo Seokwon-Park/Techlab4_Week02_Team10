@@ -1,0 +1,109 @@
+#include "EnginePCH.h"
+
+#include "Engine.h"
+#include "EngineStatics.h"
+#include "EngineTimer.h"
+#include "InputSystem.h"
+
+#include "ObjectFactory.h"
+
+
+
+#include "Component/SceneComponent.h"
+#include "World.h"
+
+#include "Renderer.h"
+#include "Picking.h"
+
+void* operator new(uint64 Size)
+{
+	void* Ptr = malloc(Size);
+	if (!Ptr)
+		throw std::bad_alloc();
+
+	FEngineStatics::TotalAllocationBytes += static_cast<uint64>(Size);
+	FEngineStatics::TotalAllocationCount += 1;
+	return Ptr;
+}
+
+void operator delete(void* Ptr, uint64 Size)
+{
+	FEngineStatics::TotalAllocationBytes -= static_cast<uint64>(Size);
+	FEngineStatics::TotalAllocationCount -= 1;
+	free(Ptr);
+}
+
+bool Engine::Init(HINSTANCE hInstance)
+{
+	// Create Main Window
+	MainWindow = MakeUnique<Window>();
+	if (!MainWindow->Create(hInstance, 1280, 720, L"Engine"))
+	{
+		return false;
+	}
+
+	// Create Renderer
+	Renderer = MakeUnique<FRenderer>();
+	Renderer->Create(MainWindow->GetHandle());
+
+	ImGuiRenderer = MakeUnique<FImGuiRenderer>();
+	ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext());
+
+	EditorUI = MakeUnique<FEditorUI>();
+	ConsolePanel = EditorUI->AddEditorPanel<FConsolePanel>();
+	
+	EditorUI->Init();
+	
+
+	// Do Sth
+	World = new UWorld();
+
+	bIsRunning = true;
+
+	return true;
+}
+
+void Engine::Run()
+{
+	EngineTimer::Init();
+
+	//World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
+
+	LOG(Info, "{}", "Hello, World!");
+	World->SaveScene("A");
+	while (bIsRunning)
+	{
+		EngineTimer::Tick();
+		float DeltaTime = EngineTimer::GetDeltaTime();
+
+		MainWindow->ProcessMessage(bIsRunning);
+		World->Tick(DeltaTime);
+
+		if (FInputSystem::IsKeyPressed(EKeyCode::A))
+		{
+			LOG(Info, "{}", "Hello, World!");
+		}
+
+		TQueue<FRenderPacket> RenderQueue;
+		World->GatherRenderPackets(RenderQueue);
+		FInputSystem::UpdateInputStates();
+
+		Renderer->BeginFrame();
+
+		ImGuiRenderer->Begin();
+
+		ImGui::ShowDemoWindow();
+		EditorUI->OnRender();
+
+		ImGuiRenderer->End();
+
+		FMatrix VP;	// 카메라 VP 행렬
+		Renderer->RenderAll(RenderQueue, VP);
+		Renderer->EndFrame();
+	}
+}
+
+void Engine::Shutdown()
+{
+	Renderer->Shutdown();
+}
