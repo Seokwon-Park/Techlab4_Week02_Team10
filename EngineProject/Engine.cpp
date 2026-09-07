@@ -95,6 +95,7 @@ bool Engine::Init(HINSTANCE hInstance)
 	Shader = Renderer->CreateShader(L"Shader/DefaultShader.hlsl", layout, 2);
 	
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
+	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
 	bIsRunning = true;
 	

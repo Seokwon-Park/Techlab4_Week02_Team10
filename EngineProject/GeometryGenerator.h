@@ -7,7 +7,7 @@ struct FMeshData
 	TArray<FVertex> Vertices;
 	TArray<uint32> Indices;
 
-	void GetAABB(FVector& OutBoxMin, FVector& OutBoxMax)
+	void GetAABB(FVector& OutBoxMin, FVector& OutBoxMax) const
 	{
 		if (Vertices.size() == 0)
 		{
@@ -33,7 +33,7 @@ struct FMeshData
 		OutBoxMax = Max;
 	}
 
-	void GetWorldAABB(FVector& OutBoxMin, FVector& OutBoxMax, const FMatrix& WorldMatrix)
+	void GetWorldAABB(FVector& OutBoxMin, FVector& OutBoxMax, const FMatrix& WorldMatrix) const
 	{
 		FVector BoxMin, BoxMax;
 		GetAABB(BoxMin, BoxMax);

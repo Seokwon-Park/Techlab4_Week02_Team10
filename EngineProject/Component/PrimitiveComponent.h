@@ -4,6 +4,7 @@
 #include "../Shader.h"
 #include "../Mesh.h"
 #include "RenderPacket.h"
+#include "GeometryGenerator.h"
 
 enum class EPrimitiveType
 {
@@ -20,12 +21,16 @@ class UPrimitiveComponent :public USceneComponent
 		REFLECT_END()
 public:
 	
+	void SetMeshData(const FMeshData& data) { MeshData = data; }
 	void SetMeshShader(TSharedPtr<FMesh> InMesh, FShader* InShader) { Mesh = InMesh; Shader = InShader; }
 	void SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue);
+
+	FMeshData GetMeshData() const { return MeshData; }
 
 	EPrimitiveType GetType() const { return Type; }
 protected:
 	EPrimitiveType Type = EPrimitiveType::None;
 	FShader* Shader = nullptr;
 	TSharedPtr<FMesh> Mesh = nullptr;
+	FMeshData MeshData;
 };

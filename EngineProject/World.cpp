@@ -6,6 +6,8 @@
 
 #include "CameraActor.h"
 
+#include "Ray.h"
+
 namespace
 {
 	FString PrimitiveTypeToString(EPrimitiveType Type)
@@ -127,6 +129,51 @@ void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
 		if (Primitive)
 			Primitive->SubmitToRenderQueue(RenderQueue);
 	}
+}
+
+UPrimitiveComponent* UWorld::GetPickingPrimitive()
+{
+	//MainCamera->
+	FRay ray; // = MainCamera->Deprojection();
+	float minT{ FLT_MAX };
+	UPrimitiveComponent* PickingPrimitive = nullptr;
+	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
+	{
+		const FMeshData& mesh = Primitive->GetMeshData();
+
+		FVector BoxMin, BoxMax;
+		mesh.GetWorldAABB(BoxMin, BoxMax, Primitive->GetWorldMatrix());
+		float rayT{};
+
+		if (!RayIntersectsAABB(ray, BoxMin, BoxMax, rayT))
+		{	
+			continue;
+		}
+		// Broad Phase 통과하면 뮐러-트럼보르 알고리즘 수행
+
+		for (uint32 i = 0; i < mesh.Indices.size(); ++i)
+		{
+			uint32 i1 = mesh.Indices[i];
+			uint32 i2 = mesh.Indices[++i];
+			uint32 i3 = mesh.Indices[++i];
+
+			FVector v1 = mesh.Vertices[i1].Position;
+			FVector v2 = mesh.Vertices[i2].Position;
+			FVector v3 = mesh.Vertices[i3].Position;
+
+			if (!RayIntersectsTriangle(ray, v1, v2, v3, rayT))
+			{
+				continue;
+			}
+
+			if (rayT < minT)
+			{
+				PickingPrimitive = Primitive;
+			}
+		}
+	}
+
+	return PickingPrimitive;
 }
 
 
