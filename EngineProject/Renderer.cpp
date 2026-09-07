@@ -246,7 +246,7 @@ void FRenderer::BindBuffer(FMesh* InMesh)
 
 void FRenderer::Draw(int IndexCount)
 {
-	DeviceContext->Draw(IndexCount, 0);
+	DeviceContext->DrawIndexed(IndexCount, 0, 0);
 }
 
 void FRenderer::Prepare()
