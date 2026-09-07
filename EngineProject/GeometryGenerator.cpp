@@ -1,6 +1,146 @@
 #include "EnginePCH.h"
 #include "GeometryGenerator.h"
 
+FMeshData FGeometryGenerator::CreateCone(float Radius, float Height, int Segments, const FVector4& Color)
+{
+	FMeshData ConeMeshData;
+
+	TArray<FVertex>& Vertices = ConeMeshData.Vertices;
+	TArray<uint32>& Indices = ConeMeshData.Indices;
+
+	Vertices.push_back({ {0.0f, 0.0f, Height}, Color });
+
+	float Slice = PI * 2.0f / Segments;
+
+	for (int32 i = 0; i <= Segments; i++)
+	{
+		float angle = i * Slice;
+		float x = -Radius * cosf(angle);
+		float y = -Radius * sinf(angle);
+
+		Vertices.push_back({ {x, y, 0.0f}, Color });
+	}
+
+
+	for (int32 i = 0; i < Segments; i++)
+	{
+		uint32 bottomA = 1 + i;
+		uint32 bottomB = 1 + i + 1;
+
+		Indices.push_back(0); Indices.push_back(bottomA); Indices.push_back(bottomB);
+	}
+
+	uint32 baseIndex = static_cast<uint32>(Vertices.size());
+
+	uint32 bottomCenterIdx = baseIndex;
+	Vertices.push_back({ {0.0f, 0.0f, 0.0f}, Color });
+
+	uint32 bottomRingStart = static_cast<uint32>(Vertices.size());
+	for (int32 i = 0; i <= Segments; i++)
+	{
+		float angle = i * Slice;
+		float x = Radius * cosf(angle);
+		float y = Radius * sinf(angle);
+		Vertices.push_back({ {x, y, 0.0f}, Color });
+	}
+
+	for (int32 i = 0; i < Segments; i++)
+	{
+		Indices.push_back(bottomCenterIdx);
+		Indices.push_back(bottomRingStart + i + 1);
+		Indices.push_back(bottomRingStart + i);
+	}
+
+	return ConeMeshData;
+}
+
+FMeshData FGeometryGenerator::CreateCylinder(float Radius, float Height, int Segments, const FVector4& Color)
+{
+	FMeshData CylinderMeshData;
+
+	TArray<FVertex>& Vertices = CylinderMeshData.Vertices;
+	TArray<uint32>& Indices = CylinderMeshData.Indices;
+
+	float Slice = PI * 2.0f / Segments;
+	float HalfHeight = Height / 2.0f;
+
+	for (uint32 i = 0; i <= Segments; i++)
+	{
+		float angle = i * Slice;
+		float x = -Radius * cosf(angle);
+		float y = -Radius * sinf(angle);
+
+		Vertices.push_back({ {x, y, -HalfHeight}, Color });
+		Vertices.push_back({ {x, y,  HalfHeight}, Color });
+	}
+
+	for (uint32 i = 0; i < Segments; i++)
+	{
+		uint32 bottomA = i * 2;
+		uint32 topA = i * 2 + 1;
+		uint32 bottomB = (i + 1) * 2;
+		uint32 topB = (i + 1) * 2 + 1;
+
+		Indices.push_back(bottomA); Indices.push_back(bottomB); Indices.push_back(topA);
+		Indices.push_back(topA);    Indices.push_back(bottomB); Indices.push_back(topB);
+	}
+
+	uint32 baseIndex = static_cast<uint32>(Vertices.size());
+
+	uint32 bottomCenterIdx = baseIndex;
+	Vertices.push_back({ {0.0f, 0.0f, -HalfHeight}, Color });
+
+	uint32 topCenterIdx = baseIndex + 1;
+	Vertices.push_back({ {0.0f, 0.0f, HalfHeight}, Color });
+
+	uint32 bottomRingStart = static_cast<uint32>(Vertices.size());
+	for (uint32 i = 0; i <= Segments; i++)
+	{
+		float angle = i * Slice;
+		float x = Radius * cosf(angle);
+		float y = Radius * sinf(angle);
+		Vertices.push_back({ {x, y, -HalfHeight}, Color });
+	}
+
+	uint32 topRingStart = static_cast<uint32>(Vertices.size());
+	for (uint32 i = 0; i <= Segments; i++)
+	{
+		float angle = i * Slice;
+		float x = Radius * cosf(angle);
+		float y = Radius * sinf(angle);
+		Vertices.push_back({ {x, y, HalfHeight}, Color });
+	}
+
+	for (uint32 i = 0; i < Segments; i++)
+	{
+		Indices.push_back(bottomCenterIdx);
+		Indices.push_back(bottomRingStart + i);
+		Indices.push_back(bottomRingStart + i + 1);
+	}
+
+	for (uint32 i = 0; i < Segments; i++)
+	{
+		Indices.push_back(topCenterIdx);
+		Indices.push_back(topRingStart + i + 1);
+		Indices.push_back(topRingStart + i);
+	}
+
+	return CylinderMeshData;
+}
+
+FMeshData FGeometryGenerator::CreateArrow(float BodyRadius, float BodyHeight, float HeadRadius, float HeadHeight, int Segments, const FVector4& Color)
+{
+
+	FMeshData Arrow = CreateCylinder(BodyRadius, BodyHeight, Segments, Color);
+	Arrow.Translate(FVector(0.0f, 0.0f, BodyHeight * 0.5f));   // 밑면을 0으로
+
+	FMeshData Head = CreateCone(HeadRadius, HeadHeight, Segments, Color);
+	Head.Translate(FVector(0.0f, 0.0f, BodyHeight));
+
+	Arrow.Append(Head);
+	return Arrow;
+}
+
 FMeshData FGeometryGenerator::CreateCube(float Size, const FVector4& Color)
 {
 	float HalfWidth = Size / 2.0f;
@@ -76,42 +216,53 @@ FMeshData FGeometryGenerator::CreateCube(float Size, const FVector4& Color)
 	return CubeMeshData;
 }
 
-FMeshData FGeometryGenerator::CreateSphere(float Radius, uint32 NumSlices, uint32 NumStacks)
+FMeshData FGeometryGenerator::CreateSphere(float Radius, uint32 NumSlices, uint32 NumStacks, const FVector4& Color)
 {
 	FMeshData SphereMeshData;
 
-	//const float SliceStep = FMath::PI*2 / NumSlices; // 대충 케이크 자르기 생각하면 됨. 몇조각으로 자를꺼냐? 근데 모양은 구체임 ㅋ
-	//const float StackStep = FMath::PI / NumStacks; // 케이크 빵을 몇겹으로 할꺼냐? 근데 모양은 구체임 ㅋ
+	const float SliceStep = PI * 2.0f / NumSlices;
+	const float StackStep = PI / NumStacks;
 
-	//for (uint32 i = 0; i <= NumStacks; i++)
-	//{
-	//	FVector(0.0f - Radius, 0.0f, 0.0f)
-	//	FVector StackStartPoint = Math::RotateZ(Vector3(0.0f, -_radius, 0.0f), i * stackStep);
-	//	for (UInt32 j = 0; j <= _numSlices; j++)
-	//	{
-	//		Vertex vertex;
-	//		vertex.position = Math::RotateY(StackStartPoint, j * -sectorStep);
-	//		vertex.normal = vertex.position;
-	//		vertex.normal = Vector3::Normalized(vertex.normal);
-	//		vertex.texCoord = Vector2(Float32(i) / _numSlices, 1.0f - Float32(j) / _numStacks);
+	// i = 0 → +Z 극, i = NumStacks → -Z 극
+	for (uint32 i = 0; i <= NumStacks; i++)
+	{
+		const float Phi = i * StackStep;        // 0 ~ PI, +Z에서 내려감
+		const float z = Radius * cosf(Phi);   // Z-up
+		const float r = Radius * sinf(Phi);   // 해당 높이에서의 원 반지름
 
-	//		SphereMeshData.vertices.push_back(vertex);
-	//	}
-	//}
+		for (uint32 j = 0; j <= NumSlices; j++)
+		{
+			const float Theta = j * SliceStep;
 
-	//for (UInt32 i = 0; i < _numStacks; i++)
-	//{
-	//	const int offset = (_numSlices + 1) * i; // 1줄에 numSlices보다 1개 더있음 왜냐하면 원래 있던 점을 넣어야 되기 때문에
-	//	for (UInt32 j = 0; j < _numSlices; j++)
-	//	{
-	//		SphereMeshData.indices.push_back(offset + j);
-	//		SphereMeshData.indices.push_back(offset + _numSlices + 1 + j);
-	//		SphereMeshData.indices.push_back(offset + _numSlices + 1 + j + 1);
+			FVertex vertex;
+			vertex.Position = FVector(r * cosf(Theta), r * sinf(Theta), z);
+			vertex.Color = Color;
+			// vertex.Normal = Normalize(vertex.Position);
+			// vertex.UV     = FVector2(float(j) / NumSlices, float(i) / NumStacks);
 
-	//		SphereMeshData.indices.push_back(offset + j);
-	//		SphereMeshData.indices.push_back(offset + _numSlices + 1 + j + 1);
-	//		SphereMeshData.indices.push_back(offset + j + 1);
-	//	}
-	//}
+			SphereMeshData.Vertices.push_back(vertex);
+		}
+	}
+
+	for (uint32 i = 0; i < NumStacks; i++)
+	{
+		const uint32 offset = (NumSlices + 1) * i;
+		for (uint32 j = 0; j < NumSlices; j++)
+		{
+			const uint32 TopL = offset + j;
+			const uint32 TopR = offset + j + 1;
+			const uint32 BotL = offset + NumSlices + 1 + j;
+			const uint32 BotR = offset + NumSlices + 1 + j + 1;
+
+			// CW (바깥에서 봤을 때)
+			SphereMeshData.Indices.push_back(TopL);
+			SphereMeshData.Indices.push_back(BotL);
+			SphereMeshData.Indices.push_back(BotR);
+
+			SphereMeshData.Indices.push_back(TopL);
+			SphereMeshData.Indices.push_back(BotR);
+			SphereMeshData.Indices.push_back(TopR);
+		}
+	}
 	return SphereMeshData;
 }

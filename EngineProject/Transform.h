@@ -10,6 +10,9 @@ struct FTransform
 
 	static FTransform Identity;
 
+    FMatrix GetWorldMatrix() const;
+
+
 	FVector Location = FVector(0, 0, 0);
 	FVector Scale = FVector(1, 1, 1);
 	FRotator Rotation = FRotator(0, 0, 0);

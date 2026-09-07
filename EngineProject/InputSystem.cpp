@@ -73,20 +73,18 @@ void FInputSystem::OnMouseDown(EMouseButton MouseButton)
 void FInputSystem::OnMouseMove(int32 x, int32 y)
 {
     MouseX = x;
-    MouseY = y;
-
-    DeltaX = PrevMouseX - MouseX;
-    DeltaY = PrevMouseY - MouseY;
-
-    PrevMouseX = MouseX;
-    PrevMouseY = MouseY;
+    MouseY = y;    
 }
 
 void FInputSystem::UpdateInputStates()
 {
     std::memcpy(bPrevKeyStates, bKeyStates, sizeof(bKeyStates));
     std::memcpy(bPrevMouseStates, bMouseStates, sizeof(bMouseStates));
-
     
+    DeltaX = PrevMouseX - MouseX;
+    DeltaY = PrevMouseY - MouseY;
+
+    PrevMouseX = MouseX;
+    PrevMouseY = MouseY;
 }
 

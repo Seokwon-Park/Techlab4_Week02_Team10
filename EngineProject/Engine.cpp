@@ -51,6 +51,12 @@ bool Engine::Init(HINSTANCE hInstance)
 	ImGuiRenderer = MakeUnique<FImGuiRenderer>();
 	ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext());
 
+	GridRenderer = MakeUnique<FGridRenderer>();
+	GridRenderer->Init(Renderer.get());
+
+	GizmoRenderer = MakeUnique<FGizmoRenderer>();
+	GizmoRenderer->Init(Renderer.get());
+
 	EditorUI = MakeUnique<FEditorUI>();
 	ConsolePanel = EditorUI->AddEditorPanel<FConsolePanel>();
 	// PropertyPanel Add
@@ -66,8 +72,11 @@ bool Engine::Init(HINSTANCE hInstance)
 	Actor->AddPrimitiveComponent(EPrimitiveType::Cube);
 
 	FMeshData Data = FGeometryGenerator::CreateCube(1.0f);
-	vb = Renderer->CreateVertexBuffer(Data.Vertices.data(), sizeof(FVertex) * (UINT)Data.Vertices.size());
-	ib = Renderer->CreateIndexBuffer(Data.Indices.data(), sizeof(uint32) * (UINT)Data.Indices.size());
+	//FMeshData Data = FGeometryGenerator::CreateCylinder(1.0f, 3.0f, 20, FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	//FMeshData Data = FGeometryGenerator::CreateCone(1.0f, 3.0f, 20, FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	//FMeshData Data = FGeometryGenerator::CreateArrow(0.1f, 1.0f, 0.2f, 0.5f, 20, FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	vb = Renderer->CreateVertexBuffer(Data.Vertices.data(), sizeof(FVertex) * (UINT)Data.Vertices.size(), sizeof(FVertex));
+	ib = Renderer->CreateIndexBuffer(Data.Indices.data(), Data.Indices.size());
 
 	//TArray<FVertex> Vertices =
 	//{
@@ -84,8 +93,6 @@ bool Engine::Init(HINSTANCE hInstance)
 	Mesh = MakeShared<FMesh>();
 	Mesh->VertexBuffer = vb;
 	Mesh->IndexBuffer = ib;
-	Mesh->NumVertices = 24;
-	Mesh->VertexStride = sizeof(FVertex);
 
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
@@ -98,14 +105,13 @@ bool Engine::Init(HINSTANCE hInstance)
 	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
 	bIsRunning = true;
-	
+
 	return true;
 }
 
 void Engine::Run()
 {
 	EngineTimer::Init();
-
 	//World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
 
 	LOG(Info, "{}", "Hello, World!");
@@ -133,16 +139,16 @@ void Engine::Run()
 
 		Renderer->BeginFrame();
 
-		//Renderer->BindShader(Shader);
+		Renderer->BindShader(Shader);
+		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();
 		//Renderer->BindBuffer(Mesh.get());
+		GridRenderer->OnRender(Mat, VP);
+		GizmoRenderer->OnRender(VP);
 
 		//FTransform transform;
 		//World->GetMainCamera()->GetCameraComponent()->SetTransform(FVector(-1.0f, 0.0f, 0.0f));
-		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();
 		//Renderer->UpdateConstantBuffer(VP);
 		//Renderer->Draw(36);
-
-
 
 		Renderer->RenderAll(RenderQueue, VP);
 
@@ -154,7 +160,7 @@ void Engine::Run()
 		ImGuiRenderer->End();
 
 
-		
+
 		Renderer->EndFrame();
 	}
 }

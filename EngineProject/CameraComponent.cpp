@@ -44,11 +44,11 @@ void UCameraComponent::TickComponent(float DeltaTime)
         float DeltaPitch = FInputSystem::GetMouseDeltaY() * MouseSensitivity;
         float DeltaYaw = FInputSystem::GetMouseDeltaX() * MouseSensitivity;
 
-        FQuat DeltaQ = FRotator(DeltaPitch, DeltaYaw, 0.0f).Quaternion();
+        FQuat DeltaQ = FRotator(0.0f, DeltaPitch, DeltaYaw).Quaternion();
         FQuat Q = transform.Rotation.Quaternion().Normalize();
         FQuat Result = Q * DeltaQ;
 
-        transform.Rotation = Result.ToFRotator(); ;
+        transform.Rotation = Result.ToFRotator();;
     }
     
     //FQuat NewQ = DeltaQ * Q;

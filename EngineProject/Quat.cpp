@@ -213,7 +213,7 @@ FQuat FQuat::MakeFromAxisAngle(const FVector& Axis, float AngleRadians)
 	);
 }
 
-FQuat FQuat::MakeFromEuler(float PitchRadian, float YawRadian, float RollRadian)
+FQuat FQuat::MakeFromEuler(float RollRadian, float PitchRadian, float YawRadian)
 {
 	const float HalfPitch = PitchRadian * 0.5f;
 	const float HalfYaw = YawRadian * 0.5f;
