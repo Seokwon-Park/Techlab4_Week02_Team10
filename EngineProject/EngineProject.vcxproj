@@ -153,7 +153,6 @@
     <ClCompile Include="Editor\ConsolePanel.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Editor\GridRenderer.cpp" />
-    <ClCompile Include="Editor\PropertyPanel.cpp" />
     <ClCompile Include="Engine.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -224,7 +223,6 @@
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="Editor\GridRenderer.h" />
     <ClInclude Include="Editor\GuizmoRenderer.h" />
-    <ClInclude Include="Editor\PropertyPanel.h" />
     <ClInclude Include="EngineLog.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="ImGuiRenderer.h" />
