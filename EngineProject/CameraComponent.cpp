@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Component/CameraComponent.h"
 #include "InputSystem.h"
+#include "Ray.h"
 
 //UCameraComponent::UCameraComponent()
 //{
@@ -133,7 +134,7 @@ FRotator UCameraComponent::GetRotation()
     return transform.Rotation;
 }
 
-FVector UCameraComponent::DeProjection(int32 MouseX, int32 MouseY)
+FRay UCameraComponent::DeProjection(int32 MouseX, int32 MouseY)
 {
     FVector COP = transform.Location;
 
@@ -150,11 +151,11 @@ FVector UCameraComponent::DeProjection(int32 MouseX, int32 MouseY)
     FVector4 WorldPoint = CameraPoint * GetViewMatrix().Inverse();
     WorldPoint /= WorldPoint.W;
 
-    FVector RayOrigin = transform.Location;
+    FRay ray;
+    ray.Origin = transform.Location;
+    ray.Direction = (FVector(WorldPoint.X, WorldPoint.Y, WorldPoint.Z) - ray.Origin).Normalize();
 
-    FVector4 RayDirection = (FVector(WorldPoint.X, WorldPoint.Y, WorldPoint.Z) - RayOrigin).Normalize();
-
-    return FVector(RayDirection.X, RayDirection.Y, RayDirection.Z);
+    return ray;
 }
 
 FMatrix UCameraComponent::GetViewMatrix() const

@@ -4,6 +4,8 @@
 #include "../Math/EngineMath.h"
 #include "../Rotator.h"
 
+struct FRay;
+
 class UCameraComponent : public USceneComponent
 {
 	DECLARE_CLASS(UCameraComponent, USceneComponent)
@@ -41,7 +43,7 @@ public:
 	FVector GetScale();
 	FRotator GetRotation();
 
-	FVector DeProjection(int32 MouseX, int32 MouseY);
+	FRay DeProjection(int32 MouseX, int32 MouseY);
 
 	FMatrix GetViewMatrix() const;
 	FMatrix GetOrthogonalMatrix() const;
