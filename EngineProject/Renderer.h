@@ -54,6 +54,7 @@ public:
 	void BindIndexBuffer(FIndexBuffer* IndexBuffer);
 	void BindConstantBuffer(uint32 Slot, FConstantBuffer* ConstantBuffer, EShaderBindFlagBits FlagBits = None);
 	void SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY Topology);
+	void SetDepthStencilEnabled(bool bEnabled);
 	void BindShader(FShader* InShader);
 	void BindMesh(FMesh* InMesh);
 	void DrawIndexed(uint32 IndexCount);
@@ -81,6 +82,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> FrameBufferDSV;
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> DepthStencilState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> DepthDisabledState;
 
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> RasterizerState;
 
