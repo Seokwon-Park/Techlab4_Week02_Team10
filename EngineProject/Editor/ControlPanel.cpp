@@ -18,9 +18,9 @@ void FControlPanel::AddActor(EPrimitiveType Type)
 	Actor->AddPrimitiveComponent(Type);
 
 	UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Actor->GetPrimitiveComponent());
-
+	FMeshData Data = FGeometryGenerator::CreateCube(1.0f);
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
-	Actor->GetPrimitiveComponent()->SetMeshData(Primitive->GetMeshData());
+	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
 	ActorNum++;
 }

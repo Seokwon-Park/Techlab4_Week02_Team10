@@ -92,8 +92,8 @@ private:
 	Microsoft::WRL::ComPtr <ID3D11Buffer> ConstantBuffer;
 	D3D11_VIEWPORT ViewportInfo;
 
+	uint32 Width;
+	uint32 Height;
+
 	FLOAT ClearColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f };
 };
-
-extern uint32 Width;
-extern uint32 Height;

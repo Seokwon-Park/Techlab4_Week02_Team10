@@ -116,6 +116,7 @@ bool Engine::Init(HINSTANCE hInstance)
 	ControlPanel->FControlPanel::World = World;
 	ControlPanel->FControlPanel::Mesh = Mesh;
 	ControlPanel->FControlPanel::Shader = Shader.get();
+
 	bIsRunning = true;
 
 	return true;
@@ -138,6 +139,12 @@ void Engine::Run()
 		float DeltaTime = EngineTimer::GetDeltaTime();
 		ControlPanel->FControlPanel::DeltaTime = DeltaTime;
 		MainWindow->ProcessMessage(bIsRunning);
+		if (MainWindow->CheckResized())
+		{
+			Renderer->Resize(MainWindow->GetWidth(), MainWindow->GetHeight());
+			World->GetMainCamera()->GetCameraComponent()->SetAspectRatio((float)MainWindow->GetWidth() / MainWindow->GetHeight());
+		}
+
 		World->Tick(DeltaTime);
 
 		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();
@@ -200,4 +207,9 @@ void Engine::Shutdown()
 {
 	delete World;
 	Renderer->Shutdown();
+}
+
+void Engine::OnWindowResized(uint32 Width, uint32 Height)
+{
+	bIsResized = true;
 }

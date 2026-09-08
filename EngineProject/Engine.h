@@ -25,8 +25,12 @@ public:
 
 	static FConsolePanel* GetConsolePanel() { return ConsolePanel; }
 
+	void OnWindowResized(uint32 Width, uint32 Height);
+
 private:
 	bool bIsRunning = false;
+	bool bIsResized = false;
+	
 	TUniquePtr<Window> MainWindow;
 
 	UWorld* World;
