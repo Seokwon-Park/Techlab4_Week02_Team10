@@ -346,7 +346,6 @@ void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
 
 UPrimitiveComponent* UWorld::GetPickingPrimitive()
 {
-	//MainCamera->
 	FRay ray = MainCamera->GetCameraComponent()->DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
 
 	float minT{ FLT_MAX };

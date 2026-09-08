@@ -20,12 +20,14 @@ class UPrimitiveComponent :public USceneComponent
 	REFLECT_START(ClassName)
 		REFLECT_END()
 public:
-	
+	virtual void BeginPlay() override;
+
 	void SetMeshData(const FMeshData& data) { MeshData = data; }
 	void SetMeshShader(TSharedPtr<FMesh> InMesh, FShader* InShader) { Mesh = InMesh; Shader = InShader; }
 	void SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue);
 
 	FMeshData GetMeshData() const { return MeshData; }
+	void SetMeshData(FMesh* InMesh);
 	TSharedPtr<FMesh> GetMesh() const { return Mesh; };
 	FShader* GetShader() const { return Shader; };
 
