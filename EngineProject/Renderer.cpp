@@ -6,9 +6,11 @@
 void FRenderer::BeginFrame()
 {
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV.Get(), ClearColor);
-	DeviceContext->ClearDepthStencilView(FrameBufferDSV.Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+	DeviceContext->ClearDepthStencilView(FrameBufferDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), FrameBufferDSV.Get());
 	DeviceContext->RSSetViewports(1, &ViewportInfo);
+	//DeviceContext->RSSetState(RasterizerState.Get());
+
 }
 
 void FRenderer::EndFrame()
@@ -48,7 +50,7 @@ void FRenderer::CreateDeviceAndSwapChain(HWND hWindow)
 	SwapChainDesc.BufferDesc.Width = 0;
 	SwapChainDesc.BufferDesc.Height = 0;
 
-	SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; 
+	SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	SwapChainDesc.SampleDesc.Count = 1;
 	SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	SwapChainDesc.BufferCount = 2;
@@ -86,7 +88,7 @@ void FRenderer::CreateRasterizerState()
 
 void FRenderer::CreateDepthStencilBufferAndState()
 {
-	D3D11_TEXTURE2D_DESC DepthDesc;
+	D3D11_TEXTURE2D_DESC DepthDesc{};
 
 	DepthDesc.Width = ViewportInfo.Width;
 	DepthDesc.Height = ViewportInfo.Height;
@@ -104,12 +106,12 @@ void FRenderer::CreateDepthStencilBufferAndState()
 
 	Device->CreateDepthStencilView(DepthStencilBuffer.Get(), nullptr, FrameBufferDSV.GetAddressOf());
 
-	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc;
+	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc{};
 
 	// Depth test Paramiter
 	DepthStencilDesc.DepthEnable = true;
 	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER;
+	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 
 	// Stencil test Paramiter
 	DepthStencilDesc.StencilEnable = false;
@@ -142,34 +144,39 @@ ID3D11DeviceContext* FRenderer::GetDeviceContext()
 }
 
 
-FShader* FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize)
+TSharedPtr<FShader> FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize)
 {
-	FShader* shader = new FShader;
+
+	TSharedPtr<FShader> Shader = MakeShared<FShader>();
 
 	ID3DBlob* VertexShaderCSO;
-
 	ID3DBlob* ErrorBlob;
 	HRESULT hr = D3DCompileFromFile(FileName, nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorBlob);
-	
-	Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, shader->VertexShader.GetAddressOf());
+
+	Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, Shader->VertexShader.GetAddressOf());
 
 	ID3DBlob* PixelShaderCSO;
 	D3DCompileFromFile(FileName, nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
-	Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, shader->PixelShader.GetAddressOf());
+	Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, Shader->PixelShader.GetAddressOf());
 
 	hr = Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
-		VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(shader->InputLayout));
+		VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(Shader->InputLayout));
 
 	VertexShaderCSO->Release();
 	PixelShaderCSO->Release();
 
-	return shader;
+	return Shader;
+}
+
+TSharedPtr<FMesh> FRenderer::CreateMesh(const FMeshData& InMeshData)
+{
+	return TSharedPtr<FMesh>();
 }
 
 TSharedPtr<FMesh> FRenderer::CreateMesh(TSharedPtr<FVertexBuffer> VertexBuffer, TSharedPtr<FIndexBuffer> IndexBuffer)
 {
 	TSharedPtr<FMesh> Mesh = MakeShared<FMesh>();
-	
+
 	Mesh->VertexBuffer = VertexBuffer;
 	Mesh->IndexBuffer = IndexBuffer;
 
@@ -189,6 +196,23 @@ TSharedPtr<FIndexBuffer> FRenderer::CreateIndexBuffer(const uint32* InIndices, u
 	TSharedPtr<FIndexBuffer> Buffer = MakeShared<FIndexBuffer>(Device.Get(), InIndices, IndexCount);
 
 	return Buffer;
+}
+
+TSharedPtr<FConstantBuffer> FRenderer::CreateConstantBuffer(uint32 BufferSize)
+{
+	TSharedPtr<FConstantBuffer> Buffer = MakeShared<FConstantBuffer>(Device.Get(), BufferSize);
+
+	return Buffer;
+}
+
+void FRenderer::UpdateConstantBufferData(FConstantBuffer* InBuffer, const void* Data, uint32 DataSize)
+{
+	ID3D11Buffer* Buffer = InBuffer->GetBuffer();
+
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	DeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	std::memcpy(MappedResource.pData, Data, DataSize);
+	DeviceContext->Unmap(Buffer, 0);
 }
 
 void FRenderer::UpdateConstantBuffer(const FMatrix& MVP)
@@ -221,6 +245,16 @@ void FRenderer::BindIndexBuffer(FIndexBuffer* IndexBuffer)
 	DeviceContext->IASetIndexBuffer(IndexBuffer->GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 }
 
+void FRenderer::BindConstantBuffer(uint32 Slot, FConstantBuffer* ConstantBuffer, EShaderBindFlagBits FlagBits)
+{
+	ID3D11Buffer* Buffer = ConstantBuffer->GetBuffer();
+	if (FlagBits & EShaderBindFlagBits::Vertex)
+		DeviceContext->VSSetConstantBuffers(Slot, 1, &Buffer);
+	if (FlagBits & EShaderBindFlagBits::Pixel)
+		DeviceContext->PSSetConstantBuffers(Slot, 1, &Buffer);
+}
+
+
 void FRenderer::SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY Topology)
 {
 	DeviceContext->IASetPrimitiveTopology(Topology);
@@ -239,22 +273,21 @@ void FRenderer::BindMesh(FMesh* InMesh)
 	BindIndexBuffer(InMesh->IndexBuffer.get());
 }
 
-void FRenderer::DrawIndexed(int IndexCount)
+void FRenderer::DrawIndexed(uint32 IndexCount)
 {
-	DeviceContext->OMSetDepthStencilState(DepthStencilState.Get(), 1);
 	DeviceContext->DrawIndexed(IndexCount, 0, 0);
 }
 
-void FRenderer::Prepare()
-{
-	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), nullptr);
-	DeviceContext->RSSetViewports(1, &ViewportInfo);
-	DeviceContext->RSSetState(RasterizerState.Get());
-	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
-
-
-}
+//void FRenderer::Prepare()
+//{
+//	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+//	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), nullptr);
+//	DeviceContext->RSSetViewports(1, &ViewportInfo);
+//	DeviceContext->RSSetState(RasterizerState.Get());
+//	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
+//
+//
+//}
 
 
 void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)

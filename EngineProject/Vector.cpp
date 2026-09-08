@@ -71,7 +71,7 @@ float& FVector::Component(int32 index)
 	assert(index >= 0 && index <= 2);
 	if (index == 0) return X;
 	if (index == 1) return Y;
-	if (index == 2) return Z; 
+	if (index == 2) return Z;
 	return X;					// 예외의 경우에서 X를 반환 (임시)
 }
 
@@ -101,7 +101,7 @@ float FVector::Dot(const FVector& V1) const
 
 FVector FVector::Cross(const FVector& V1) const
 {
-	return FVector(Y*V1.Z - Z*V1.Y, Z*V1.X - X*V1.Z, X*V1.Y - Y * V1.X);
+	return FVector(Y * V1.Z - Z * V1.Y, Z * V1.X - X * V1.Z, X * V1.Y - Y * V1.X);
 }
 
 FVector FVector::GetAbs() const {
@@ -117,6 +117,11 @@ FVector FVector::GetAbs() const {
 /* Operator */
 
 FVector FVector::operator - ()
+{
+	return FVector(-X, -Y, -Z);
+}
+
+FVector FVector::operator-() const
 {
 	return FVector(-X, -Y, -Z);
 }
@@ -202,7 +207,7 @@ FVector& FVector::operator /= (const FVector& V1)
 	X *= InvX;
 	Y *= InvY;
 	Z *= InvZ;
-	
+
 	return *this;
 }
 
@@ -243,7 +248,7 @@ float& FVector::operator[] (int32 Index)
 }
 
 /* Global Operator */
-std::ostream& operator << (std::ostream & OS, const FVector& V)
+std::ostream& operator << (std::ostream& OS, const FVector& V)
 {
 	OS << "(" << V.X << ", " << V.Y << ", " << V.Z << ")";
 	return OS;

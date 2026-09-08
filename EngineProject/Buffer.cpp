@@ -32,3 +32,19 @@ FVertexBuffer::FVertexBuffer(ID3D11Device* Device, const void* Vertices, uint32 
 
 	HRESULT hr = Device->CreateBuffer(&Desc, &Data, Buffer.GetAddressOf());
 }
+
+FConstantBuffer::FConstantBuffer(ID3D11Device* Device, uint32 Size)
+{
+	D3D11_BUFFER_DESC Desc = {};
+	Desc.ByteWidth = Size;
+	Desc.Usage = D3D11_USAGE_DYNAMIC;
+	Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	HRESULT hr = Device->CreateBuffer(&Desc, nullptr, Buffer.GetAddressOf());
+}
+
+void FConstantBuffer::UpdateData(const void* InData)
+{
+	
+}

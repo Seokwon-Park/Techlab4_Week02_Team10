@@ -141,6 +141,67 @@ FMeshData FGeometryGenerator::CreateArrow(float BodyRadius, float BodyHeight, fl
 	return Arrow;
 }
 
+FMeshData FGeometryGenerator::CreateScaleBar(float BodyRadius, float BodyLength, float HeadSize, float Segments, const FVector4& Color)
+{
+	FMeshData Arrow = CreateCylinder(BodyRadius, BodyLength, Segments, Color);
+	Arrow.Translate(FVector(0.0f, 0.0f, BodyLength * 0.5f));   // 밑면을 0으로
+
+	FMeshData Head = CreateCube(HeadSize, Color);
+	Head.Translate(FVector(0.0f, 0.0f, BodyLength + HeadSize * 0.5f));
+
+	Arrow.Append(Head);
+	return Arrow;
+}
+
+FMeshData FGeometryGenerator::CreateRing(float Radius, float TubeRadius, int Segments, int TubeSegments, const FVector4& Color)
+{
+	FMeshData Data;
+
+	// 정점 생성
+	for (int i = 0; i <= Segments; ++i)
+	{
+		float theta = (float)i * 2.0f * PI / Segments;   // 큰 원을 도는 각도
+		float cosTheta = cosf(theta);
+		float sinTheta = sinf(theta);
+
+		for (int j = 0; j <= TubeSegments; ++j)
+		{
+			float phi = (float)j  * 2.0f * PI / TubeSegments;   // 단면 원을 도는 각도
+			float cosPhi = cosf(phi);
+			float sinPhi = sinf(phi);
+
+			FVertex v;
+			v.Position.X = (Radius + TubeRadius * cosPhi) * cosTheta;
+			v.Position.Y = (Radius + TubeRadius * cosPhi) * sinTheta;
+			v.Position.Z = TubeRadius * sinPhi;
+			v.Color = Color;
+			Data.Vertices.push_back(v);
+		}
+	}
+
+	int stride = TubeSegments + 1;
+	for (int i = 0; i < Segments; ++i)
+	{
+		for (int j = 0; j < TubeSegments; ++j)
+		{
+			int a = i * stride + j;
+			int b = a + 1;
+			int c = (i + 1) * stride + j;
+			int d = c + 1;
+
+			Data.Indices.push_back(a);
+			Data.Indices.push_back(c);
+			Data.Indices.push_back(b);
+
+			Data.Indices.push_back(b);
+			Data.Indices.push_back(c);
+			Data.Indices.push_back(d);
+		}
+	}
+
+	return Data;
+}
+
 FMeshData FGeometryGenerator::CreateCube(float Size, const FVector4& Color)
 {
 	float HalfWidth = Size / 2.0f;

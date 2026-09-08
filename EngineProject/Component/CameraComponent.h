@@ -39,9 +39,9 @@ public:
 
 	float* GetFOV();
 
-	FVector GetLocation();
-	FVector GetScale();
-	FRotator GetRotation();
+	FVector GetLocation() const;
+	FVector GetScale() const;
+	FRotator GetRotation() const;
 
 	FRay DeProjection(int32 MouseX, int32 MouseY);
 

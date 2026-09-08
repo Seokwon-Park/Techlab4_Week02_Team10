@@ -23,7 +23,7 @@ public:
 
 	UPrimitiveComponent* GetPrimitiveComponent() const { return Cast<UPrimitiveComponent>(Root); }
 	void AddPrimitiveComponent(EPrimitiveType Type);
-
+	void SetRootComponent(USceneComponent* SceneComponent);
 	USceneComponent* GetRootComponent();
 
 	friend class UWorld;
