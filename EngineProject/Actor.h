@@ -21,8 +21,10 @@ public:
 
 	UWorld* GetWorld() const { return World; }
 
-	UPrimitiveComponent* GetPrimitiveComponent() const { return Primitive; }
+	UPrimitiveComponent* GetPrimitiveComponent() const { return Cast<UPrimitiveComponent>(Root); }
 	void AddPrimitiveComponent(EPrimitiveType Type);
+
+	USceneComponent* GetRootComponent();
 
 	friend class UWorld;
 protected:
@@ -34,5 +36,5 @@ private:
 	USceneComponent* Root = nullptr;
 
 	// 임시
-	UPrimitiveComponent* Primitive = nullptr;
+	//UPrimitiveComponent* Primitive = nullptr;
 };

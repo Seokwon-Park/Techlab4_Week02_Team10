@@ -14,7 +14,7 @@ AActor::AActor()
 
 void AActor::BeginPlay()
 {
-	World->AddPrimitive(Primitive);
+	World->AddPrimitive(Cast<UPrimitiveComponent>(Root));
 }
 
 void AActor::Tick(float DeltaTime)
@@ -30,13 +30,18 @@ void AActor::AddPrimitiveComponent(EPrimitiveType Type)
 	switch (Type)
 	{
 	case EPrimitiveType::Sphere:
-		Primitive = FObjectFactory::ConstructObject<USphereComponent>();
+		Root = FObjectFactory::ConstructObject<USphereComponent>();
 		break;
 	case EPrimitiveType::Cube:
-		Primitive = FObjectFactory::ConstructObject<UCubeComponent>();
+		Root = FObjectFactory::ConstructObject<UCubeComponent>();
 		break;
 	default:
 		break;
 	}
-	Components.push_back(Primitive);
+	Components.push_back(Root);
+}
+
+USceneComponent* AActor::GetRootComponent()
+{
+	return Root;
 }

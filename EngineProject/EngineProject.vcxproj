@@ -144,36 +144,18 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Actor.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="CameraActor.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="CameraComponent.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Class.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Component\CubeComponent.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Component\PrimitiveComponent.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Editor\ConsolePanel.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Editor\EditorUI.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Editor\GizmoRenderer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Editor\GridRenderer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="CameraActor.cpp" />
+    <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="Class.cpp" />
+    <ClCompile Include="Component\CubeComponent.cpp" />
+    <ClCompile Include="Component\PrimitiveComponent.cpp" />
+    <ClCompile Include="Editor\ConsolePanel.cpp" />
+    <ClCompile Include="Editor\ControlPanel.cpp" />
+    <ClCompile Include="Editor\EditorUI.cpp" />
+    <ClCompile Include="Editor\GizmoRenderer.cpp" />
+    <ClCompile Include="Editor\GridRenderer.cpp" />
+    <ClCompile Include="Editor\PropertyPanel.cpp" />
     <ClCompile Include="Engine.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -282,10 +264,12 @@
     <ClInclude Include="Component\ActorComponent.h" />
     <ClInclude Include="Component\CameraComponent.h" />
     <ClInclude Include="Editor\ConsolePanel.h" />
+    <ClInclude Include="Editor\ControlPanel.h" />
     <ClInclude Include="Editor\EditorPanel.h" />
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="Editor\GridRenderer.h" />
-    <ClInclude Include="Editor\GizmoRenderer.h" />
+    <ClInclude Include="Editor\GuizmoRenderer.h" />
+    <ClInclude Include="Editor\PropertyPanel.h" />
     <ClInclude Include="EngineLog.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="ImGuiRenderer.h" />
