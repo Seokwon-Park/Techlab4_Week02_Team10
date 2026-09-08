@@ -350,32 +350,56 @@ UPrimitiveComponent* UWorld::GetPickingPrimitive()
 
 	float minT{ FLT_MAX };
 	UPrimitiveComponent* PickingPrimitive = nullptr;
+
 	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 	{
+
+		// ray를 로컬공간으로
+		FMatrix invWorld = Primitive->GetWorldMatrix().Inverse();
+		FVector4 LocalRayOrigin = invWorld.TransformPosition(ray.Origin);
+		FVector4 LocalRayDir = invWorld.TransformVector(ray.Direction);
+
+		FRay LocalRay{};
+		LocalRay.Origin.X = LocalRayOrigin.X;
+		LocalRay.Origin.Y = LocalRayOrigin.Y;
+		LocalRay.Origin.Z = LocalRayOrigin.Z;
+
+		LocalRay.Direction.X = LocalRayDir.X;
+		LocalRay.Direction.Y = LocalRayDir.Y;
+		LocalRay.Direction.Z = LocalRayDir.Z;
+
+
 		if (!Primitive) continue;
 		const FMeshData& mesh = Primitive->GetMeshData();
 
 		FVector BoxMin, BoxMax;
-		mesh.GetWorldAABB(BoxMin, BoxMax, Primitive->GetWorldMatrix());
+		mesh.GetAABB(BoxMin, BoxMax);
 		float rayT{};
 
-		if (!RayIntersectsAABB(ray, BoxMin, BoxMax, rayT))
+		if (!RayIntersectsAABB(LocalRay, BoxMin, BoxMax, rayT))
 		{	
 			continue;
 		}
-		// Broad Phase 통과하면 뮐러-트럼보르 알고리즘 수행
 
-		for (uint32 i = 0; i < mesh.Indices.size(); ++i)
+		if (rayT > minT)
 		{
-			uint32 i1 = mesh.Indices[i];
-			uint32 i2 = mesh.Indices[++i];
-			uint32 i3 = mesh.Indices[++i];
+			continue;
+		}
 
-			FVector v1 = mesh.Vertices[i1].Position;
-			FVector v2 = mesh.Vertices[i2].Position;
-			FVector v3 = mesh.Vertices[i3].Position;
+		// Broad Phase 통과하면 뮐러-트럼보르 알고리즘 수행
+		for (uint32 i = 0; i + 2 < mesh.Indices.size(); i += 3)
+		{
+			FVector vertices[3]{};	// 3 vertex
+			for (uint32 j = 0; j < 3; ++j)
+			{
+				uint32 index = mesh.Indices[i + j];
 
-			if (!RayIntersectsTriangle(ray, v1, v2, v3, rayT))
+				vertices[j].X = mesh.Vertices[index].Position.X;
+				vertices[j].Y = mesh.Vertices[index].Position.Y;
+				vertices[j].Z = mesh.Vertices[index].Position.Z;
+			}
+
+			if (!RayIntersectsTriangle(LocalRay, vertices[0], vertices[1], vertices[2], rayT))
 			{
 				continue;
 			}
@@ -383,6 +407,7 @@ UPrimitiveComponent* UWorld::GetPickingPrimitive()
 			if (rayT < minT)
 			{
 				PickingPrimitive = Primitive;
+				minT = rayT;
 			}
 		}
 	}
