@@ -32,30 +32,9 @@ bool FGizmoRenderer::Init(FRenderer* InRenderer)
 
 	CB = Renderer->CreateConstantBuffer(sizeof(FGizmoData));
 
-	FGizmoData GizmoData;
-	Transform.Rotation = FRotator(90.0f, 0.0f, 0.0f);
-	World = Transform.GetWorldMatrix();
-	GizmoData.World = World;
-	GizmoData.World = GizmoData.World.GetTransposed();
-	GizmoData.Color = FVector4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	AxisDataArray.push_back(GizmoData);
-
-	Transform.Rotation = FRotator(0.0f, 0.0f, -90.0f);
-	World = Transform.GetWorldMatrix();
-	GizmoData.World = World;
-	GizmoData.World = GizmoData.World.GetTransposed();
-	GizmoData.Color = FVector4(0.0f, 1.0f, 0.0f, 1.0f);
-
-	AxisDataArray.push_back(GizmoData);
-
-	Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
-	World = Transform.GetWorldMatrix();
-	GizmoData.World = World;
-	GizmoData.World = GizmoData.World.GetTransposed();
-	GizmoData.Color = FVector4(0.0f, 0.0f, 1.0f, 1.0f);
-
-	AxisDataArray.push_back(GizmoData);
+	AxisDataArray.push_back({ FRotator(90.0f, 0.0f, 0.0f) ,FVector4(1.0f, 0.0f, 0.0f, 1.0f) });
+	AxisDataArray.push_back({ FRotator(0.0f, 0.0f, -90.0f) ,FVector4(0.0f, 1.0f, 0.0f, 1.0f) });
+	AxisDataArray.push_back({ FRotator(0.0f, 0.0f, 0.0f) ,FVector4(0.0f, 0.0f, 1.0f, 1.0f) });
 
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
@@ -67,119 +46,60 @@ bool FGizmoRenderer::Init(FRenderer* InRenderer)
 	return false;
 }
 
-void FGizmoRenderer::OnRender(const FMatrix& ViewProj)
+void FGizmoRenderer::OnRender(const FGizmo& Gizmo, const FMatrix& ViewProj)
 {
+    if (!Gizmo.GetTarget())
+        return;
 
-	Renderer->BindShader(Shader.get());
-	Renderer->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    FMesh* AxisMesh = nullptr;
+    switch (Gizmo.GetMode())
+    {
+    case EGizmoMode::Location: AxisMesh = LocationMesh.get(); break;
+    case EGizmoMode::Rotation: AxisMesh = RotationMesh.get(); break;
+    case EGizmoMode::Scale:    AxisMesh = ScaleMesh.get();    break;
+    default: return;
+    }
 
-	switch (Mode)
-	{
-	case EGizmoMode::Location:
-	{
-		Renderer->BindMesh(LocationMesh.get());
+    Renderer->BindShader(Shader.get());
+    Renderer->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		FGizmoData Data{};
-		for (int i = 0; i < 3;i++)
-		{
-			FGizmoData Data = AxisDataArray[i];
-			Data.ViewProj = ViewProj.GetTransposed();
-			Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
-			Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
-			Renderer->DrawIndexed(LocationMesh->IndexBuffer->GetIndexCount());
-		}
+    const FMatrix ViewProjT = ViewProj.GetTransposed();
+    const FVector GizmoLocation = Gizmo.GetLocation();
+    const int HoveredAxis = Gizmo.GetHoveredAxis();
 
-		Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
-		World = Transform.GetWorldMatrix();
-		Data.World = World.GetTransposed();
-		Data.ViewProj = ViewProj.GetTransposed();
-		Data.Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+    // 축 3개
+    Renderer->BindMesh(AxisMesh);
+    Transform.Location = GizmoLocation;
 
-		Renderer->BindMesh(SphereMesh.get());
+    for (int i = 0; i < 3; ++i)
+    {
+        Transform.Rotation = AxisDataArray[i].Rotator;
 
-		Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
-		Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex); 
-		Renderer->DrawIndexed(SphereMesh->IndexBuffer->GetIndexCount());
-		break;
-	}
-	case EGizmoMode::Rotation:
-	{
-		Renderer->BindMesh(RotationMesh.get());
-		FGizmoData Data{};
-		for (int i = 0; i < 3;i++)
-		{
-			FGizmoData Data = AxisDataArray[i];
-			Data.ViewProj = ViewProj.GetTransposed();
-			Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
-			Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
-			Renderer->DrawIndexed(RotationMesh->IndexBuffer->GetIndexCount());
-		}
+        FGizmoData Data{};
+        Data.World = Transform.GetWorldMatrix().GetTransposed();
+        Data.ViewProj = ViewProjT;
+        Data.Color = (i == HoveredAxis)
+            ? FVector4(1.0f, 1.0f, 0.0f, 1.0f)     // hover 시 노랑
+            : AxisDataArray[i].Color;
 
-		Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
-		World = Transform.GetWorldMatrix();
-		Data.World = World.GetTransposed();
-		Data.Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+        DrawMesh(AxisMesh, Data);
+    }
 
-		Renderer->BindMesh(SphereMesh.get());
+    // 중앙 구
+    Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
 
-		Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
-		Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
-		Renderer->DrawIndexed(SphereMesh->IndexBuffer->GetIndexCount());
-		break;
-	}
-	case EGizmoMode::Scale:
-	{
-		Renderer->BindMesh(ScaleMesh.get());
+    FGizmoData SphereData{};
+    SphereData.World = Transform.GetWorldMatrix().GetTransposed();
+    SphereData.ViewProj = ViewProjT;
+    SphereData.Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
 
-		FGizmoData Data{};
-		for (int i = 0; i < 3;i++)
-		{
-			FGizmoData Data = AxisDataArray[i];
-			Data.ViewProj = ViewProj.GetTransposed();
-			Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
-			Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
-			Renderer->DrawIndexed(LocationMesh->IndexBuffer->GetIndexCount());
-		}
+    DrawMesh(SphereMesh.get(), SphereData);
+}
 
-		Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
-		World = Transform.GetWorldMatrix();
-		Data.World = World.GetTransposed();
-		Data.ViewProj = ViewProj.GetTransposed();
-		Data.Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
-
-		Renderer->BindMesh(SphereMesh.get());
-
-		Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
-		Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
-		Renderer->DrawIndexed(SphereMesh->IndexBuffer->GetIndexCount());
-		break;
-	}
-	default:
-		break;
-	}
-
-
-
-	//Transform.Rotation = FRotator(00.0f, 0.0f, -90.0f);
-	//World = Transform.GetWorldMatrix();
-	//Data.World = World * ViewProj;
-	//Data.World = Data.World.GetTransposed();
-	//Data.Color = FVector4(0.0f, 1.0f, 0.0f, 1.0f);
-
-	//Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
-	//Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
-	//Renderer->DrawIndexed(LocationMesh->IndexBuffer->GetIndexCount());
-
-	//Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
-	//World = Transform.GetWorldMatrix();
-	//Data.World = World * ViewProj;
-	//Data.World = Data.World.GetTransposed();
-	//Data.Color = FVector4(0.0f, 0.0f, 1.0f, 1.0f);
-
-	//Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
-	//Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
-	//Renderer->DrawIndexed(LocationMesh->IndexBuffer->GetIndexCount());
-
-
-
+void FGizmoRenderer::DrawMesh(FMesh* Mesh, const FGizmoData& Data)
+{
+    Renderer->BindMesh(Mesh);
+    Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
+    Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
+    Renderer->DrawIndexed(Mesh->IndexBuffer->GetIndexCount());
 }

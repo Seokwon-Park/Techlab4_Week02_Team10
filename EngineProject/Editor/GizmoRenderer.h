@@ -1,19 +1,18 @@
 #pragma once
 
-#include <d3d11.h>
 #include "Renderer.h"
-
-enum class EGizmoMode
-{
-	Location,
-	Rotation,
-	Scale,
-};
+#include "Gizmo.h"
 
 struct FGizmoData
 {
 	FMatrix World;
 	FMatrix ViewProj;
+	FVector4 Color;
+};
+
+struct FAxisData
+{
+	FRotator Rotator;
 	FVector4 Color;
 };
 
@@ -24,15 +23,17 @@ public:
 	~FGizmoRenderer() = default;
 
 	bool Init(FRenderer* InRenderer);
-	void OnRender(const FMatrix& ViewProj);
+	void OnRender(const FGizmo& Gizmo, const FMatrix& ViewProj);
 
 private:
+	void DrawMesh(FMesh* Mesh, const FGizmoData& Data);
+
 	FRenderer* Renderer;
 
 	FTransform Transform;
 	FMatrix World;
 
-	TArray<FGizmoData> AxisDataArray;
+	TArray<FAxisData> AxisDataArray;
 
 	TSharedPtr<FShader> Shader;
 	TSharedPtr<FMesh> LocationMesh;
@@ -41,5 +42,5 @@ private:
 	TSharedPtr<FMesh> SphereMesh;
 	TSharedPtr<FConstantBuffer> CB;
 
-	EGizmoMode Mode = EGizmoMode::Scale;
+	//EGizmoMode Mode = EGizmoMode::Scale;
 };

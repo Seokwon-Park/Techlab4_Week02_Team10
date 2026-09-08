@@ -17,7 +17,7 @@ struct FVector {
 	};
 
 public:
-/* Constructor */
+	/* Constructor */
 	FVector();
 	FVector(float x, float y, float z);
 	explicit FVector(float f);
@@ -25,7 +25,7 @@ public:
 	// ~FVector();
 
 public:
-/* Public Functions */
+	/* Public Functions */
 	void Set(float x, float y, float z);
 
 	float Size() const; // 길이 반환
@@ -37,7 +37,7 @@ public:
 
 	FVector Add(const FVector& V1) const;
 	FVector Subtract(const FVector& V1) const;
-	
+
 	FVector Cross(const FVector& V1) const;
 	FVector GetAbs() const;
 	FVector Normalize() const;
@@ -57,19 +57,20 @@ public:
 /* operator */
 
 	FVector operator - ();
+	FVector operator - () const;
 	FVector& operator = (const FVector& V1);
-	
+
 	FVector operator - (const FVector& V1) const;
 	FVector& operator -= (const FVector& V1);
-	
+
 	FVector operator + (const FVector& V1) const;
 	FVector& operator += (const FVector& V1);
 
 	FVector operator * (const FVector& V1) const;
 	FVector operator * (const float& f) const;
 	FVector& operator *= (const FVector& V1);
-	FVector& operator *= (const float & f);
-	
+	FVector& operator *= (const float& f);
+
 	FVector operator / (const FVector& V1) const;
 	FVector operator / (const float& f) const;
 	FVector& operator /= (const FVector& V1);
@@ -83,7 +84,7 @@ public:
 	float operator[] (int32 Index) const;
 	float& operator[] (int32 Index);
 
-/* Static */
+	/* Static */
 	static float DotProduct(const FVector& V1, const FVector& V2);
 	static FVector CrossProduct(const FVector& V1, const FVector& V2);
 	static float Distance(const FVector& V1, const FVector& V2); // == Dist()
@@ -93,7 +94,7 @@ public:
 	static FVector Max3(const FVector& V1, const FVector& V2, const FVector& V3);
 	static FVector Min(const FVector& V1, const FVector& V2);
 	static FVector Min3(const FVector& V1, const FVector& V2, const FVector& V3);
-	
+
 	static FVector UnitX();
 	static FVector UnitY();
 	static FVector UnitZ();

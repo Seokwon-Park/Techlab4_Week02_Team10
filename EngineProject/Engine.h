@@ -36,6 +36,7 @@ private:
 	TUniquePtr<FImGuiRenderer> ImGuiRenderer;
 	TUniquePtr<FGridRenderer> GridRenderer;
 	TUniquePtr<FGizmoRenderer> GizmoRenderer;
+	TUniquePtr<FGizmo> Gizmo;
 
 	inline static FConsolePanel* ConsolePanel = nullptr;
 	inline static FPropertyPanel* PropertyPanel = nullptr;

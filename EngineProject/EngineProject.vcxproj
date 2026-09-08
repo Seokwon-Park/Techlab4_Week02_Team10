@@ -153,6 +153,7 @@
     <ClCompile Include="Editor\ConsolePanel.cpp" />
     <ClCompile Include="Editor\ControlPanel.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
+    <ClCompile Include="Editor\Gizmo.cpp" />
     <ClCompile Include="Editor\GizmoRenderer.cpp" />
     <ClCompile Include="Editor\GridRenderer.cpp" />
     <ClCompile Include="Editor\PropertyPanel.cpp" />
@@ -267,6 +268,7 @@
     <ClInclude Include="Editor\ControlPanel.h" />
     <ClInclude Include="Editor\EditorPanel.h" />
     <ClInclude Include="Editor\EditorUI.h" />
+    <ClInclude Include="Editor\Gizmo.h" />
     <ClInclude Include="Editor\GizmoRenderer.h" />
     <ClInclude Include="Editor\GridRenderer.h" />
     <ClInclude Include="Editor\GuizmoRenderer.h" />
@@ -280,6 +282,7 @@
     <ClInclude Include="Math\MatrixRegister.h" />
     <ClInclude Include="Math\Quat.h" />
     <ClInclude Include="Math\Vector.h" />
+    <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Math\VectorRegister.h" />
     <ClInclude Include="Math\VectorRegister_SSE.h" />

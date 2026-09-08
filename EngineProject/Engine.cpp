@@ -57,6 +57,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	GizmoRenderer = MakeUnique<FGizmoRenderer>();
 	GizmoRenderer->Init(Renderer.get());
 
+	Gizmo = MakeUnique<FGizmo>();
+
 	EditorUI = MakeUnique<FEditorUI>();
 	ConsolePanel = EditorUI->AddEditorPanel<FConsolePanel>();
 	// PropertyPanel Add
@@ -92,6 +94,7 @@ bool Engine::Init(HINSTANCE hInstance)
 	//vb = Renderer->CreateVertexBuffer(Vertices.data(), sizeof(FVertex) * (UINT)Vertices.size());
 	//ib = Renderer->CreateIndexBuffer(Indices.data(), sizeof(uint32) * (UINT)Indices.size());
 
+
 	Mesh = MakeShared<FMesh>();
 	Mesh->VertexBuffer = vb;
 	Mesh->IndexBuffer = ib;
@@ -102,7 +105,7 @@ bool Engine::Init(HINSTANCE hInstance)
 		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 	Shader = Renderer->CreateShader(L"Shader/DefaultShader.hlsl", layout, 2);
-	
+
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader.get());
 	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
@@ -134,9 +137,22 @@ void Engine::Run()
 		MainWindow->ProcessMessage(bIsRunning);
 		World->Tick(DeltaTime);
 
-		if (FInputSystem::IsKeyPressed(EKeyCode::A))
+		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();
+
+		FRay ray = World->GetMainCamera()->GetCameraComponent()->DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
+		FVector2 mousePos(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
+		bool bMouseDown = FInputSystem::IsMouseDown(EMouseButton::Left);
+
+		Gizmo->Update(ray, mousePos, VP, 1280, 720, bMouseDown);
+
+		if (FInputSystem::IsMousePressed(EMouseButton::Left) && !Gizmo->IsUsing() && Gizmo->GetHoveredAxis() < 0 && !ImGui::GetIO().WantCaptureMouse)
+			Gizmo->SetTarget(World->GetPickingPrimitive());
+
+		if (FInputSystem::IsKeyPressed(EKeyCode::Space))
 		{
-			LOG(Info, "{}", "Hello, World!");
+			static int ModeIndex = 0;
+			ModeIndex = (ModeIndex + 1) % 3;
+			Gizmo->SetMode(static_cast<EGizmoMode>(ModeIndex));
 		}
 
 		TQueue<FRenderPacket> RenderQueue;
@@ -146,10 +162,11 @@ void Engine::Run()
 		Renderer->BeginFrame();
 
 		Renderer->BindShader(Shader.get());
-		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();
+
 		//Renderer->BindBuffer(Mesh.get());
 		GridRenderer->OnRender(Mat, VP);
-		GizmoRenderer->OnRender(VP);
+		if (Gizmo->GetTarget())
+			GizmoRenderer->OnRender(*Gizmo, VP);
 
 		//FTransform transform;
 		//World->GetMainCamera()->GetCameraComponent()->SetTransform(FVector(-1.0f, 0.0f, 0.0f));
@@ -173,5 +190,6 @@ void Engine::Run()
 
 void Engine::Shutdown()
 {
+	delete World;
 	Renderer->Shutdown();
 }

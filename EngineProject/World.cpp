@@ -5,6 +5,8 @@
 #include "EngineStatics.h"
 
 #include "CameraActor.h"
+#include "Component/CameraComponent.h"
+#include "InputSystem.h"
 
 #include "Ray.h"
 
@@ -134,11 +136,13 @@ void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
 UPrimitiveComponent* UWorld::GetPickingPrimitive()
 {
 	//MainCamera->
-	FRay ray; // = MainCamera->Deprojection();
+	FRay ray = MainCamera->GetCameraComponent()->DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
+
 	float minT{ FLT_MAX };
 	UPrimitiveComponent* PickingPrimitive = nullptr;
 	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 	{
+		if (!Primitive) continue;
 		const FMeshData& mesh = Primitive->GetMeshData();
 
 		FVector BoxMin, BoxMax;
