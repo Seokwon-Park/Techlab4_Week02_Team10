@@ -9,12 +9,7 @@
 #include <wrl/client.h>
 
 #include "RenderPacket.h"
-
-struct FVertexSimple
-{	// test
-	float x, y, z;
-	float r, g, b, a;
-};
+#include "Buffer.h"
 
 class FRenderer
 {
@@ -34,19 +29,20 @@ public:
 	ID3D11DeviceContext* GetDeviceContext();
 
 	FShader* CreateShader(const wchar_t* FileName, D3D11_INPUT_ELEMENT_DESC* InLayoutDesc, size_t InLayoutSize);
-	FMesh* CreateMesh(const void* Vertices, uint32 VertexCount, uint32 Stride,
-		const uint32* Indices = nullptr, uint32 IndexCount = 0);
+	TSharedPtr<FMesh> CreateMesh(TSharedPtr<FVertexBuffer> VertexBuffer, TSharedPtr<FIndexBuffer> IndexBuffer);
 
-	ID3D11Buffer* CreateVertexBuffer(const void* InVertices, UINT InByteWidth);
-	ID3D11Buffer* CreateIndexBuffer(const uint32* InIndices, UINT InByteWidth);
+	TSharedPtr<FVertexBuffer> CreateVertexBuffer(const void* InVertices, uint32 InSize, uint32 Stride);
+	TSharedPtr<FIndexBuffer> CreateIndexBuffer(const uint32* InIndices, uint32 IndexCount);
 
 	void UpdateConstantBuffer(const FMatrix& MVP);
+	void BindVertexBuffer(FVertexBuffer* VertexBuffer);
+	void BindIndexBuffer(FIndexBuffer* IndexBuffer);
+	void SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY Topology);
 	void BindShader(FShader* InShader);
-	void BindBuffer(FMesh* InMesh);
-	void Draw(int IndexCount);
+	void BindMesh(FMesh* InMesh);
+	void DrawIndexed(int IndexCount);
 
 	void Prepare();
-	void RenderPrimitive(ID3D11Buffer* pVertexBuffer, UINT InNumVertices, ID3D11Buffer* pIndexBuffer, UINT InNumIndices, UINT InStride);
 
 	void RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP);
 	void Shutdown();

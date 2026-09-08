@@ -44,7 +44,7 @@ struct FQuat
 	/* Static */
 	static FQuat Identity();
 	static FQuat MakeFromAxisAngle(const FVector& Axis, float AngleRadians);
-	static FQuat MakeFromEuler(float Pitch, float Yaw, float Roll);
+	static FQuat MakeFromEuler(float Roll, float Pitch, float Yaw);
 };
 
 

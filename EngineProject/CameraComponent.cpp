@@ -44,10 +44,10 @@ void UCameraComponent::TickComponent(float DeltaTime)
         FQuat Q = transform.Rotation.Quaternion().Normalize();
         FQuat Result = Q * DeltaQ;
 
-        transform.Rotation = Result.ToFRotator(); ;
+        transform.Rotation = Result.ToFRotator();;
     }
 
-    if (FInputSystem::IsMouseDown(EMouseButton::Left))
+    /*if (FInputSystem::IsMouseDown(EMouseButton::Left))
     {
         FVector RayDirection = DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
 
@@ -57,7 +57,7 @@ void UCameraComponent::TickComponent(float DeltaTime)
             RayDirection.Y,
             RayDirection.Z
         );
-    }
+    }*/
 }
 
 void UCameraComponent::SetLocation(FVector vector)
