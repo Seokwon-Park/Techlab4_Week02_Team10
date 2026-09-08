@@ -26,9 +26,6 @@ bool FGizmoRenderer::Init(FRenderer* InRenderer)
 
 void FGizmoRenderer::OnRender(const FMatrix& ViewProj)
 {
-	Transform.Rotation = FRotator(0.0f, 90.0f, 0.0f);
-	World = Transform.GetWorldMatrix();
-
 	Renderer->BindMesh(ArrowMesh.get());
 	Renderer->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -37,12 +34,12 @@ void FGizmoRenderer::OnRender(const FMatrix& ViewProj)
 	Renderer->UpdateConstantBuffer(World * ViewProj);
 	Renderer->DrawIndexed(ArrowMesh->IndexBuffer->GetIndexCount());
 
-	Transform.Rotation = FRotator(-90.0f, 0.0f, 0.0f);
+	Transform.Rotation = FRotator(00.0f, 0.0f, 90.0f);
 	World = Transform.GetWorldMatrix();
 	Renderer->UpdateConstantBuffer(World * ViewProj);
 	Renderer->DrawIndexed(ArrowMesh->IndexBuffer->GetIndexCount());
 
-	Transform.Rotation = FRotator(-0.0f, 0.0f, 0.0f);
+	Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
 	World = Transform.GetWorldMatrix();
 	Renderer->UpdateConstantBuffer(World * ViewProj);
 	Renderer->DrawIndexed(ArrowMesh->IndexBuffer->GetIndexCount());
