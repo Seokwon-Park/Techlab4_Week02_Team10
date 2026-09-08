@@ -4,18 +4,21 @@
 
 bool RayIntersectsAABB(const FRay& Ray, const FVector& BoxMin, const FVector& BoxMax, float& OutT)
 {
-    float tX1 = (BoxMin.X - Ray.Origin.X) / Ray.Direction.X;
-    float tX2 = (BoxMax.X - Ray.Origin.X) / Ray.Direction.X;
+    float invRayDir = 1.0f / Ray.Direction.X;
+    float tX1 = (BoxMin.X - Ray.Origin.X) * invRayDir;
+    float tX2 = (BoxMax.X - Ray.Origin.X) * invRayDir;
     float tMinX = fmin(tX1, tX2);
     float tMaxX = fmax(tX1, tX2);
 
-    float tY1 = (BoxMin.Y - Ray.Origin.Y) / Ray.Direction.Y;
-    float tY2 = (BoxMax.Y - Ray.Origin.Y) / Ray.Direction.Y;
+    invRayDir = 1.0f / Ray.Direction.Y;
+    float tY1 = (BoxMin.Y - Ray.Origin.Y) * invRayDir;
+    float tY2 = (BoxMax.Y - Ray.Origin.Y) * invRayDir;
     float tMinY = fmin(tY1, tY2);
     float tMaxY = fmax(tY1, tY2);
 
-    float tZ1 = (BoxMin.Z - Ray.Origin.Z) / Ray.Direction.Z;
-    float tZ2 = (BoxMax.Z - Ray.Origin.Z) / Ray.Direction.Z;
+    invRayDir = 1.0f / Ray.Direction.Z;
+    float tZ1 = (BoxMin.Z - Ray.Origin.Z) * invRayDir;
+    float tZ2 = (BoxMax.Z - Ray.Origin.Z) * invRayDir;
     float tMinZ = fmin(tZ1, tZ2);
     float tMaxZ = fmax(tZ1, tZ2);   
     
