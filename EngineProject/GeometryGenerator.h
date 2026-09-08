@@ -96,7 +96,8 @@ public:
 	static FMeshData CreateCone(float Radius, float Height, int Segments, const FVector4& Color);
 	static FMeshData CreateCylinder(float Radius, float Height, int Segments, const FVector4& Color);
 	static FMeshData CreateArrow(float BodyRadius, float BodyHeight, float HeadRadius, float HeadHeight, int Segments, const FVector4& Color); // Cylinder + Cone 합성
-	static FMeshData CreateRing(float Radius, int Segments, const FVector4& Color);    // 회전 기즈모용
+	static FMeshData CreateScaleBar(float BodyRadius, float BodyLength, float HeadSize, float Segments, const FVector4& Color); // Cylinder + Cone 합성
+	static FMeshData CreateRing(float Radius, float TubeRadius, int Segments, int TubeSegments, const FVector4& Color);
 	static FMeshData CreateCube(float Size, const FVector4& Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	static FMeshData CreateSphere(float _radius, uint32 _numSlices, uint32 _numStacks, const FVector4& Color);
