@@ -130,7 +130,7 @@ void Engine::Run()
 	{
 		EngineTimer::Tick();
 		float DeltaTime = EngineTimer::GetDeltaTime();
-
+		ControlPanel->FControlPanel::DeltaTime = DeltaTime;
 		MainWindow->ProcessMessage(bIsRunning);
 		World->Tick(DeltaTime);
 

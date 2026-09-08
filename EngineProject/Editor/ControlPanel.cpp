@@ -32,7 +32,7 @@ void FControlPanel::OnRender()
 	ImGui::Begin("Jungle Control Panel");
 	
 	ImGui::Text("Hello Jungle world");
-	ImGui::Text("FPS: %.f",FPS);
+	ImGui::Text("FPS: %.2f (%.0f ms)",1.0f / DeltaTime, DeltaTime * 1000.0f);
 
 	ImGui::Separator();
 	ImGui::Combo("Actor", &SelectedIndex, Items, IM_ARRAYSIZE(Items));

@@ -8,7 +8,7 @@ public:
 	bool Init() override;
 	void OnRender() override;
 
-	float* FPS;
+	float DeltaTime = 1.0f;
 	UWorld* World; // SpawnActor MainCamera
 	char SceneName[128] = "";
 
