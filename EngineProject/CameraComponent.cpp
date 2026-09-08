@@ -119,17 +119,17 @@ void UCameraComponent::SetFarClipPlane(float FarPlane)
 	FarClipPlane = FarPlane;
 }
 
-FVector UCameraComponent::GetLocation()
+FVector UCameraComponent::GetLocation() const
 {
 	return transform.Location;
 }
 
-FVector UCameraComponent::GetScale()
+FVector UCameraComponent::GetScale() const
 {
     return transform.Scale;
 }
 
-FRotator UCameraComponent::GetRotation()
+FRotator UCameraComponent::GetRotation() const
 {
     return transform.Rotation;
 }

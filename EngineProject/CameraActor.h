@@ -11,7 +11,6 @@ public:
 	ACameraActor();
 	virtual ~ACameraActor() override;
 protected:
-	UCameraComponent* CameraComponent;
 	TArray<USceneComponent*> SceneComponents;
 
 public:
