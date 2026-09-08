@@ -62,6 +62,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> FrameBufferRTV;
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> DepthStencilBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> FrameBufferDSV;
+
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> DepthStencilState;
 
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> RasterizerState;

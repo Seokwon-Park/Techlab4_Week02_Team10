@@ -6,7 +6,8 @@
 void FRenderer::BeginFrame()
 {
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV.Get(), ClearColor);
-	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), nullptr);
+	DeviceContext->ClearDepthStencilView(FrameBufferDSV.Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), FrameBufferDSV.Get());
 	DeviceContext->RSSetViewports(1, &ViewportInfo);
 }
 
@@ -92,7 +93,7 @@ void FRenderer::CreateDepthStencilBufferAndState()
 
 	DepthDesc.MipLevels = 1;
 	DepthDesc.ArraySize = 1;
-	DepthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;	// 24비트 깊이, 8비트 스텐실
+	DepthDesc.Format = DXGI_FORMAT_D32_FLOAT;	// 24비트 깊이, 8비트 스텐실
 	DepthDesc.SampleDesc.Count = 1;
 	DepthDesc.SampleDesc.Quality = 0;
 	DepthDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -100,6 +101,8 @@ void FRenderer::CreateDepthStencilBufferAndState()
 	DepthDesc.CPUAccessFlags = 0;
 	DepthDesc.MiscFlags = 0;
 	HRESULT hr = Device->CreateTexture2D(&DepthDesc, NULL, DepthStencilBuffer.GetAddressOf());
+
+	Device->CreateDepthStencilView(DepthStencilBuffer.Get(), nullptr, FrameBufferDSV.GetAddressOf());
 
 	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc;
 
@@ -109,7 +112,7 @@ void FRenderer::CreateDepthStencilBufferAndState()
 	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER;
 
 	// Stencil test Paramiter
-	DepthStencilDesc.StencilEnable = true;
+	DepthStencilDesc.StencilEnable = false;
 	DepthStencilDesc.StencilReadMask = 0xFF;
 	DepthStencilDesc.StencilWriteMask = 0xFF;
 
