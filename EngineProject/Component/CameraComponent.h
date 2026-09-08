@@ -4,6 +4,8 @@
 #include "../Math/EngineMath.h"
 #include "../Rotator.h"
 
+struct FRay;
+
 class UCameraComponent : public USceneComponent
 {
 	DECLARE_CLASS(UCameraComponent, USceneComponent)
@@ -41,7 +43,7 @@ public:
 	FVector GetScale();
 	FRotator GetRotation();
 
-	FVector DeProjection(int32 MouseX, int32 MouseY);
+	FRay DeProjection(int32 MouseX, int32 MouseY);
 
 	FMatrix GetViewMatrix() const;
 	FMatrix GetOrthogonalMatrix() const;
@@ -51,6 +53,7 @@ public:
 private:
 	const float CameraSpeed = 10.0f;
 	const float MouseSensitivity = 0.05f;
+	const float WheelSpeed = 0.1f;
 };
 
 //Engine에서 FSceneView 구조체를 가지고 Tick Component에서 업데이트 or ACameraActor에서 업데이트 카메라 가져오는 함수로 엔진의 루프 안에서

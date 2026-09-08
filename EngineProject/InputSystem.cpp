@@ -76,6 +76,11 @@ void FInputSystem::OnMouseMove(int32 x, int32 y)
     MouseY = y;    
 }
 
+void FInputSystem::OnMouseWheelDelta(int32 Wheel)
+{
+    WheelDelta = Wheel;
+}
+
 void FInputSystem::UpdateInputStates()
 {
     std::memcpy(bPrevKeyStates, bKeyStates, sizeof(bKeyStates));

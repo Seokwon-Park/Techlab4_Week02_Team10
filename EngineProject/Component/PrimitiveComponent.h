@@ -26,6 +26,8 @@ public:
 	void SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue);
 
 	FMeshData GetMeshData() const { return MeshData; }
+	TSharedPtr<FMesh> GetMesh() const { return Mesh; };
+	FShader* GetShader() const { return Shader; };
 
 	EPrimitiveType GetType() const { return Type; }
 protected:
