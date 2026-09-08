@@ -160,6 +160,8 @@ TSharedPtr<FShader> FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT
 	HRESULT hr = D3DCompileFromFile(FileName, nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorBlob);
 
 	Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, Shader->VertexShader.GetAddressOf());
+	
+	assert(SUCCEEDED(hr));
 
 	ID3DBlob* PixelShaderCSO;
 	D3DCompileFromFile(FileName, nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
@@ -167,6 +169,8 @@ TSharedPtr<FShader> FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT
 
 	hr = Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
 		VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(Shader->InputLayout));
+
+	assert(SUCCEEDED(hr));
 
 	VertexShaderCSO->Release();
 	PixelShaderCSO->Release();

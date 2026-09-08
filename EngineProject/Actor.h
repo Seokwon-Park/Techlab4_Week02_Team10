@@ -21,6 +21,12 @@ public:
 
 	UWorld* GetWorld() const { return World; }
 
+	//template <typename T>
+	//T* AddComponent()
+	//{
+	//	T* newComponent = 
+	//}
+
 	UPrimitiveComponent* GetPrimitiveComponent() const { return Cast<UPrimitiveComponent>(Root); }
 	void AddPrimitiveComponent(EPrimitiveType Type);
 	void SetRootComponent(USceneComponent* SceneComponent);

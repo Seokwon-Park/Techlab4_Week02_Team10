@@ -17,5 +17,7 @@ private:
 	FShader* Shader;
 	FMesh* Mesh;
 
+	TSharedPtr<FMesh> Test;
+
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> RasterizerState;
 };

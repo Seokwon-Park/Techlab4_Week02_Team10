@@ -164,11 +164,11 @@ void Engine::Run()
 
 		Gizmo->Update(ray, mousePos, VP, MainWindow->GetWidth(), MainWindow->GetHeight(), bMouseDown);
 
-		
+
 		if (FInputSystem::IsMousePressed(EMouseButton::Left) && !Gizmo->IsUsing() && Gizmo->GetHoveredAxis() < 0 && !ImGui::GetIO().WantCaptureMouse)
 
 		{
-			UPrimitiveComponent* PickedComponent = World->GetPickingPrimitive();
+			UPrimitiveComponent* PickedComponent = World->GetPickingPrimitive(MainWindow->GetWidth(), MainWindow->GetHeight());
 			OutlineComponent = PickedComponent;
 			Gizmo->SetTarget(PickedComponent);
 			Outline->SetTarget(OutlineComponent);
@@ -186,7 +186,7 @@ void Engine::Run()
 		FInputSystem::UpdateInputStates();
 
 		Renderer->BeginFrame();
-
+		 
 		Renderer->BindShader(Shader.get());
 
 		//Renderer->BindBuffer(Mesh.get());
@@ -198,9 +198,9 @@ void Engine::Run()
 		//Renderer->UpdateConstantBuffer(VP);
 		//Renderer->Draw(36);
 
-		//Renderer->RenderAll(RenderQueue, VP);
+		Renderer->RenderAll(RenderQueue, VP);
 
-		//if (Outline->GetTarget())
+		if (Outline->GetTarget())
 			OutlineRenderer->OnRender(*Outline, VP);
 
 		if (Gizmo->GetTarget())
@@ -214,7 +214,7 @@ void Engine::Run()
 		ImGui::ShowDemoWindow();
 		EditorUI->OnRender();
 
-		
+
 
 		ImGuiRenderer->End();
 

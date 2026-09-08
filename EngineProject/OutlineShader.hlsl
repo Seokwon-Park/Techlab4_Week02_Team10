@@ -19,9 +19,11 @@ PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
     
+    input.position *= 1.1f;
+
     output.position = mul(float4(input.position, 1.0f), MVP);
     //output.position = float4(input.position, 1.0f);
-    output.color = input.color;
+    output.color = float4(1.0f,1.0f,0.0f, 1.0f);
     return output;
 }
 
