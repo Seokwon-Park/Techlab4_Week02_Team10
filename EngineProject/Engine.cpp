@@ -106,7 +106,7 @@ bool Engine::Init(HINSTANCE hInstance)
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader.get());
 	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
-	PropertyPanel->transform = Actor->GetRootComponent()->GetTransform();
+	PropertyPanel->transform = Actor->GetPrimitiveComponent()->GetTransform();
 	ControlPanel->FControlPanel::World = World;
 	ControlPanel->FControlPanel::Mesh = Mesh;
 	ControlPanel->FControlPanel::Shader = Shader.get();
@@ -130,7 +130,7 @@ void Engine::Run()
 	{
 		EngineTimer::Tick();
 		float DeltaTime = EngineTimer::GetDeltaTime();
-
+		ControlPanel->FControlPanel::DeltaTime = DeltaTime;
 		MainWindow->ProcessMessage(bIsRunning);
 		World->Tick(DeltaTime);
 

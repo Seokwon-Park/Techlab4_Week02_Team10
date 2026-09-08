@@ -14,7 +14,11 @@ AActor::AActor()
 
 void AActor::BeginPlay()
 {
-	World->AddPrimitive(Cast<UPrimitiveComponent>(Root));
+	if (UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Root))
+	{
+		World->AddPrimitive(Cast<UPrimitiveComponent>(Root));
+	}
+
 }
 
 void AActor::Tick(float DeltaTime)
@@ -39,6 +43,11 @@ void AActor::AddPrimitiveComponent(EPrimitiveType Type)
 		break;
 	}
 	Components.push_back(Root);
+}
+
+void AActor::SetRootComponent(USceneComponent* SceneComponent)
+{
+	Root = SceneComponent;
 }
 
 USceneComponent* AActor::GetRootComponent()

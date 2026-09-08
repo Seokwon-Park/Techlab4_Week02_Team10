@@ -13,6 +13,7 @@ class USceneComponent :public UActorComponent
 public:
 	FTransform* GetTransform();
 	FMatrix GetWorldMatrix() const;
+	void SetTransform(FTransform transform);
 private:
 	//FTransform transform;
 	bool bVisible = true;
