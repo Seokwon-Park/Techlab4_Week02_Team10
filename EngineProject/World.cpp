@@ -6,6 +6,7 @@
 
 #include "CameraActor.h"
 #include "Component/CameraComponent.h"
+#include "InputSystem.h"
 
 
 #include "Ray.h"
