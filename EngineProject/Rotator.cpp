@@ -20,7 +20,7 @@ FQuat FRotator::Quaternion() const
 	float YRad = Yaw * (PI / 180.0f);
 	float RRad = Roll * (PI / 180.0f);
 	
-	return FQuat::MakeFromEuler(PRad, YRad, RRad);
+	return FQuat::MakeFromEuler(RRad, PRad, YRad);
 }
 
 FMatrix FRotator::RotationMatrix() const

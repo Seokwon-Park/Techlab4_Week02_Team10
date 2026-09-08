@@ -20,19 +20,27 @@ void UCameraComponent::TickComponent(float DeltaTime)
 
     if (FInputSystem::IsKeyDown(EKeyCode::W))
     {
-        transform.Location += Q.GetForwardVector() * CameraSpeed * DeltaTime;
+        transform.Location += transform.GetForward() * CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyDown(EKeyCode::A))
     {
-        transform.Location -= Q.GetRightVector() * CameraSpeed * DeltaTime;
+        transform.Location -= transform.GetRight() * CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyDown(EKeyCode::S))
     {
-        transform.Location -= Q.GetForwardVector() * CameraSpeed * DeltaTime;
+        transform.Location -= transform.GetForward() * CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyDown(EKeyCode::D))
     {
-        transform.Location += Q.GetRightVector() * CameraSpeed * DeltaTime;
+        transform.Location += transform.GetRight() * CameraSpeed * DeltaTime;
+    }
+    if (FInputSystem::IsKeyDown(EKeyCode::Q))
+    {
+        transform.Location += transform.GetUp() * CameraSpeed * DeltaTime;
+    }
+    if (FInputSystem::IsKeyDown(EKeyCode::E))
+    {
+        transform.Location -= transform.GetUp() * CameraSpeed * DeltaTime;
     }
 
     if (FInputSystem::IsMouseDown(EMouseButton::Right))
@@ -40,11 +48,8 @@ void UCameraComponent::TickComponent(float DeltaTime)
         float DeltaPitch = -FInputSystem::GetMouseDeltaY() * MouseSensitivity;
         float DeltaYaw = -FInputSystem::GetMouseDeltaX() * MouseSensitivity;
 
-        FQuat DeltaQ = FRotator(DeltaPitch, DeltaYaw, 0.0f).Quaternion();
-        FQuat Q = transform.Rotation.Quaternion().Normalize();
-        FQuat Result = Q * DeltaQ;
-
-        transform.Rotation = Result.ToFRotator();;
+        transform.Rotation.Pitch -= DeltaPitch;
+        transform.Rotation.Yaw -= DeltaYaw;
     }
 
     /*if (FInputSystem::IsMouseDown(EMouseButton::Left))
