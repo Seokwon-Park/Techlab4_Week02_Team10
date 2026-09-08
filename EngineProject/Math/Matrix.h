@@ -3,6 +3,7 @@
 
 struct FVector;
 struct FVector4;
+struct FRotator;
 
 // Row Vector sys
 struct FMatrix {
@@ -45,7 +46,9 @@ public:
 	void SetIdentity();
 	void SetOrigin(const FVector& NewOrigin);
 
-	// 
+	static FMatrix MakeTranslation(const FVector& T);
+
+
 	//void To3x4MatrixTranspose(float* Out) const;
 	// FMatrix TransposeAdjoint();
 
@@ -93,3 +96,6 @@ inline static const FMatrix Identity = FMatrix(
 
 /* Global Operator*/
 std::ostream& operator << (std::ostream& OS, const FMatrix& M);
+
+FRotator MatrixToRotator(const FMatrix& M);
+

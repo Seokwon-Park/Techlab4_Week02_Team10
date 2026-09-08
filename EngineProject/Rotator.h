@@ -20,8 +20,18 @@ struct FRotator
 	static FRotator Identitiy;
 
 	FQuat Quaternion() const;
-	FMatrix RotationMatrix() const;
 
+	FRotator operator+(const FRotator& Other)
+	{
+		Pitch += Other.Pitch;
+		Yaw += Other.Yaw;
+		Roll += Other.Roll;
+
+		return *this;
+	}
 };
+
+FRotator operator+(FRotator Rot, const FVector& Vec);
+
 
 

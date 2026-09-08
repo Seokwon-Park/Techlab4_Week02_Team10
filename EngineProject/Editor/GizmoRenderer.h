@@ -31,8 +31,7 @@ private:
 	FRenderer* Renderer;
 
 	FTransform Transform;
-	FMatrix World;
-
+	
 	TArray<FAxisData> AxisDataArray;
 
 	TSharedPtr<FShader> Shader;

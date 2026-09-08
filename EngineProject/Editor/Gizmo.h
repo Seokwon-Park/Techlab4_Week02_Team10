@@ -11,6 +11,12 @@ enum class EGizmoMode
 	Scale,
 };
 
+enum class EGizmoSpace
+{
+	Local,
+	World,
+};
+
 class FGizmo   // 상태 + 로직
 {
 public:
@@ -22,6 +28,9 @@ public:
 	void SetMode(EGizmoMode InMode) { Mode = InMode; }
 	EGizmoMode GetMode() const { return Mode; }
 
+	void SetSpace(EGizmoSpace InSpace) { Space = InSpace; }
+	EGizmoSpace GetSpace() const { return Space; }
+
 	void Update(const FRay& MouseRay, const FVector2& MousePos,
 		const FMatrix& ViewProj, int ScreenW, int ScreenH,
 		bool bMouseDown);
@@ -31,15 +40,26 @@ public:
 
 	int PickAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH);
 
+	int PickLinearAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH);
+	int PickRotationAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH);
+
+
 	void BeginDrag(int Axis, const FRay& MouseRay);
 	void UpdateDrag(const FRay& MouseRay);
 	void EndDrag();
 
+	float ComputeAngleOnPlane(const FVector& Point, int Axis) const;
+
+	inline FTransform GetTransform() const { return Target ? *Target->GetTransform() : FTransform(); }
 	inline FVector GetLocation() const { return Target ? Target->GetTransform()->Location: FVector(0, 0, 0); }
+	inline FRotator GetRotation() const { return Target ? Target->GetTransform()->Rotation: FRotator(0, 0, 0); }
 	inline FVector GetScale() const { return Target ? Target->GetTransform()->Scale: FVector(0, 0, 0); }
+
+	FVector GetAxisDirection(int Axis) const;
 
 private:
 	EGizmoMode Mode = EGizmoMode::Location;
+	EGizmoSpace Space = EGizmoSpace::Local;
 	FTransform Transform = FTransform();
 	USceneComponent* Target = nullptr;
 
@@ -48,6 +68,12 @@ private:
 
 	FVector DragStartPoint;
 	FVector DragStartLocation;
+	FRotator DragStartRotation;
 	FVector DragStartScale;
+	FVector DragAxisDirection;
+
 	FVector DragPlaneNormal;
+
+	float DragStartAngle;
+	float RingRadius = 1.0f;
 };

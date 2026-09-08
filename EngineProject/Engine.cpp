@@ -16,6 +16,7 @@
 
 #include "CameraActor.h"
 #include "Component/CameraComponent.h"
+#include "ResourceManager.h"
 
 void* operator new(uint64 Size)
 {
@@ -66,6 +67,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	ControlPanel = EditorUI->AddEditorPanel<FControlPanel>();
 	EditorUI->Init();
 
+	// Resource Manager 
+	FResourceManager::GetInstance().Init(Renderer.get());
 
 	// Do Sth
 	World = new UWorld();
@@ -165,8 +168,7 @@ void Engine::Run()
 
 		//Renderer->BindBuffer(Mesh.get());
 		GridRenderer->OnRender(Mat, VP);
-		if (Gizmo->GetTarget())
-			GizmoRenderer->OnRender(*Gizmo, VP);
+
 
 		//FTransform transform;
 		//World->GetMainCamera()->GetCameraComponent()->SetTransform(FVector(-1.0f, 0.0f, 0.0f));
@@ -174,6 +176,12 @@ void Engine::Run()
 		//Renderer->Draw(36);
 
 		Renderer->RenderAll(RenderQueue, VP);
+
+		if (Gizmo->GetTarget())
+		{
+			Renderer->SetDepthStencilEnabled(false);
+			GizmoRenderer->OnRender(*Gizmo, VP);
+		}
 
 		ImGuiRenderer->Begin();
 

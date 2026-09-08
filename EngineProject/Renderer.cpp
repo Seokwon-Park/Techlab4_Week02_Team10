@@ -124,6 +124,11 @@ void FRenderer::CreateDepthStencilBufferAndState()
 	DepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	Device->CreateDepthStencilState(&DepthStencilDesc, DepthStencilState.GetAddressOf());
+
+	D3D11_DEPTH_STENCIL_DESC disabledDesc = {};
+	disabledDesc.DepthEnable = FALSE;
+	disabledDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	Device->CreateDepthStencilState(&disabledDesc, &DepthDisabledState);
 }
 
 void FRenderer::CreateConstantBuffer()
@@ -258,6 +263,11 @@ void FRenderer::BindConstantBuffer(uint32 Slot, FConstantBuffer* ConstantBuffer,
 void FRenderer::SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY Topology)
 {
 	DeviceContext->IASetPrimitiveTopology(Topology);
+}
+
+void FRenderer::SetDepthStencilEnabled(bool bEnabled)
+{
+	DeviceContext->OMSetDepthStencilState(bEnabled ? DepthStencilState.Get() : DepthDisabledState.Get(), 0);
 }
 
 void FRenderer::BindShader(FShader* InShader)

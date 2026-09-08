@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "Math/Matrix.h"
+#include "Rotator.h"
 
 /* Constructor */
 
@@ -96,6 +97,16 @@ void FMatrix::SetOrigin(const FVector & NewOrigin)
 	M[3][0] = NewOrigin.X;
 	M[3][1] = NewOrigin.Y;
 	M[3][2] = NewOrigin.Z;
+}
+
+FMatrix FMatrix::MakeTranslation(const FVector& T)
+{
+	FMatrix Mat;
+	Mat.SetIdentity();
+	Mat.M[3][0] = T.X;
+	Mat.M[3][1] = T.Y;
+	Mat.M[3][2] = T.Z;
+	return Mat;
 }
 
 FVector4 FMatrix::TransformFVector4(const FVector4& V) const
@@ -306,4 +317,13 @@ std::ostream& operator << (std::ostream& OS, const FMatrix& M )
 	OS << M[2][0] << " " << M[2][1] << " " << M[2][2] << " " << M[2][3] << "\n";
 	OS << M[3][0] << " " << M[3][1] << " " << M[3][2] << " " << M[3][3] << "\n";
 	return OS;
+}
+
+FRotator MatrixToRotator(const FMatrix& Mat)
+{
+	FRotator R;
+	R.Roll = atan2f(Mat.M[1][2], Mat.M[2][2]) * 180.0f / PI;
+	R.Pitch = atan2f(-Mat.M[0][2], sqrtf(Mat.M[1][2] * Mat.M[1][2] + Mat.M[2][2] * Mat.M[2][2])) * 180.0f / PI;
+	R.Yaw = atan2f(Mat.M[0][1], Mat.M[0][0]) * 180.0f / PI;
+	return R;
 }

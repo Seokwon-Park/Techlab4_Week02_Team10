@@ -13,6 +13,8 @@ class UCubeComponent :public UPrimitiveComponent
 	~UCubeComponent() {};
 
 public:
+	virtual void BeginPlay() override;
+
 private:
 
 };

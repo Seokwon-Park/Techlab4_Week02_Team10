@@ -23,9 +23,13 @@ FQuat FRotator::Quaternion() const
 	return FQuat::MakeFromEuler(RRad, PRad, YRad);
 }
 
-FMatrix FRotator::RotationMatrix() const
-{
-	return Quaternion().ToFMatrix();
-}
-
 FRotator FRotator::Identitiy = FRotator(0, 0, 0);
+
+FRotator operator+(FRotator Rot, const FVector& Vec)
+{
+	Rot.Roll += Vec.X;
+	Rot.Pitch += Vec.Y;
+	Rot.Yaw += Vec.Z;
+
+	return Rot;
+}

@@ -48,58 +48,72 @@ bool FGizmoRenderer::Init(FRenderer* InRenderer)
 
 void FGizmoRenderer::OnRender(const FGizmo& Gizmo, const FMatrix& ViewProj)
 {
-    if (!Gizmo.GetTarget())
-        return;
+	if (!Gizmo.GetTarget())
+		return;
 
-    FMesh* AxisMesh = nullptr;
-    switch (Gizmo.GetMode())
-    {
-    case EGizmoMode::Location: AxisMesh = LocationMesh.get(); break;
-    case EGizmoMode::Rotation: AxisMesh = RotationMesh.get(); break;
-    case EGizmoMode::Scale:    AxisMesh = ScaleMesh.get();    break;
-    default: return;
-    }
+	FMesh* AxisMesh = nullptr;
+	switch (Gizmo.GetMode())
+	{
+	case EGizmoMode::Location: AxisMesh = LocationMesh.get(); break;
+	case EGizmoMode::Rotation: AxisMesh = RotationMesh.get(); break;
+	case EGizmoMode::Scale:    AxisMesh = ScaleMesh.get();    break;
+	default: return;
+	}
 
-    Renderer->BindShader(Shader.get());
-    Renderer->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	Renderer->BindShader(Shader.get());
+	Renderer->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    const FMatrix ViewProjT = ViewProj.GetTransposed();
-    const FVector GizmoLocation = Gizmo.GetLocation();
-    const int HoveredAxis = Gizmo.GetHoveredAxis();
+	const FMatrix ViewProjT = ViewProj.GetTransposed();
+	const FVector GizmoLocation = Gizmo.GetLocation();
+	const int HoveredAxis = Gizmo.GetHoveredAxis();
 
-    // 축 3개
-    Renderer->BindMesh(AxisMesh);
-    Transform.Location = GizmoLocation;
+	// 축 3개
+	Renderer->BindMesh(AxisMesh);
+	Transform.Location = GizmoLocation;
 
-    for (int i = 0; i < 3; ++i)
-    {
-        Transform.Rotation = AxisDataArray[i].Rotator;
+	for (int i = 0; i < 3; ++i)
+	{
+		FMatrix World;
 
-        FGizmoData Data{};
-        Data.World = Transform.GetWorldMatrix().GetTransposed();
-        Data.ViewProj = ViewProjT;
-        Data.Color = (i == HoveredAxis)
-            ? FVector4(1.0f, 1.0f, 0.0f, 1.0f)     // hover 시 노랑
-            : AxisDataArray[i].Color;
+		if (Gizmo.GetMode() == EGizmoMode::Scale || Gizmo.GetSpace() == EGizmoSpace::Local)
+		{
+			FMatrix AxisRot = AxisDataArray[i].Rotator.Quaternion().ToFMatrix();
+			FMatrix ObjRot = Gizmo.GetRotation().Quaternion().ToFMatrix();
+			FMatrix Trans = FMatrix::MakeTranslation(GizmoLocation);
+			World = AxisRot * ObjRot * Trans;
+		}
+		else
+		{
+			Transform.Location = GizmoLocation;
+			Transform.Rotation = AxisDataArray[i].Rotator;
+			World = Transform.GetWorldMatrix();
+		}
 
-        DrawMesh(AxisMesh, Data);
-    }
+		FGizmoData Data{};
+		Data.World = World.GetTransposed();
+		Data.ViewProj = ViewProjT;
+		Data.Color = (i == HoveredAxis)
+			? FVector4(1.0f, 1.0f, 0.0f, 1.0f)     // hover 시 노랑
+			: AxisDataArray[i].Color;
 
-    // 중앙 구
-    Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
+		DrawMesh(AxisMesh, Data);
+	}
 
-    FGizmoData SphereData{};
-    SphereData.World = Transform.GetWorldMatrix().GetTransposed();
-    SphereData.ViewProj = ViewProjT;
-    SphereData.Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+	// 중앙 구
+	Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
 
-    DrawMesh(SphereMesh.get(), SphereData);
+	FGizmoData SphereData{};
+	SphereData.World = Transform.GetWorldMatrix().GetTransposed();
+	SphereData.ViewProj = ViewProjT;
+	SphereData.Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	DrawMesh(SphereMesh.get(), SphereData);
 }
 
 void FGizmoRenderer::DrawMesh(FMesh* Mesh, const FGizmoData& Data)
 {
-    Renderer->BindMesh(Mesh);
-    Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
-    Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
-    Renderer->DrawIndexed(Mesh->IndexBuffer->GetIndexCount());
+	Renderer->BindMesh(Mesh);
+	Renderer->UpdateConstantBufferData(CB.get(), &Data, sizeof(FGizmoData));
+	Renderer->BindConstantBuffer(0, CB.get(), EShaderBindFlagBits::Vertex);
+	Renderer->DrawIndexed(Mesh->IndexBuffer->GetIndexCount());
 }

@@ -150,6 +150,7 @@
     <ClCompile Include="Class.cpp" />
     <ClCompile Include="Component\CubeComponent.cpp" />
     <ClCompile Include="Component\PrimitiveComponent.cpp" />
+    <ClCompile Include="Component\SphereComponent.cpp" />
     <ClCompile Include="Editor\ConsolePanel.cpp" />
     <ClCompile Include="Editor\ControlPanel.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
@@ -212,6 +213,7 @@
     <ClCompile Include="Render\Vertex.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Rotator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -309,6 +311,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderPacket.h" />
     <ClInclude Include="Render\Vertex.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Rotator.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_dx11.h" />
