@@ -8,8 +8,9 @@ void FRenderer::BeginFrame()
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV.Get(), ClearColor);
 	DeviceContext->ClearDepthStencilView(FrameBufferDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	DeviceContext->OMSetRenderTargets(1, FrameBufferRTV.GetAddressOf(), FrameBufferDSV.Get());
+	DeviceContext->OMSetDepthStencilState(DepthStencilState.Get(), 0);
 	DeviceContext->RSSetViewports(1, &ViewportInfo);
-	//DeviceContext->RSSetState(RasterizerState.Get());
+	DeviceContext->RSSetState(RasterizerState.Get());
 
 }
 

@@ -5,16 +5,16 @@
 void FOutlineRenderer::Init(FRenderer* InRenderer)
 {
     Renderer = InRenderer;
-    FResourceManager::GetInstance().GetShader("Shader/OutlineShader.hlsl");
+    Shader = FResourceManager::GetInstance().GetShader("Shader/OutlineShader.hlsl");
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
     RasterizerDesc.FillMode = D3D11_FILL_SOLID;
-    RasterizerDesc.CullMode = D3D11_CULL_FRONT;
+    RasterizerDesc.CullMode = D3D11_CULL_NONE;
     RasterizerDesc.FrontCounterClockwise = FALSE;
     RasterizerDesc.DepthClipEnable = TRUE;
     Renderer->GetDevice()->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
 }
 
-void FOutlineRenderer::SetMesh(TSharedPtr<FMesh>& InMesh)
+void FOutlineRenderer::SetMesh(FMesh* InMesh)
 {
     Mesh = InMesh;
 }
@@ -27,7 +27,7 @@ void FOutlineRenderer::OnRender(const FOutline& InOutline, const FMatrix& InView
     }
 
     Renderer->GetDeviceContext()->RSSetState(RasterizerState.Get());
-    Renderer->BindShader(Shader.get());
+    Renderer->BindShader(Shader);
     Renderer->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
    
     Renderer->BindMesh(InOutline.GetMesh());

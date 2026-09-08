@@ -16,6 +16,9 @@
 #include "Editor/PropertyPanel.h"
 #include "Editor/ControlPanel.h"
 
+#include "Outline.h"
+#include "OutLineRenderer.h"
+
 class Engine
 {
 public:
@@ -37,6 +40,8 @@ private:
 	TUniquePtr<FGridRenderer> GridRenderer;
 	TUniquePtr<FGizmoRenderer> GizmoRenderer;
 	TUniquePtr<FGizmo> Gizmo;
+	TUniquePtr<FOutline> Outline;
+	TUniquePtr<FOutlineRenderer> OutlineRenderer;
 
 	inline static FConsolePanel* ConsolePanel = nullptr;
 	inline static FPropertyPanel* PropertyPanel = nullptr;
