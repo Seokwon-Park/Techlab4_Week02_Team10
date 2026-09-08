@@ -11,6 +11,9 @@ public:
 	float* FPS;
 	UWorld* World; // SpawnActor MainCamera
 
+	TSharedPtr<FMesh> Mesh;
+	FShader* Shader;
+	
 	void AddActor(EPrimitiveType Type);
 	
 	int32 SelectedIndex = 0;
