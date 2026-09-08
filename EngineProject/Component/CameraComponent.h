@@ -56,5 +56,5 @@ private:
 	const float WheelSpeed = 0.1f;
 };
 
-//Engine에서 FSceneView 구조체를 가지고 Tick Component에서 업데이트 or ACameraActor에서 업데이트 카메라 가져오는 함수로 엔진의 루프 안에서
-//FScemeView 업데이트 하면 Renderer가 가져가서 사용
+extern uint32 Width;
+extern uint32 Height;

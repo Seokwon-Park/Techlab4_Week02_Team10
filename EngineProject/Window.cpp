@@ -5,6 +5,9 @@
 
 #include <backends/imgui_impl_win32.h>
 
+uint32 Width = 1280;
+uint32 Height = 720;
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -52,7 +55,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	
-	case WM_MOUSEMOVE:
+	case WM_MOUSEMOVE: 
 		FInputSystem::OnMouseMove((int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
 		break;
 
@@ -71,7 +74,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_SIZE:
+	{
+		Width = LOWORD(lParam);
+		Height = HIWORD(lParam);
 
+		printf("Window Size : %u x %u\n", Width, Height);
+		break;
+	}
 	default:
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}

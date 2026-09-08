@@ -294,6 +294,19 @@ void FRenderer::RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP)
 {
 	//DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffff'ffff);
 	//DeviceContext->OMSetDepthStencilState(nullptr, 0);
+
+	static uint32 PrevWidth = Width;
+	static uint32 PrevHeight = Height;
+
+	if (Width != PrevWidth || Height != PrevHeight)
+	{
+		Resize(Width, Height);
+
+		PrevWidth = Width;
+		PrevHeight = Height;
+	}
+
+
 	while (true)
 	{
 		if (InQueue.empty())
@@ -326,4 +339,46 @@ void FRenderer::Shutdown()
 		DeviceContext->ClearState();
 		DeviceContext->Flush();
 	}
+}
+
+void FRenderer::Resize(int32 Width, int32 Height)
+{
+    // 기존 RTV 해제
+	FrameBufferRTV.Reset();
+
+    // SwapChain 크기 변경
+    SwapChain->ResizeBuffers(
+        0,
+        Width,
+        Height,
+        DXGI_FORMAT_UNKNOWN,
+        0
+    );
+
+    // BackBuffer 다시 가져오기
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> BackBuffer;
+
+    SwapChain->GetBuffer(
+        0,
+        IID_PPV_ARGS(&BackBuffer)
+    );
+
+    Device->CreateRenderTargetView(
+        BackBuffer.Get(),
+        nullptr,
+        &FrameBufferRTV
+    );
+
+    // Viewport 변경
+    D3D11_VIEWPORT Viewport{};
+    Viewport.TopLeftX = 0.0f;
+    Viewport.TopLeftY = 0.0f;
+    Viewport.Width = static_cast<float>(Width);
+    Viewport.Height = static_cast<float>(Height);
+    Viewport.MinDepth = 0.0f;
+    Viewport.MaxDepth = 1.0f;
+
+    DeviceContext->RSSetViewports(1, &Viewport);
+
+    
 }

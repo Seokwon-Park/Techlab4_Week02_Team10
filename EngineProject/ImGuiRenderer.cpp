@@ -1,6 +1,8 @@
 #include "EnginePCH.h"
 #include "ImGuiRenderer.h"
 
+#include "InputSystem.h"
+
 #include <backends/imgui_impl_dx11.h>
 #include <backends/imgui_impl_win32.h>
 
@@ -32,6 +34,15 @@ void FImGuiRenderer::Begin()
 	ImGui_ImplWin32_NewFrame();
 
 	ImGui::NewFrame();
+
+	/*ImGuiIO& io = ImGui::GetIO(); (void)io;
+	printf(
+		"Mouse: %.0f %.0f | imguiMouse: %.0f %.0f\n",
+		FInputSystem::GetMouseX(),
+		FInputSystem::GetMouseY(),
+		io.MousePos.x,
+		io.MousePos.y
+	);*/
 }
 
 void FImGuiRenderer::End()
