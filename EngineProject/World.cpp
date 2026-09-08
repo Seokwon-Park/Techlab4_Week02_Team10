@@ -134,7 +134,7 @@ void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
 UPrimitiveComponent* UWorld::GetPickingPrimitive()
 {
 	//MainCamera->
-	FRay ray; // = MainCamera->Deprojection();
+	FRay ray;// = MainCamera->GetCameraComponent()->Deprojection(); // = MainCamera->Deprojection();
 	float minT{ FLT_MAX };
 	UPrimitiveComponent* PickingPrimitive = nullptr;
 	for (UPrimitiveComponent* Primitive : PrimitiveComponents)

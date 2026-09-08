@@ -101,4 +101,5 @@ public:
 
 	static FMeshData CreateSphere(float _radius, uint32 _numSlices, uint32 _numStacks, const FVector4& Color);
 
+	static FMeshData GetMeshData(const FString& InName);
 };

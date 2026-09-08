@@ -266,3 +266,26 @@ FMeshData FGeometryGenerator::CreateSphere(float Radius, uint32 NumSlices, uint3
 	}
 	return SphereMeshData;
 }
+
+FMeshData FGeometryGenerator::GetMeshData(const FString& InName)
+{
+	if (InName == FString("Cone"))
+	{
+		return CreateCone(1.0f, 1.0f, 20, FVector4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+	else if (InName == FString("Cube"))
+	{
+		return CreateCube(1.0f);
+	}
+	else if (InName == FString("Cylinder"))
+	{
+		return CreateCylinder(1.0f, 1.0f, 20, FVector4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+	else if (InName == FString("Sphere"))
+	{
+		return CreateSphere(1.0f, 20, 10, FVector4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+
+
+	return FMeshData();
+}

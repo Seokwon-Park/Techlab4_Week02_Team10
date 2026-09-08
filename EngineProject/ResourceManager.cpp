@@ -1,0 +1,89 @@
+#include "EnginePCH.h"
+#include "ResourceManager.h"
+#include "Buffer.h"
+
+FResourceManager& FResourceManager::GetInstance()
+{   // 렌더러 생성되고 이후에
+    static FResourceManager instance;
+    
+    return instance;
+}
+
+void FResourceManager::Init(FRenderer* InRenderer)
+{
+    Renderer = InRenderer;
+
+    if (!Renderer)
+    {
+        return;
+    }
+
+    // 메시 데이터 업로드
+    FMeshData CubeData = FGeometryGenerator::CreateCube(1.0f);
+    
+    TSharedPtr<FVertexBuffer> vb = Renderer->CreateVertexBuffer(CubeData.Vertices.data(), sizeof(FVertex) * (UINT)CubeData.Vertices.size(), sizeof(FVertex));
+    TSharedPtr<FIndexBuffer> ib = Renderer->CreateIndexBuffer(CubeData.Indices.data(), CubeData.Indices.size());
+    MeshMap[FString("Cube")] = Renderer->CreateMesh(vb, ib);
+
+    FMeshData ConeData = FGeometryGenerator::CreateCone(1.0f, 1.0f, 20, FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+    vb = Renderer->CreateVertexBuffer(ConeData.Vertices.data(), sizeof(FVertex) * (UINT)ConeData.Vertices.size(), sizeof(FVertex));
+    ib = Renderer->CreateIndexBuffer(ConeData.Indices.data(), ConeData.Indices.size());
+    MeshMap[FString("Cone")] = Renderer->CreateMesh(vb, ib);
+
+    FMeshData SphereData = FGeometryGenerator::CreateSphere(1.0f, 20, 10, FVector4(1.0f, 1.0f, 1.0f, 1.0f));
+    vb = Renderer->CreateVertexBuffer(SphereData.Vertices.data(), sizeof(FVertex) * (UINT)SphereData.Vertices.size(), sizeof(FVertex));
+    ib = Renderer->CreateIndexBuffer(SphereData.Indices.data(), SphereData.Indices.size());
+    MeshMap[FString("Sphere")] = Renderer->CreateMesh(vb, ib);
+}
+
+void FResourceManager::SetRenderer(FRenderer* InRenderer)
+{
+    Renderer = InRenderer;
+}
+
+FMesh* FResourceManager::GetMesh(FString InName)
+{
+    if (!Renderer)
+    {
+        return nullptr;
+    }
+
+    auto it = MeshMap.find(InName);
+    if (it == MeshMap.end())
+    {
+        FMeshData Data = FGeometryGenerator::GetMeshData(InName);
+        TSharedPtr<FVertexBuffer> vb = Renderer->CreateVertexBuffer(Data.Vertices.data(), sizeof(FVertex) * (UINT)Data.Vertices.size(), sizeof(FVertex));
+        TSharedPtr<FIndexBuffer> ib = Renderer->CreateIndexBuffer(Data.Indices.data(), Data.Indices.size());
+
+        VertexBufferMap[InName] = vb;
+        indexBufferMap[InName] = ib;
+
+        TSharedPtr<FMesh> mesh = Renderer->CreateMesh(vb, ib);
+        MeshMap[InName] = mesh;
+    }
+    return MeshMap[InName].get();
+}
+
+FShader* FResourceManager::GetShader(FString InName)
+{
+    if (!Renderer)
+    {
+        return nullptr;
+    }
+
+    auto it = ShaderMap.find(InName);
+    if (it == ShaderMap.end())
+    {
+        std::wstring wstr(InName.begin(), InName.end());
+
+        D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+        {
+            {"POSITION" , 0 , DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        };
+
+        FShader* shader = Renderer->CreateShader(wstr.c_str(), inputDesc, 2);
+        ShaderMap[InName] = TSharedPtr<FShader>(shader);
+    }
+    return ShaderMap[InName].get();
+}

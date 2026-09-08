@@ -16,6 +16,7 @@
 
 #include "CameraActor.h"
 #include "Component/CameraComponent.h"
+#include "ResourceManager.h"
 
 void* operator new(uint64 Size)
 {
@@ -64,6 +65,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	ControlPanel = EditorUI->AddEditorPanel<FControlPanel>();
 	EditorUI->Init();
 
+	// Resource Manager 
+	FResourceManager::GetInstance().Init(Renderer.get());
 
 	// Do Sth
 	World = new UWorld();
