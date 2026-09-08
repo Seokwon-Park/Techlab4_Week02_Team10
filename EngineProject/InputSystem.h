@@ -21,13 +21,20 @@ public:
     static void OnKeyDown(int VirtualKey);
     static void OnMouseDown(EMouseButton MouseButton);
     static void OnMouseMove(int32 x, int32 y);
-
+    static void OnMouseWheelDelta(int32 Wheel);
 
     static inline int32 GetMouseX() { return MouseX; }
     static inline int32 GetMouseY() { return MouseY; }
 
     static inline int32 GetMouseDeltaX() { return DeltaX; }
     static inline int32 GetMouseDeltaY() { return DeltaY; }
+
+    static inline int32 GetWheelDelta() 
+    { 
+        int32 Delta = WheelDelta;
+        WheelDelta = 0;
+        return Delta;
+    }
 
 private:
     FInputSystem() = delete;
@@ -41,4 +48,6 @@ private:
     static inline int32 MouseX = 0, MouseY = 0;
     static inline int32 PrevMouseX = 0, PrevMouseY = 0;
     static inline int32 DeltaX = 0, DeltaY = 0;
+
+    static inline int32 WheelDelta = 0;
 };

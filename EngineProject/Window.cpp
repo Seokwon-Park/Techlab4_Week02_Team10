@@ -56,6 +56,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		FInputSystem::OnMouseMove((int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
 		break;
 
+	case WM_MOUSEWHEEL:
+		FInputSystem::OnMouseWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam));
+		break;
+
 	case WM_KEYDOWN:
 		FInputSystem::OnKeyDown(wParam);
 		break;

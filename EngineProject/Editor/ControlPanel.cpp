@@ -5,6 +5,9 @@
 
 bool FControlPanel::Init()
 {
+
+
+
 	return true;
 }
 
@@ -13,6 +16,12 @@ void FControlPanel::AddActor(EPrimitiveType Type)
 	FTransform Transform;
 	AActor* Actor = World->SpawnActor(AActor::StaticClass(), &Transform);
 	Actor->AddPrimitiveComponent(Type);
+
+	UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Actor->GetRootComponent());
+
+	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
+	Actor->GetPrimitiveComponent()->SetMeshData(Primitive->GetMeshData());
+
 	ActorNum++;
 }
 
@@ -32,17 +41,20 @@ void FControlPanel::OnRender()
 	//EngineTimer::GetDeltaTime();
 	if (ImGui::SmallButton("Spawn")) { AddActor(static_cast<EPrimitiveType>(SelectedIndex)); }
 	ImGui::SameLine();
-	ImGui::InputInt("##N", &ActorNum);		// <-- 숫자 바뀌면 그만큼 AddActor하고 Delete 하게 만들어야????
+	ImGui::InputInt("##N", &ActorNum, 0, 0, ImGuiInputTextFlags_ReadOnly);
 	ImGui::SameLine();
 	ImGui::Text("Number of spawn");
 
 	ImGui::Separator();
 	// 씬 생성 세이브 로드
-
+	ImGui::InputText("Scene Name", SceneName, IM_ARRAYSIZE(SceneName));
+	if (ImGui::SmallButton("New Scene")) {  }
+	if (ImGui::SmallButton("Save Scene")) { }
+	if (ImGui::SmallButton("Load Scene")) { }
 	ImGui::Separator();
 	UCameraComponent* CamCom = World->GetMainCamera()->GetCameraComponent();
 
-	ImGui::Checkbox("Visible", &CamCom->bIsOrthogonal);
+	ImGui::Checkbox("Orthogonal", &CamCom->bIsOrthogonal);
 
 
 	FTransform* transform = CamCom->GetTransform();

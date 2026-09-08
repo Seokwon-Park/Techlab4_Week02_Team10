@@ -108,6 +108,8 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	PropertyPanel->transform = Actor->GetRootComponent()->GetTransform();
 	ControlPanel->FControlPanel::World = World;
+	ControlPanel->FControlPanel::Mesh = Mesh;
+	ControlPanel->FControlPanel::Shader = Shader;
 	bIsRunning = true;
 
 	return true;
