@@ -27,6 +27,8 @@ public:
 
 	void OnRender(FRenderer* Renderer);
 
+	void ClearScene();
+	bool NewScene(const FString& Path);
 	bool SaveScene(const FString& Path);
 	bool LoadScene(const FString& Path);
 

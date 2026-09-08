@@ -1,17 +1,19 @@
 #include "EnginePCH.h"
 
 #include "CameraActor.h"
+#include "Component/ActorComponent.h"
 #include "Component/CameraComponent.h"
 
 ACameraActor::ACameraActor()
 {
-	CameraComponent = new UCameraComponent;
-	Components.push_back(CameraComponent);
+	UCameraComponent* CameraComponent = new UCameraComponent;
+	SetRootComponent(Cast<USceneComponent>(CameraComponent));
+	Components.push_back(Cast<UActorComponent>(CameraComponent));
 }
 
 ACameraActor::~ACameraActor()
 {
-	delete CameraComponent;
+	// delete CameraComponent;
 
 	for (auto& i : SceneComponents)
 	{
@@ -37,5 +39,13 @@ void ACameraActor::Tick(float DeltaTime)
 
 UCameraComponent* ACameraActor::GetCameraComponent()
 {
-	return CameraComponent;
+	for (UActorComponent* Component : Components)
+	{
+		if (Cast<UCameraComponent>(Component))
+		{
+			return Cast<UCameraComponent>(Component);
+		}
+	}
+
+	return nullptr;
 }

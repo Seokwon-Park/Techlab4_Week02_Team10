@@ -106,7 +106,7 @@ bool Engine::Init(HINSTANCE hInstance)
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
 	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
-	PropertyPanel->transform = Actor->GetRootComponent()->GetTransform();
+	PropertyPanel->transform = Actor->GetPrimitiveComponent()->GetTransform();
 	ControlPanel->FControlPanel::World = World;
 	ControlPanel->FControlPanel::Mesh = Mesh;
 	ControlPanel->FControlPanel::Shader = Shader;

@@ -17,7 +17,7 @@ void FControlPanel::AddActor(EPrimitiveType Type)
 	AActor* Actor = World->SpawnActor(AActor::StaticClass(), &Transform);
 	Actor->AddPrimitiveComponent(Type);
 
-	UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Actor->GetRootComponent());
+	UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Actor->GetPrimitiveComponent());
 
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
 	Actor->GetPrimitiveComponent()->SetMeshData(Primitive->GetMeshData());
@@ -48,9 +48,9 @@ void FControlPanel::OnRender()
 	ImGui::Separator();
 	// 씬 생성 세이브 로드
 	ImGui::InputText("Scene Name", SceneName, IM_ARRAYSIZE(SceneName));
-	if (ImGui::SmallButton("New Scene")) {  }
-	if (ImGui::SmallButton("Save Scene")) { }
-	if (ImGui::SmallButton("Load Scene")) { }
+	if (ImGui::SmallButton("New Scene")) { World->NewScene(SceneName); }
+	if (ImGui::SmallButton("Save Scene")) { World->SaveScene(SceneName); }
+	if (ImGui::SmallButton("Load Scene")) { World->LoadScene(SceneName); }
 	ImGui::Separator();
 	UCameraComponent* CamCom = World->GetMainCamera()->GetCameraComponent();
 
