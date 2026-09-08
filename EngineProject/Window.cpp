@@ -5,8 +5,7 @@
 
 #include <backends/imgui_impl_win32.h>
 
-uint32 Width = 1280;
-uint32 Height = 720;
+
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
 
@@ -15,6 +14,75 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 		return true;
 
+	Window* window = nullptr;
+
+	if (msg == WM_NCCREATE)
+	{
+		CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
+		window = reinterpret_cast<Window*>(cs->lpCreateParams);
+
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
+	}
+	else
+	{
+		window = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	}
+
+	if (window)
+		return window->HandleMessage(hWnd, msg, wParam, lParam);
+
+	return DefWindowProc(hWnd, msg, wParam, lParam);   // return 0 대신
+}
+
+bool Window::Create(HINSTANCE hInstance, int InWidth, int InHeight, const wchar_t* Title)
+{
+	Width = InWidth;
+	Height = InHeight;
+	const wchar_t CLASS_NAME[] = L"EngineWindowClass";
+
+	WNDCLASS wc = {};
+	wc.lpfnWndProc = WndProc;
+	wc.hInstance = hInstance;
+	wc.lpszClassName = CLASS_NAME;
+	RegisterClass(&wc);
+
+	DWORD style = WS_OVERLAPPEDWINDOW;
+
+	// 원하는 클라이언트 크기 -> 실제 윈도우 크기로 보정
+	RECT rc = { 0, 0, Width, Height };
+	AdjustWindowRect(&rc, style, FALSE);   // FALSE = 메뉴 없음
+	int WindowWidth = rc.right - rc.left;
+	int WindowHeight = rc.bottom - rc.top;
+
+
+	hWnd = CreateWindowEx(
+		0, CLASS_NAME, Title,
+		style,
+		CW_USEDEFAULT, CW_USEDEFAULT, WindowWidth, WindowHeight,
+		nullptr, nullptr, hInstance, this);
+
+	if (hWnd == nullptr)
+		return false;
+
+	ShowWindow(hWnd, SW_SHOW);
+
+
+	return true;
+}
+
+void Window::ProcessMessage(bool& bIsRunning)
+{
+	MSG msg;
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+		if (msg.message == WM_QUIT) { bIsRunning = false; }
+	}
+}
+
+LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
 	switch (msg)
 	{
 	case WM_LBUTTONDOWN:
@@ -54,21 +122,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			FInputSystem::OnMouseUp(EMouseButton::Side2);
 		break;
 	}
-	
-	case WM_MOUSEMOVE: 
+
+	case WM_MOUSEMOVE:
 	{
 		//FInputSystem::OnMouseMove((int)(short)LOWORD(lParam) * (Width/1280), (int)(short)HIWORD(lParam) * (Height/720));
 		///*POINT Point;
 		//GetCursorPos(&Point);
 		//ScreenToClient(hWnd, &Point);
 		//FInputSystem::OnMouseMove(Point.x, Point.y);*/
+		printf("Mouse X: %d, Mouse Y: %d\n", (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
 
-		int MouseX = (int)(short)LOWORD(lParam) *(1280.0f / Width);
-		int MouseY = (int)(short)HIWORD(lParam) * (720.0f /Height);
+		int MouseX = (int)(short)LOWORD(lParam);
+		int MouseY = (int)(short)HIWORD(lParam);
+
+		printf("Mouse X(refined): %d, Mouse Y: %d\n", MouseX, MouseY);
 
 		FInputSystem::OnMouseMove(MouseX, MouseY);
 	}
-		break;
+	break;
 
 	case WM_MOUSEWHEEL:
 		FInputSystem::OnMouseWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam));
@@ -85,58 +156,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+
 	case WM_SIZE:
-	{
+		if (wParam == SIZE_MINIMIZED)
+			break;
+
 		Width = LOWORD(lParam);
 		Height = HIWORD(lParam);
 
+		if (wParam == SIZE_MAXIMIZED || wParam == SIZE_RESTORED)
+		{
+			if (!bIsInSizeMove)
+				bIsResized = true;
+		}
+		break;
+
+	case WM_ENTERSIZEMOVE:
+		bIsInSizeMove = true;
+		break;
+	case WM_EXITSIZEMOVE:
+	{
+		RECT rc;
+		GetClientRect(hWnd, &rc);
+		Width = rc.right - rc.left;
+		Height = rc.bottom - rc.top;
+
+		bIsResized = true;
+		break;
 		break;
 	}
 	default:
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 	return 0;
-}
-
-bool Window::Create(HINSTANCE hInstance, int Width, int Height, const wchar_t* Title)
-{
-	const wchar_t CLASS_NAME[] = L"EngineWindowClass";
-
-	WNDCLASS wc = {};
-	wc.lpfnWndProc = WndProc;
-	wc.hInstance = hInstance;
-	wc.lpszClassName = CLASS_NAME;
-	RegisterClass(&wc);
-
-	DWORD style = WS_OVERLAPPEDWINDOW;
-
-	// 원하는 클라이언트 크기 -> 실제 윈도우 크기로 보정
-	RECT rc = { 0, 0, Width, Height };
-	AdjustWindowRect(&rc, style, FALSE);   // FALSE = 메뉴 없음
-	int WindowWidth = rc.right - rc.left;
-	int WindowHeight = rc.bottom - rc.top;
-
-
-	hWnd = CreateWindowEx(
-		0, CLASS_NAME, Title,
-		style,
-		CW_USEDEFAULT, CW_USEDEFAULT, WindowWidth, WindowHeight,
-		nullptr, nullptr, hInstance, this);
-
-	if (hWnd == nullptr)
-		return false;
-
-	ShowWindow(hWnd, SW_SHOW);
-	return true;
-}
-
-void Window::ProcessMessage(bool& bIsRunning)
-{
-	MSG msg;
-	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-		if (msg.message == WM_QUIT) { bIsRunning = false; }
-	}
 }

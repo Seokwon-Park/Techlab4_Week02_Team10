@@ -56,5 +56,3 @@ private:
 	const float WheelSpeed = 0.1f;
 };
 
-extern uint32 Width;
-extern uint32 Height;
