@@ -13,6 +13,8 @@
 
 #include "Editor/EditorUI.h"
 #include "Editor/ConsolePanel.h"
+#include "Editor/PropertyPanel.h"
+#include "Editor/ControlPanel.h"
 
 class Engine
 {
@@ -36,6 +38,8 @@ private:
 	TUniquePtr<FGizmoRenderer> GizmoRenderer;
 
 	inline static FConsolePanel* ConsolePanel = nullptr;
+	inline static FPropertyPanel* PropertyPanel = nullptr;
+	inline static FControlPanel* ControlPanel = nullptr;
 
 	TSharedPtr<FVertexBuffer> vb;
 	TSharedPtr<FIndexBuffer> ib;

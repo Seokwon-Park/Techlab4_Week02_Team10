@@ -11,6 +11,7 @@ class USceneComponent :public UActorComponent
 		PROPERTY(bVisible)
 	REFLECT_END()
 public:
+	FTransform* GetTransform();
 	FMatrix GetWorldMatrix() const;
 private:
 	//FTransform transform;

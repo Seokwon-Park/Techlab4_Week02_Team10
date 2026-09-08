@@ -43,30 +43,26 @@ void UCameraComponent::TickComponent(float DeltaTime)
         transform.Location -= transform.GetUp() * CameraSpeed * DeltaTime;
     }
 
-    // if 마우스 키 다운이고 다른 클릭이 없다 이면
-    //      마우스 키를 위치를 받아와서
-    //      DeltaPitch Yaw에 저장
-
     if (FInputSystem::IsMouseDown(EMouseButton::Right))
     {
-        float DeltaPitch = FInputSystem::GetMouseDeltaY() * MouseSensitivity;
-        float DeltaYaw = FInputSystem::GetMouseDeltaX() * MouseSensitivity;
+        float DeltaPitch = -FInputSystem::GetMouseDeltaY() * MouseSensitivity;
+        float DeltaYaw = -FInputSystem::GetMouseDeltaX() * MouseSensitivity;
 
         transform.Rotation.Pitch -= DeltaPitch;
         transform.Rotation.Yaw -= DeltaYaw;
     }
-    
-    //FQuat NewQ = DeltaQ * Q;
-    // ;
 
-    // Yaw Pitch 를 입력을 통해 반환
-    // DeltaQ는 입력을 통해 반환한 추가 회전을 쿼터니언으로 변환한 것
-    // Q는 현재 카메라 컴포넌트의 로테이터 정보를 쿼터니언으로 변환한 것
-    // NewQ = DeltaQ * Q
-    // NewQ.ToFRotate -> 이걸 카메라 컴포넌트의 로테이터로 업데이트
+    /*if (FInputSystem::IsMouseDown(EMouseButton::Left))
+    {
+        FVector RayDirection = DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
 
-
-
+        printf(
+            "Ray Direction: X=%f Y=%f Z=%f\n",
+            RayDirection.X,
+            RayDirection.Y,
+            RayDirection.Z
+        );
+    }*/
 }
 
 void UCameraComponent::SetLocation(FVector vector)
@@ -87,6 +83,11 @@ void UCameraComponent::SetScale(FVector vector)
 void UCameraComponent::SetFOV(float FoV)
 {
 	FOV = FoV;
+}
+
+float* UCameraComponent::GetFOV()
+{
+    return &FOV;
 }
 
 void UCameraComponent::SetAspectRatio(float Ratio)
@@ -119,6 +120,30 @@ FRotator UCameraComponent::GetRotation()
     return transform.Rotation;
 }
 
+FVector UCameraComponent::DeProjection(int32 MouseX, int32 MouseY)
+{
+    FVector COP = transform.Location;
+
+    // 1280 720
+
+    const float NDCX = 2.0f * MouseX / 1280 - 1.0f;
+    const float NDCY = 1.0f - 2.0f * MouseY / 720;
+
+    // Near Plane 위의 점
+    FVector4 NDCPoint(NDCX, NDCY, 1.0f, 1.0f);
+    FVector4 CameraPoint = NDCPoint * GetPerspectiveMatrix().Inverse();
+    CameraPoint /= CameraPoint.W;
+
+    FVector4 WorldPoint = CameraPoint * GetViewMatrix().Inverse();
+    WorldPoint /= WorldPoint.W;
+
+    FVector RayOrigin = transform.Location;
+
+    FVector4 RayDirection = (FVector(WorldPoint.X, WorldPoint.Y, WorldPoint.Z) - RayOrigin).Normalize();
+
+    return FVector(RayDirection.X, RayDirection.Y, RayDirection.Z);
+}
+
 FMatrix UCameraComponent::GetViewMatrix() const
 {
     return GetWorldMatrix().Inverse();
@@ -131,9 +156,8 @@ FMatrix UCameraComponent::GetPerspectiveMatrix() const
 	const float YScale = 1.0f / tan(HalfFOV);
 	const float XScale = YScale / AspectRatio;
 
-	// Reversed-Z
-	const float ZScale = -NearClipPlane / (FarClipPlane - NearClipPlane);
-	const float ZOffset = NearClipPlane * FarClipPlane / (FarClipPlane - NearClipPlane);
+    const float ZScale = FarClipPlane / (FarClipPlane - NearClipPlane);
+    const float ZOffset = -NearClipPlane * FarClipPlane /(FarClipPlane - NearClipPlane);
 
 	return FMatrix(
 		0.0f, 0.0f, ZScale, 1.0f,
