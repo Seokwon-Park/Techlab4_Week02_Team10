@@ -149,14 +149,14 @@ void Engine::Run()
 
 		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();
 
-		FRay ray = World->GetMainCamera()->GetCameraComponent()->DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
+		FRay ray = World->GetMainCamera()->GetCameraComponent()->DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY(), MainWindow->GetWidth(), MainWindow->GetHeight());
 		FVector2 mousePos(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
 		bool bMouseDown = FInputSystem::IsMouseDown(EMouseButton::Left);
 
-		Gizmo->Update(ray, mousePos, VP, 1280, 720, bMouseDown);
+		Gizmo->Update(ray, mousePos, VP, MainWindow->GetWidth(), MainWindow->GetHeight(), bMouseDown);
 
 		if (FInputSystem::IsMousePressed(EMouseButton::Left) && !Gizmo->IsUsing() && Gizmo->GetHoveredAxis() < 0 && !ImGui::GetIO().WantCaptureMouse)
-			Gizmo->SetTarget(World->GetPickingPrimitive());
+			Gizmo->SetTarget(World->GetPickingPrimitive(MainWindow->GetWidth(), MainWindow->GetHeight()));
 
 		if (FInputSystem::IsKeyPressed(EKeyCode::Space))
 		{
