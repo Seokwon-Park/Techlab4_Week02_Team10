@@ -44,6 +44,6 @@ private:
 	TSharedPtr<FVertexBuffer> vb;
 	TSharedPtr<FIndexBuffer> ib;
 	TSharedPtr<FMesh> Mesh;
-	FShader* Shader;
+	TSharedPtr<FShader> Shader;
 };
 

@@ -103,13 +103,13 @@ bool Engine::Init(HINSTANCE hInstance)
 	};
 	Shader = Renderer->CreateShader(L"Shader/DefaultShader.hlsl", layout, 2);
 	
-	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
+	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader.get());
 	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
 	PropertyPanel->transform = Actor->GetRootComponent()->GetTransform();
 	ControlPanel->FControlPanel::World = World;
 	ControlPanel->FControlPanel::Mesh = Mesh;
-	ControlPanel->FControlPanel::Shader = Shader;
+	ControlPanel->FControlPanel::Shader = Shader.get();
 	bIsRunning = true;
 
 	return true;
@@ -145,7 +145,7 @@ void Engine::Run()
 
 		Renderer->BeginFrame();
 
-		Renderer->BindShader(Shader);
+		Renderer->BindShader(Shader.get());
 		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();
 		//Renderer->BindBuffer(Mesh.get());
 		GridRenderer->OnRender(Mat, VP);

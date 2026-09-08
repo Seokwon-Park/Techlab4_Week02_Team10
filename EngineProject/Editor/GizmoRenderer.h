@@ -3,6 +3,20 @@
 #include <d3d11.h>
 #include "Renderer.h"
 
+enum class EGizmoMode
+{
+	Location,
+	Rotation,
+	Scale,
+};
+
+struct FGizmoData
+{
+	FMatrix World;
+	FMatrix ViewProj;
+	FVector4 Color;
+};
+
 class FGizmoRenderer
 {
 public:
@@ -18,6 +32,14 @@ private:
 	FTransform Transform;
 	FMatrix World;
 
-	TSharedPtr<FMesh> ArrowMesh;
+	TArray<FGizmoData> AxisDataArray;
+
+	TSharedPtr<FShader> Shader;
+	TSharedPtr<FMesh> LocationMesh;
+	TSharedPtr<FMesh> RotationMesh;
+	TSharedPtr<FMesh> ScaleMesh;
 	TSharedPtr<FMesh> SphereMesh;
+	TSharedPtr<FConstantBuffer> CB;
+
+	EGizmoMode Mode = EGizmoMode::Scale;
 };
