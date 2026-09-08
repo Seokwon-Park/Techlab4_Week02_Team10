@@ -59,6 +59,9 @@ public:
 	void BindMesh(FMesh* InMesh);
 	void DrawIndexed(uint32 IndexCount);
 
+	// 윈도우 사이즈 변경
+	void Resize(int32 Width, int32 Height);
+
 	/*void Prepare();*/
 
 	void RenderAll(TQueue<FRenderPacket>& InQueue, FMatrix VP);
@@ -91,3 +94,6 @@ private:
 
 	FLOAT ClearColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f };
 };
+
+extern uint32 Width;
+extern uint32 Height;

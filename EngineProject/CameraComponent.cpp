@@ -16,6 +16,7 @@ void UCameraComponent::BeginPlay()
 void UCameraComponent::TickComponent(float DeltaTime)
 {
     Super::TickComponent(DeltaTime);
+    AspectRatio = static_cast<float>(Width) / static_cast<float>(Height);
 
     FQuat Q = transform.Rotation.Quaternion().Normalize();
 
@@ -64,7 +65,6 @@ void UCameraComponent::TickComponent(float DeltaTime)
     {
         transform.Location += transform.GetForward() * WheelSpeed * WDelta* DeltaTime;
     }
-
 
     /*if (FInputSystem::IsMouseDown(EMouseButton::Left))
     {

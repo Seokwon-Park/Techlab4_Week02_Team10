@@ -5,6 +5,9 @@
 
 #include <backends/imgui_impl_win32.h>
 
+uint32 Width = 1280;
+uint32 Height = 720;
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -52,8 +55,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	
-	case WM_MOUSEMOVE:
-		FInputSystem::OnMouseMove((int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+	case WM_MOUSEMOVE: 
+	{
+		//FInputSystem::OnMouseMove((int)(short)LOWORD(lParam) * (Width/1280), (int)(short)HIWORD(lParam) * (Height/720));
+		///*POINT Point;
+		//GetCursorPos(&Point);
+		//ScreenToClient(hWnd, &Point);
+		//FInputSystem::OnMouseMove(Point.x, Point.y);*/
+		printf("Mouse X: %d, Mouse Y: %d\n", (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+
+		int MouseX = (int)(short)LOWORD(lParam) *(1280.0f / Width);
+		int MouseY = (int)(short)HIWORD(lParam) * (720.0f /Height);
+
+		printf("Mouse X(refined): %d, Mouse Y: %d\n", MouseX, MouseY);
+
+		FInputSystem::OnMouseMove(MouseX, MouseY);
+	}
 		break;
 
 	case WM_MOUSEWHEEL:
@@ -71,7 +88,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_SIZE:
+	{
+		Width = LOWORD(lParam);
+		Height = HIWORD(lParam);
 
+		break;
+	}
 	default:
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
