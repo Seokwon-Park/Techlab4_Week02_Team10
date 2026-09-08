@@ -56,18 +56,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	
 	case WM_MOUSEMOVE: 
-	{
-		//FInputSystem::OnMouseMove((int)(short)LOWORD(lParam) * (Width/1280), (int)(short)HIWORD(lParam) * (Height/720));
-		///*POINT Point;
-		//GetCursorPos(&Point);
-		//ScreenToClient(hWnd, &Point);
-		//FInputSystem::OnMouseMove(Point.x, Point.y);*/
-
-		int MouseX = (int)(short)LOWORD(lParam) *(1280.0f / Width);
-		int MouseY = (int)(short)HIWORD(lParam) * (720.0f /Height);
-
-		FInputSystem::OnMouseMove(MouseX, MouseY);
-	}
+		FInputSystem::OnMouseMove((int)(short)LOWORD(lParam) * (Width), (int)(short)HIWORD(lParam) * (Height));
 		break;
 
 	case WM_MOUSEWHEEL:
