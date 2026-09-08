@@ -52,6 +52,19 @@ void UCameraComponent::TickComponent(float DeltaTime)
         transform.Rotation.Yaw -= DeltaYaw;
     }
 
+    int32 WDelta = FInputSystem::GetWheelDelta();
+
+    if (WDelta > 0)
+    {
+        transform.Location += transform.GetForward() * WheelSpeed * WDelta * DeltaTime;
+    }
+
+    if (WDelta < 0)
+    {
+        transform.Location += transform.GetForward() * WheelSpeed * WDelta* DeltaTime;
+    }
+
+
     /*if (FInputSystem::IsMouseDown(EMouseButton::Left))
     {
         FVector RayDirection = DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());

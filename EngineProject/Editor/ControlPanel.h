@@ -10,6 +10,7 @@ public:
 
 	float* FPS;
 	UWorld* World; // SpawnActor MainCamera
+	char SceneName[128] = "";
 
 	TSharedPtr<FMesh> Mesh;
 	FShader* Shader;

@@ -47,11 +47,14 @@ void FControlPanel::OnRender()
 
 	ImGui::Separator();
 	// 씬 생성 세이브 로드
-
+	ImGui::InputText("Scene Name", SceneName, IM_ARRAYSIZE(SceneName));
+	if (ImGui::SmallButton("New Scene")) {  }
+	if (ImGui::SmallButton("Save Scene")) { }
+	if (ImGui::SmallButton("Load Scene")) { }
 	ImGui::Separator();
 	UCameraComponent* CamCom = World->GetMainCamera()->GetCameraComponent();
 
-	ImGui::Checkbox("IsOrthogonal", &CamCom->bIsOrthogonal);
+	ImGui::Checkbox("Orthogonal", &CamCom->bIsOrthogonal);
 
 
 	FTransform* transform = CamCom->GetTransform();
