@@ -137,6 +137,8 @@ FRotator UCameraComponent::GetRotation() const
 FRay UCameraComponent::DeProjection(int32 MouseX, int32 MouseY)
 {
     FVector COP = transform.Location;
+    const FMatrix InvPerspective = GetPerspectiveMatrix().Inverse();
+    const FMatrix InvView = GetViewMatrix().Inverse();
 
     // 1280 720
 
@@ -145,15 +147,46 @@ FRay UCameraComponent::DeProjection(int32 MouseX, int32 MouseY)
 
     // Near Plane 위의 점
     FVector4 NDCPoint(NDCX, NDCY, 1.0f, 1.0f);
-    FVector4 CameraPoint = NDCPoint * GetPerspectiveMatrix().Inverse();
-    CameraPoint /= CameraPoint.W;
+    FVector4 CameraPoint = NDCPoint * InvPerspective;
+    FVector4 WorldPoint = CameraPoint * InvView;
 
-    FVector4 WorldPoint = CameraPoint * GetViewMatrix().Inverse();
+    CameraPoint /= CameraPoint.W;
     WorldPoint /= WorldPoint.W;
 
     FRay ray;
     ray.Origin = transform.Location;
     ray.Direction = (FVector(WorldPoint.X, WorldPoint.Y, WorldPoint.Z) - ray.Origin).Normalize();
+
+    if (bIsOrthogonal) 
+    {
+        const FMatrix InvOrthogonal = GetOrthogonalMatrix().Inverse();
+
+        FVector4 NearPoint = FVector4(NDCX, NDCY, 0.0f, 1.0f) * InvOrthogonal;
+        FVector4 FarPoint = FVector4(NDCX, NDCY, 1.0f, 1.0f) * InvOrthogonal;
+
+        NearPoint /= NearPoint.W;
+        FarPoint /= FarPoint.W;
+
+        NearPoint = NearPoint * InvView;
+        FarPoint = FarPoint * InvView;
+
+        NearPoint /= NearPoint.W;
+        FarPoint /= FarPoint.W;
+
+        FRay ray;
+        ray.Origin = FVector(NearPoint.X, NearPoint.Y, NearPoint.Z);
+        FVector4 Direction4 = (FarPoint - NearPoint);
+        ray.Direction = FVector(Direction4.X, Direction4.Y, Direction4.Z).Normalize();
+
+        std::cout << "Orthogonal\n";
+        std::cout << GetOrthogonalMatrix() << '\n';
+
+        std::cout << "Inverse\n";
+        std::cout << InvOrthogonal << '\n';
+
+        return ray;
+    }
+
 
     return ray;
 }
