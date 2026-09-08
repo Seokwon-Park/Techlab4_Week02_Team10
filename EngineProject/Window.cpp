@@ -62,12 +62,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		//GetCursorPos(&Point);
 		//ScreenToClient(hWnd, &Point);
 		//FInputSystem::OnMouseMove(Point.x, Point.y);*/
-		printf("Mouse X: %d, Mouse Y: %d\n", (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
 
 		int MouseX = (int)(short)LOWORD(lParam) *(1280.0f / Width);
 		int MouseY = (int)(short)HIWORD(lParam) * (720.0f /Height);
-
-		printf("Mouse X(refined): %d, Mouse Y: %d\n", MouseX, MouseY);
 
 		FInputSystem::OnMouseMove(MouseX, MouseY);
 	}
