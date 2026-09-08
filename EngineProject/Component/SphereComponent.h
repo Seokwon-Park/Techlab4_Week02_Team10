@@ -13,6 +13,7 @@ class USphereComponent :public UPrimitiveComponent
 	~USphereComponent() {};
 
 public:
+	virtual void BeginPlay() override;
 private:
 
 };

@@ -36,6 +36,7 @@ private:
 	TUniquePtr<FImGuiRenderer> ImGuiRenderer;
 	TUniquePtr<FGridRenderer> GridRenderer;
 	TUniquePtr<FGizmoRenderer> GizmoRenderer;
+	TUniquePtr<FGizmo> Gizmo;
 
 	inline static FConsolePanel* ConsolePanel = nullptr;
 	inline static FPropertyPanel* PropertyPanel = nullptr;
@@ -44,6 +45,6 @@ private:
 	TSharedPtr<FVertexBuffer> vb;
 	TSharedPtr<FIndexBuffer> ib;
 	TSharedPtr<FMesh> Mesh;
-	FShader* Shader;
+	TSharedPtr<FShader> Shader;
 };
 

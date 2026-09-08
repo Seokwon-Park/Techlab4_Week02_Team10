@@ -34,3 +34,8 @@ FTransform* USceneComponent::GetTransform()
 {
     return &transform;
 }
+
+void USceneComponent::SetTransform(FTransform Transform)
+{
+    transform = Transform;
+}

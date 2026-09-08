@@ -5,6 +5,9 @@
 #include "EngineStatics.h"
 
 #include "CameraActor.h"
+#include "Component/CameraComponent.h"
+#include "InputSystem.h"
+
 
 #include "Ray.h"
 
@@ -24,6 +27,23 @@ namespace
 			return "";
 			break;
 		}
+	}
+
+	EPrimitiveType FStringToPrimitiveType(const FString& string)
+	{
+		if (string == "Sphere")
+		{
+			return EPrimitiveType::Sphere;
+		}
+		if (string == "Cube")
+		{
+			return EPrimitiveType::Cube;
+		}
+		if (string == "None")
+		{
+			return EPrimitiveType::None;
+		}
+		return EPrimitiveType::None;
 	}
 }
 
@@ -89,37 +109,230 @@ void UWorld::OnRender(FRenderer* Renderer)
 	// Rendering
 }
 
+void UWorld::ClearScene()
+{
+	TArray<AActor*> NewActors;
+	for (AActor* actor : Actors)
+	{
+		delete actor;
+	}
+	Actors.clear();
+	BeginPlayList = TQueue<AActor*>();
+	PrimitiveComponents.clear();
+	Actors = NewActors;
+}
+
+bool UWorld::NewScene(const FString& Path)
+{
+	ClearScene(); // 씬 제거
+
+	ACameraActor* GetCamera = SpawnActor<ACameraActor>(nullptr);
+	if (GetCamera)
+	{
+		SetMainCamera(GetCamera);
+	}
+	MainCamera = GetCamera;
+
+	std::filesystem::create_directories("Scene");
+
+	FEngineStatics::NextUUID = 0;
+
+	json Json;
+
+	Json["Version"] = 1;
+	Json["NextUUID"] = FEngineStatics::NextUUID;
+	Json["Primitives"] = json::object();
+
+	FString FullPath = "Scene/" + Path + ".Scene";
+	std::ofstream File(FullPath);
+
+	if (!File.is_open())
+	{
+		return false;
+	}
+
+	File << Json.dump(4);
+
+	File.close();
+
+
+	return true;
+}
+
 bool UWorld::SaveScene(const FString& Path)
 {
-	std::ifstream file(Path);
-	//if (!file.is_open())
-	//	return false;
-
 	json Json;
 	Json.dump(4);
 	Json["Version"] = 1;
 	Json["NextUUID"] = FEngineStatics::NextUUID;
 	Json["Primitives"] = json::object();
-
-	//for (UPrimitiveComponent* p : Primitives)
+	
+	for (AActor* Actor : Actors)
 	{
-		json pJson;
-		//pJson["Location"] = { p->Transform.Location.x, p->Transform.Location.y, p->Transform.Location.z };
-		//pJson["Rotation"] = { p->Transform.Rotation.x, p->Transform.Rotation.y, p->Transform.Rotation.z };
-		//pJson["Scale"] = { p->Transform.Scale.x,    p->Transform.Scale.y,    p->Transform.Scale.z };
-		//pJson["Type"] = PrimitiveTypeToString(p->GetType());
 
-		//Json["Primitives"][std::to_string(p->GetUUID())] = pJson;
+		USceneComponent* Primitive = Actor->GetRootComponent();
+
+		if (Primitive == nullptr)
+		{
+			continue;
+		}
+
+		json pJson;
+
+		const FTransform* Transform = Primitive->GetTransform();
+
+		pJson["Location"] = { Transform->Location.X, Transform->Location.Y, Transform->Location.Z };
+		pJson["Rotation"] = { Transform->Rotation.Roll, Transform->Rotation.Pitch, Transform->Rotation.Yaw};
+		pJson["Scale"] = { Transform->Scale.X, Transform->Scale.Y, Transform->Scale.Z };
+		
+		if (Cast<UPrimitiveComponent>(Primitive))
+		{
+			pJson["Type"] = PrimitiveTypeToString(Cast<UPrimitiveComponent>(Primitive)->GetType());
+		}
+		else if (Cast<UCameraComponent>(Primitive))
+		{
+			pJson["Type"] = "Camera";
+		}
+		else
+		{
+			pJson["Type"] = "Other";
+		}
+
+		
+		Json["Primitives"][std::to_string(Primitive->GetUUID())] = pJson;
 
 	}
-	std::cout << Json.dump(4);
 
+	std::filesystem::create_directories("Scene");
+
+	FString FullPath = "Scene/" + Path + ".Scene";
+	std::ofstream File(FullPath);
+
+	if (!File.is_open())
+	{
+		return false;
+	}
+
+	File << Json.dump(4);
+
+	File.close();
+
+	std::cout << Json.dump(4);
 	return true;
 }
 
 bool UWorld::LoadScene(const FString& Path)
 {
-	return false;
+	std::filesystem::create_directories("Scene");
+
+	FString FullPath = "Scene/" + Path + ".Scene";
+	std::ifstream File(FullPath);
+
+	if (!File.is_open())
+	{
+		return false;
+	}
+
+	json Json;
+
+	try
+	{
+		File >> Json;
+	}
+	catch (const json::parse_error&)
+	{
+		File.close();
+		return false;
+	}
+
+	File.close();
+
+	if (!Json.contains("Version"))
+	{
+		return false;
+	}
+
+	if (Json["Version"] != 1)
+	{
+		return false;
+	}
+
+	ClearScene(); //기존씬 제거
+
+	if (Json.contains("NextUUID"))
+	{
+		FEngineStatics::NextUUID = Json["NextUUID"].get<uint64>();
+	}
+
+	if (!Json.contains("Primitives"))
+	{
+		return true;
+	}
+
+	for (auto& [UUIDString, PrimitiveJson] : Json["Primitives"].items())
+	{
+		uint64 UUID = std::stoull(UUIDString);
+
+		FTransform Transform;
+
+		if (PrimitiveJson.contains("Location"))
+		{
+			Transform.Location.X = PrimitiveJson["Location"][0].get<float>();
+			Transform.Location.Y = PrimitiveJson["Location"][1].get<float>();
+			Transform.Location.Z = PrimitiveJson["Location"][2].get<float>();
+		}
+
+		if (PrimitiveJson.contains("Rotation"))
+		{
+			Transform.Rotation.Roll = PrimitiveJson["Rotation"][0].get<float>();
+			Transform.Rotation.Pitch = PrimitiveJson["Rotation"][1].get<float>();
+			Transform.Rotation.Yaw = PrimitiveJson["Rotation"][2].get<float>();
+		}
+
+		if (PrimitiveJson.contains("Scale"))
+		{
+			Transform.Scale.X = PrimitiveJson["Scale"][0].get<float>();
+			Transform.Scale.Y = PrimitiveJson["Scale"][1].get<float>();
+			Transform.Scale.Z = PrimitiveJson["Scale"][2].get<float>();
+		}
+
+		if (!PrimitiveJson.contains("Type"))
+		{
+			continue;
+		}
+
+
+		FString TypeString = PrimitiveJson["Type"].get<FString>();
+
+		if (TypeString == "Camera") 
+		{
+			// 현재 카메라 delete하고 새로 생성
+			ACameraActor* GetCamera = SpawnActor<ACameraActor>(nullptr);
+			if (GetCamera)
+			{
+				SetMainCamera(GetCamera);
+			}
+			MainCamera = GetCamera;
+			MainCamera->GetRootComponent()->SetTransform(Transform);
+
+
+			continue;
+		}
+
+		if (TypeString == "Other")
+		{
+			continue;
+		}
+
+		EPrimitiveType Type = FStringToPrimitiveType(TypeString);
+
+
+		// 액터 스폰
+		// AActor* actor = SpawnActor;
+		// actor->SetUUID(UUID);
+	}
+
+	return true;
 }
 
 void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
@@ -133,13 +346,14 @@ void UWorld::GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue)
 
 UPrimitiveComponent* UWorld::GetPickingPrimitive()
 {
-	//MainCamera->
-	FRay ray; // = MainCamera->Deprojection();
+	FRay ray = MainCamera->GetCameraComponent()->DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
+
 	float minT{ FLT_MAX };
 	UPrimitiveComponent* PickingPrimitive = nullptr;
 
 	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 	{
+
 		// ray를 로컬공간으로
 		FMatrix invWorld = Primitive->GetWorldMatrix().Inverse();
 		FVector4 LocalRayOrigin = invWorld.TransformPosition(ray.Origin);
@@ -154,6 +368,8 @@ UPrimitiveComponent* UWorld::GetPickingPrimitive()
 		LocalRay.Direction.Y = LocalRayDir.Y;
 		LocalRay.Direction.Z = LocalRayDir.Z;
 
+
+		if (!Primitive) continue;
 		const FMeshData& mesh = Primitive->GetMeshData();
 
 		FVector BoxMin, BoxMax;

@@ -91,3 +91,52 @@ bool RayIntersectsTriangle(const FRay& Ray, const FVector& v1, const FVector& v2
 
     return false;
 }
+
+FVector2 WorldToScreen(const FVector& WorldPos, const FMatrix& ViewProj, int ScreenW, int ScreenH)
+{
+    FVector4 clip = FVector4(WorldPos.X, WorldPos.Y, WorldPos.Z, 1.0f) * ViewProj;
+
+    if (clip.W < 0.0001f)
+        return FVector2(-FLT_MAX, -FLT_MAX);
+
+    float ndcX = clip.X / clip.W;
+    float ndcY = clip.Y / clip.W;
+
+    FVector2 result;
+    result.X = (ndcX * 0.5f + 0.5f) * ScreenW;
+    result.Y = (1.0f - (ndcY * 0.5f + 0.5f)) * ScreenH;   // Y 뒤집기
+    return result;
+}
+
+float DistanceToSegment(const FVector2& P, const FVector2& A, const FVector2& B)
+{
+    FVector2 seg = B - A;
+    float segLenSq = seg.X * seg.X + seg.Y * seg.Y;
+
+    if (segLenSq < 1e-6f)
+    {
+        FVector2 d = P - A;
+        return sqrtf(d.X * d.X + d.Y * d.Y);
+    }
+
+    FVector2 toP = P - A;
+    float t = (toP.X * seg.X + toP.Y * seg.Y) / segLenSq;
+
+    t = (t < 0.0f) ? 0.0f : ((t > 1.0f) ? 1.0f : t);
+
+    FVector2 closest = A + seg * t;
+    FVector2 diff = P - closest;
+    return sqrtf(diff.X * diff.X + diff.Y * diff.Y);
+}
+
+bool RayIntersectsPlane(const FRay& Ray, const FVector& PlanePoint, const FVector& PlaneNormal, float& OutT)
+{
+    float denom = Ray.Direction.Dot(PlaneNormal);
+
+    if (fabsf(denom) < 1e-6f)
+        return false;
+
+    OutT = (PlanePoint - Ray.Origin).Dot(PlaneNormal) / denom;
+
+    return OutT >= 0.0f;
+}
