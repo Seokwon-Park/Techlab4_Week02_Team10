@@ -49,8 +49,8 @@ void UCameraComponent::TickComponent(float DeltaTime)
         float DeltaPitch = -FInputSystem::GetMouseDeltaY() * MouseSensitivity;
         float DeltaYaw = -FInputSystem::GetMouseDeltaX() * MouseSensitivity;
 
-        transform.Rotation.Pitch -= DeltaPitch;
-        transform.Rotation.Yaw -= DeltaYaw;
+        transform.Rotation.Pitch += DeltaPitch;
+        transform.Rotation.Yaw += DeltaYaw;
     }
 
     int32 WDelta = FInputSystem::GetWheelDelta();

@@ -34,3 +34,19 @@ private:
 	ComPtr<ID3D11Buffer> Buffer;
 
 };
+
+class FConstantBuffer
+{
+public:
+	FConstantBuffer(ID3D11Device* Device, uint32 Size);
+	~FConstantBuffer() = default;
+
+	void UpdateData(const void* InData);
+	inline ID3D11Buffer* GetBuffer() const { return Buffer.Get(); }
+
+private:
+	ComPtr<ID3D11Buffer> Buffer;
+	void* DataPtr;
+	uint32 Size;
+
+};
