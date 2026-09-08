@@ -37,4 +37,26 @@ FMatrix FTransform::GetWorldMatrix() const
     return WorldMatrix;
 }
 
+FVector FTransform::GetForward() const
+{
+    FQuat Quat = GetOrientation();
+    return Quat.RotateVector(FVector(1.0f, 0.0f, 0.0f));
+}
+
+FVector FTransform::GetUp() const
+{
+    FQuat Quat = GetOrientation();
+    return Quat.RotateVector(FVector(0.0f, 0.0f, 1.0f));
+}
+
+FVector FTransform::GetRight() const
+{
+    return GetOrientation().RotateVector(FVector(0.0f, 1.0f, 0.0f));
+}
+
+FQuat FTransform::GetOrientation() const
+{
+    return FQuat::MakeFromEuler(FMath::DegreesToRadians(Rotation.Roll), FMath::DegreesToRadians(Rotation.Pitch), FMath::DegreesToRadians(Rotation.Yaw));
+}
+
 FTransform FTransform::Identity = FTransform(FVector(0, 0, 0), FVector(1, 1, 1), FRotator(0, 0, 0));

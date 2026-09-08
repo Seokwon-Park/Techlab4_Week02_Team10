@@ -12,6 +12,11 @@ struct FTransform
 
     FMatrix GetWorldMatrix() const;
 
+	FVector GetForward() const;
+	FVector GetUp() const;
+	FVector GetRight() const;
+	FQuat GetOrientation() const;
+
 
 	FVector Location = FVector(0, 0, 0);
 	FVector Scale = FVector(1, 1, 1);

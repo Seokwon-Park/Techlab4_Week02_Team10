@@ -20,19 +20,27 @@ void UCameraComponent::TickComponent(float DeltaTime)
 
     if (FInputSystem::IsKeyDown(EKeyCode::W))
     {
-        transform.Location += Q.GetForwardVector() * CameraSpeed * DeltaTime;
+        transform.Location += transform.GetForward() * CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyDown(EKeyCode::A))
     {
-        transform.Location -= Q.GetRightVector() * CameraSpeed * DeltaTime;
+        transform.Location -= transform.GetRight() * CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyDown(EKeyCode::S))
     {
-        transform.Location -= Q.GetForwardVector() * CameraSpeed * DeltaTime;
+        transform.Location -= transform.GetForward() * CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyDown(EKeyCode::D))
     {
-        transform.Location += Q.GetRightVector() * CameraSpeed * DeltaTime;
+        transform.Location += transform.GetRight() * CameraSpeed * DeltaTime;
+    }
+    if (FInputSystem::IsKeyDown(EKeyCode::Q))
+    {
+        transform.Location += transform.GetUp() * CameraSpeed * DeltaTime;
+    }
+    if (FInputSystem::IsKeyDown(EKeyCode::E))
+    {
+        transform.Location -= transform.GetUp() * CameraSpeed * DeltaTime;
     }
 
     // if 마우스 키 다운이고 다른 클릭이 없다 이면
@@ -44,11 +52,8 @@ void UCameraComponent::TickComponent(float DeltaTime)
         float DeltaPitch = FInputSystem::GetMouseDeltaY() * MouseSensitivity;
         float DeltaYaw = FInputSystem::GetMouseDeltaX() * MouseSensitivity;
 
-        FQuat DeltaQ = FRotator(0.0f, DeltaPitch, DeltaYaw).Quaternion();
-        FQuat Q = transform.Rotation.Quaternion().Normalize();
-        FQuat Result = Q * DeltaQ;
-
-        transform.Rotation = Result.ToFRotator();;
+        transform.Rotation.Pitch -= DeltaPitch;
+        transform.Rotation.Yaw -= DeltaYaw;
     }
     
     //FQuat NewQ = DeltaQ * Q;
