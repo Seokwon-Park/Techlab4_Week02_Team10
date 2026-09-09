@@ -16,13 +16,9 @@ void FControlPanel::AddActor(EPrimitiveType Type)
 	FTransform Transform;
 	AActor* Actor = World->SpawnActor(AActor::StaticClass(), &Transform);
 	Actor->AddPrimitiveComponent(Type);
-
 	UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Actor->GetPrimitiveComponent());
-	FMeshData Data = FGeometryGenerator::CreateCube(1.0f);
-	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
-	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
-	ActorNum++;
+	ActorNum = World->GetActorNum();
 }
 
 
@@ -51,9 +47,9 @@ void FControlPanel::OnRender()
 	// 씬 생성 세이브 로드
 	ImGui::SetNextItemWidth(165.0f);
 	ImGui::InputText("Scene Name", SceneName, IM_ARRAYSIZE(SceneName));
-	if (ImGui::Button("New Scene", ImVec2(80.0f, 19.0f))) { World->NewScene(SceneName); }
-	if (ImGui::Button("Save Scene", ImVec2(80.0f, 19.0f))) { World->SaveScene(SceneName); }
-	if (ImGui::Button("Load Scene", ImVec2(80.0f, 19.0f))) { World->LoadScene(SceneName); }
+	if (ImGui::Button("New Scene", ImVec2(80.0f, 19.0f))) { World->NewScene(SceneName); ActorNum = World->GetActorNum();}
+	if (ImGui::Button("Save Scene", ImVec2(80.0f, 19.0f))) { World->SaveScene(SceneName); ActorNum = World->GetActorNum();}
+	if (ImGui::Button("Load Scene", ImVec2(80.0f, 19.0f))) { World->LoadScene(SceneName); ActorNum = World->GetActorNum();}
 	ImGui::Separator();
 	UCameraComponent* CamCom = World->GetMainCamera()->GetCameraComponent();
 

@@ -73,6 +73,7 @@ public:
 	bool IsA(FClass* Class);
 
 	uint32 GetUUID() const { return UUID; }
+	void SetUUID(uint32 Uid) { UUID = Uid; }
 
 	inline static void RegisterProperties(FClass* InClass) {};
 
