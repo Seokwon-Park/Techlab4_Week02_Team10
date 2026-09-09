@@ -19,11 +19,16 @@ struct PS_INPUT
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
+    float3 localPos = input.position;
     
-    input.position *= 1.1f;
-
-    output.position = mul(float4(input.position, 1.0f), MVP);
-    //output.position = float4(input.position, 1.0f);
+    float3 dir = sign(localPos);
+    float3 thickness = 0.025f;
+    
+    float3 adjustThickness = dir * (thickness / scale.xyz);
+    
+    float3 outlinePos = localPos + adjustThickness;
+    
+    output.position = mul(float4(outlinePos, 1.0f), MVP);
     output.color = float4(1.0f,1.0f,0.0f, 1.0f);
     return output;
 }
