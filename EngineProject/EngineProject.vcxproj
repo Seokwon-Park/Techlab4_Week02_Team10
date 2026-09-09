@@ -174,9 +174,6 @@
     <ClCompile Include="ImGuiRenderer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Buffer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="InputSystem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -211,6 +208,7 @@
     <ClCompile Include="Renderer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Render\Buffer.cpp" />
     <ClCompile Include="Render\Vertex.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -279,7 +277,6 @@
     <ClInclude Include="EngineLog.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="ImGuiRenderer.h" />
-    <ClInclude Include="Buffer.h" />
     <ClInclude Include="Math\EngineMath.h" />
     <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\MatrixRegister.h" />
@@ -313,6 +310,7 @@
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderPacket.h" />
+    <ClInclude Include="Render\Buffer.h" />
     <ClInclude Include="Render\Vertex.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Rotator.h" />

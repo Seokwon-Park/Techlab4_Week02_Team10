@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
 #include "ResourceManager.h"
-#include "Buffer.h"
+#include "Render/Buffer.h"
 
 FResourceManager& FResourceManager::GetInstance()
 {   // 렌더러 생성되고 이후에

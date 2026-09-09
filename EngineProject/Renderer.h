@@ -9,7 +9,7 @@
 #include <wrl/client.h>
 
 #include "RenderPacket.h"
-#include "Buffer.h"
+#include "Render/Buffer.h"
 
 enum EShaderBindFlagBits : uint32
 {
