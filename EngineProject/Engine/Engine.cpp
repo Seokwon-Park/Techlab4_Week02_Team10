@@ -187,9 +187,10 @@ void Engine::Run()
 		Renderer->BindShader(Shader.get());
 		GridRenderer->OnRender(VP, World->GetMainCamera()->GetCameraComponent()->GetLocation());
 		Renderer->RenderAll(RenderQueue, VP);
-
+		FVector4 CamLoc = World->GetMainCamera()->GetCameraComponent()->GetLocation();
 		if (Outline->GetTarget())
-			OutlineRenderer->OnRender(*Outline, VP);
+			OutlineRenderer->OnRender(*Outline, VP, CamLoc);
+
 		if (Gizmo->GetTarget())
 		{
 			Renderer->SetDepthStencilEnabled(false);

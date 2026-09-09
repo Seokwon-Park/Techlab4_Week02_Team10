@@ -19,7 +19,7 @@ void FOutlineRenderer::SetMesh(FMesh* InMesh)
 	Mesh = InMesh;
 }
 
-void FOutlineRenderer::OnRender(const FOutline& InOutline, const FMatrix& InViewProj) 
+void FOutlineRenderer::OnRender(const FOutline& InOutline, const FMatrix& InViewProj, const FVector4& CameraPos) 
 {
 	if (!InOutline.GetTarget())
 	{
@@ -33,11 +33,10 @@ void FOutlineRenderer::OnRender(const FOutline& InOutline, const FMatrix& InView
 
 	Renderer->BindMesh(InOutline.GetMesh());
 
-	FMatrix MVP = InOutline.GetWorldMatrix() * InViewProj;
-	MVP = MVP.GetTransposed();
+	FMatrix World = InOutline.GetWorldMatrix().GetTransposed();
+	FMatrix ViewProj = InViewProj.GetTransposed();
 	FVector4 Scale = InOutline.GetTargetScale();
-	FOutlineData OutlineConst = { MVP, Scale };
-	//Renderer->UpdateConstantBuffer(MVP);
+	FOutlineData OutlineConst = { World, ViewProj, CameraPos, Scale };
 	Renderer->UpdateConstantBufferData(ConstantBuffer.get(), &OutlineConst, sizeof(OutlineConst));
 	Renderer->BindConstantBuffer(0, ConstantBuffer.get(), EShaderBindFlagBits::Vertex);
 	Renderer->DrawIndexed(InOutline.GetMesh()->IndexBuffer->GetIndexCount());
