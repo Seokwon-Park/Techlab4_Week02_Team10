@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 
 #include "Window.h"
-#include "InputSystem.h"
+#include "Input/InputSystem.h"
 
 #include <backends/imgui_impl_win32.h>
 

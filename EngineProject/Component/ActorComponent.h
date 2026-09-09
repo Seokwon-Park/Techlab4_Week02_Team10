@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Object.h"
-
-#include "Class.h"
+#include "../ObjectSystem/Object.h"
+#include "ObjectSystem/Class.h"
 
 class UActorComponent : public UObject
 {

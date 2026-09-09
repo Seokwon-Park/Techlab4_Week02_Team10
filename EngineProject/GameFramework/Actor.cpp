@@ -1,11 +1,11 @@
 #include "EnginePCH.h"
 #include "Actor.h"
 
-#include "ObjectFactory.h"
-#include "World.h"
+#include "../ObjectSystem/ObjectFactory.h"
+#include "../Engine/World.h"
 
-#include "Component/CubeComponent.h"
-#include "Component/SphereComponent.h"
+#include "../Component/CubeComponent.h"
+#include "../Component/SphereComponent.h"
 
 AActor::AActor()
 {

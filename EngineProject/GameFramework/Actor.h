@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Object.h"
+#include "../ObjectSystem/Object.h"
 #include "Component/PrimitiveComponent.h"
 
-#include "Class.h"
+#include "ObjectSystem/Class.h"
 
 class UWorld;
 

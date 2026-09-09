@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Window.h"
+#include "Core/Window.h"
 #include "String.h"
-#include "Types.h"
-#include "Containers.h"
+#include "Core/Types.h"
+#include "Core/Containers.h"
 
 #include "World.h"
-#include "Renderer.h"
+#include "Render/Renderer.h"
 #include "ImGuiRenderer.h"
 #include "Editor/GridRenderer.h"
 #include "Editor/GizmoRenderer.h"

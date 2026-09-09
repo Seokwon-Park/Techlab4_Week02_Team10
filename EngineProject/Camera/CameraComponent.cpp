@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
-#include "Component/CameraComponent.h"
-#include "InputSystem.h"
+#include "CameraComponent.h"
+#include "Input/InputSystem.h"
+#include "Collision/Ray.h"
 
 //UCameraComponent::UCameraComponent()
 //{

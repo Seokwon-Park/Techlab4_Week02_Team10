@@ -1,13 +1,14 @@
 #include "EnginePCH.h"
 #include "World.h"
 
-#include "ObjectFactory.h"
-#include "EngineStatics.h"
+#include "ObjectSystem/ObjectFactory.h"
+#include "Core/EngineStatics.h"
 
-#include "CameraActor.h"
-#include "Component/CameraComponent.h"
-#include "InputSystem.h"
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
+#include "Input/InputSystem.h"
 
+#include "Collision/Ray.h"
 
 namespace
 {

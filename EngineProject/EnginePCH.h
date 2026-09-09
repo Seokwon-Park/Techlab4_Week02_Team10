@@ -2,12 +2,12 @@
 
 #include <iostream>
 #include <fstream>
-#include "Types.h"
-#include "Containers.h"
-#include "EngineString.h"
-#include "Casts.h"
+#include "Core/Types.h"
+#include "Core/Containers.h"
+#include "Core/EngineString.h"
+#include "ObjectSystem/Casts.h"
 #include "Math/EngineMath.h"
-#include "EngineLog.h"
+#include "Core/EngineLog.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;

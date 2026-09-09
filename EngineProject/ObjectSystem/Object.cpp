@@ -1,8 +1,8 @@
 #include "EnginePCH.h"
 #include "Object.h"
 
-#include "EngineStatics.h"
-#include "Class.h"
+#include "Core/EngineStatics.h"
+#include "ObjectSystem/Class.h"
 
 TArray<UObject*> GUObjectArray;
 
