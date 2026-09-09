@@ -58,11 +58,13 @@ void AActor::AddPrimitiveComponent(EPrimitiveType Type, FTransform Transform)
 		Cast<UPrimitiveComponent>(Root)->SetMesh(FResourceManager::GetInstance().GetMesh("Cone"));
 		Cast<UPrimitiveComponent>(Root)->SetMeshData(FGeometryGenerator::GetMeshData("Cone"));
 		Cast<UPrimitiveComponent>(Root)->SetType(Type);
+		break;
 	case EPrimitiveType::Plane:
 		Root = FObjectFactory::ConstructObject<UPrimitiveComponent>();
 		Cast<UPrimitiveComponent>(Root)->SetMesh(FResourceManager::GetInstance().GetMesh("Plane"));
 		Cast<UPrimitiveComponent>(Root)->SetMeshData(FGeometryGenerator::GetMeshData("Plane"));
 		Cast<UPrimitiveComponent>(Root)->SetType(Type);
+		break;
 	default:
 		break;
 	break;
