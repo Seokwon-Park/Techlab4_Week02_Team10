@@ -14,7 +14,7 @@ class AActor : public UObject
 		REFLECT_END()
 public:
 	AActor();
-	virtual ~AActor() = default;
+	virtual ~AActor();
 
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);

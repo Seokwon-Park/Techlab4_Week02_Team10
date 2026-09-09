@@ -12,6 +12,11 @@ AActor::AActor()
 	
 }
 
+AActor::~AActor()
+{
+	Components.clear();
+}
+
 void AActor::BeginPlay()
 {
 	if (UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Root))
