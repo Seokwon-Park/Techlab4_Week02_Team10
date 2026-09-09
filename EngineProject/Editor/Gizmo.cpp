@@ -8,35 +8,40 @@ static const FVector AxisDirs[3] = {
 	FVector(0, 0, 1),
 };
 
+static const int AXIS_PLANE_YZ = 3;
+static const int AXIS_PLANE_ZX = 4;
+static const int AXIS_PLANE_XY = 5;
+static const int AXIS_SCREEN = 6;   // 3축 자유 이동
+
 static const float AxisLength = 1.5f;
 static const float HitPixels = 12.0f;
 
-void FGizmo::Update(const FRay& MouseRay, const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH, bool bMouseDown, UCameraComponent* CameraComponent)
+void FGizmo::Update(const FRay& MouseRay, const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH, bool bMouseDown, UCameraComponent* InCameraComponent)
 {
-	FGizmo::CameraComponent = CameraComponent;
+	CameraComponent = InCameraComponent;
 
-	if (!Target)
+	if (!Target) // 만약 현재 타겟이 없다면 
 	{
 		HoveredAxis = -1;
 		DraggingAxis = -1;
 		return;
 	}
 
-	if (DraggingAxis >= 0)
+	if (DraggingAxis >= 0) // 만약 드래그 중인 축이 있다면
 	{
 		if (bMouseDown)
-			UpdateDrag(MouseRay);
+			UpdateDrag(MouseRay, MousePos);
 		else
 			EndDrag();
 		return;
 	}
 
-	HoveredAxis = PickAxis(MousePos, ViewProj, ScreenW, ScreenH);
+	HoveredAxis = PickAxis(MousePos, ViewProj, ScreenW, ScreenH); // 현재 마우스가 올라간 기즈모 축이 있으면
 
-	if (bMouseDown && HoveredAxis >= 0)
-		BeginDrag(HoveredAxis, MouseRay);
+	if (bMouseDown && HoveredAxis >= 0) // 마우스가 올라간 축이 있고 마우스가 눌렸으면
+		BeginDrag(HoveredAxis, MouseRay, MousePos);
 
-	
+
 }
 
 int FGizmo::PickAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH)
@@ -50,6 +55,11 @@ int FGizmo::PickAxis(const FVector2& MousePos, const FMatrix& ViewProj, int Scre
 int FGizmo::PickLinearAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH)
 {
 	FVector Origin = GetRenderLocation();
+
+	FVector2 Center = WorldToScreen(Origin, ViewProj, ScreenW, ScreenH);
+	FVector2 d = MousePos - Center;
+	if (sqrtf(d.X * d.X + d.Y * d.Y) < 15.0f)
+		return AXIS_SCREEN;
 
 	int Best = -1;
 	float BestDist = HitPixels;
@@ -109,22 +119,73 @@ int FGizmo::PickRotationAxis(const FVector2& MousePos, const FMatrix& ViewProj, 
 		}
 	}
 
+	FVector CamPos = GetCameraLocation();
+	FVector Forward = (Origin - CamPos).Normalize();
+	FVector u = FVector(0, 0, 1).Cross(Forward).Normalize();
+	FVector v = Forward.Cross(u);
+
+	const float ScreenRingRadius = RingRadius * 1.3f;  
+
+	FVector2 prev;
+	bool bHasPrev = false;
+
+	for (int s = 0; s <= Segments; ++s)
+	{
+		float theta = (float)s / Segments * 2.0f * PI;
+		FVector worldPos = Origin
+			+ u * (ScreenRingRadius * cosf(theta))
+			+ v * (ScreenRingRadius * sinf(theta));
+
+		FVector2 screenPos = WorldToScreen(worldPos, ViewProj, ScreenW, ScreenH);
+
+		if (bHasPrev)
+		{
+			float Dist = DistanceToSegment(MousePos, prev, screenPos);
+			if (Dist < BestDist)
+			{
+				BestDist = Dist;
+				Best = AXIS_SCREEN;
+			}
+		}
+
+		prev = screenPos;
+		bHasPrev = true;
+	}
+
 	return Best;
 }
 
-void FGizmo::BeginDrag(int Axis, const FRay& MouseRay)
+void FGizmo::BeginDrag(int Axis, const FRay& MouseRay, const FVector2& MousePos)
 {
+	DragStartMousePos = MousePos;
 	DraggingAxis = Axis;
 	DragStartLocation = GetLocation();
+	DragStartRenderLocation = GetRenderLocation();     // 추가
 	DragStartRotation = GetRotation();
 	DragStartScale = GetScale();
 
-	DragAxisDirection = GetAxisDirection(Axis);   // ← 여기 추가
-	FVector axis = DragAxisDirection;              // ← 아래에서 이걸 씀
+	DragAxisDirection = GetAxisDirection(Axis);
+	FVector axis = DragAxisDirection;
 
-	if (Mode == EGizmoMode::Rotation)
+	if (Axis == AXIS_SCREEN)
 	{
-		DragPlaneNormal = axis;   // 링 평면
+		if (Mode == EGizmoMode::Rotation)
+		{
+			DragAxisDirection = (GetRenderLocation() - GetCameraLocation()).Normalize();
+			DragPlaneNormal = DragAxisDirection;
+		}
+		else
+		{
+			DragPlaneNormal = -MouseRay.Direction;
+		}
+	}
+	else if (Mode == EGizmoMode::Rotation)
+	{
+		FVector ToCamera = (GetCameraLocation() - GetRenderLocation()).Normalize();
+		if (DragAxisDirection.Dot(ToCamera) < 0.0f)
+			DragAxisDirection = -DragAxisDirection;
+
+		DragPlaneNormal = DragAxisDirection;
 	}
 	else
 	{
@@ -134,31 +195,50 @@ void FGizmo::BeginDrag(int Axis, const FRay& MouseRay)
 	}
 
 	float t;
-	if (RayIntersectsPlane(MouseRay, DragStartLocation, DragPlaneNormal, t))
+	if (RayIntersectsPlane(MouseRay, DragStartRenderLocation, DragPlaneNormal, t))
 		DragStartPoint = MouseRay.Origin + MouseRay.Direction * t;
 	else
-		DragStartPoint = DragStartLocation;
+		DragStartPoint = DragStartRenderLocation;
 
 	if (Mode == EGizmoMode::Rotation)
 		DragStartAngle = ComputeAngleOnPlane(DragStartPoint, Axis);
 }
 
-void FGizmo::UpdateDrag(const FRay& MouseRay)
+void FGizmo::UpdateDrag(const FRay& MouseRay, const FVector2& MousePos)
 {
 	float t;
-	if (!RayIntersectsPlane(MouseRay, DragStartLocation, DragPlaneNormal, t))
+	if (!RayIntersectsPlane(MouseRay, DragStartRenderLocation, DragPlaneNormal, t))
 		return;
 
 	FVector current = MouseRay.Origin + MouseRay.Direction * t;
+
+	if (DraggingAxis == AXIS_SCREEN && Mode != EGizmoMode::Rotation)
+	{
+		if (Mode == EGizmoMode::Location)
+			Target->GetTransform()->Location = DragStartLocation + (current - DragStartPoint);
+		else
+		{
+			float dx = MousePos.X - DragStartMousePos.X;
+			float dy = DragStartMousePos.Y - MousePos.Y;   // 화면 Y는 아래가 +
+			float scaleDelta = (dx + dy) * 0.005f;
+
+			float factor = 1.0f + scaleDelta;
+			if (factor < 0.01f) factor = 0.01f;
+
+			Target->GetTransform()->Scale = DragStartScale * factor;
+		}
+		return;
+	}
+
 	if (Mode == EGizmoMode::Rotation)
 	{
 		float currentAngle = ComputeAngleOnPlane(current, DraggingAxis);
-		float deltaAngle = currentAngle - DragStartAngle;   
+		float deltaAngle = currentAngle - DragStartAngle;
 
-		FQuat delta = FQuat::MakeFromAxisAngle(DragAxisDirection, deltaAngle);  
+		FQuat delta = FQuat::MakeFromAxisAngle(DragAxisDirection, deltaAngle);
 		FQuat start = DragStartRotation.Quaternion();
 
-		FQuat result = delta * start;   
+		FQuat result = delta * start;
 
 		Target->GetTransform()->Rotation = result.ToFRotator();
 		return;
@@ -179,7 +259,6 @@ void FGizmo::UpdateDrag(const FRay& MouseRay)
 		else if (DraggingAxis == 1) NewScale.Y *= factor;
 		else                        NewScale.Z *= factor;
 
-		Target->GetTransform()->Rotation;  
 		Target->GetTransform()->Scale = NewScale;
 	}
 }
@@ -191,15 +270,33 @@ void FGizmo::EndDrag()
 
 float FGizmo::ComputeAngleOnPlane(const FVector& Point, int Axis) const
 {
-	FVector u = AxisDirs[(Axis + 1) % 3];
-	FVector v = AxisDirs[(Axis + 2) % 3];
+	FVector u, v;
 
-	FVector local = Point - GetLocation();
+	if (DraggingAxis >= 0)
+	{
+		FVector Ref = (fabsf(DragAxisDirection.Z) > 0.9f) ? FVector(1, 0, 0) : FVector(0, 0, 1);
+		u = Ref.Cross(DragAxisDirection).Normalize();
+		v = DragAxisDirection.Cross(u);
+	}
+	else if (Axis == AXIS_SCREEN)
+	{
+		FVector Forward = (GetRenderLocation() - GetCameraLocation()).Normalize();
+		u = FVector(0, 0, 1).Cross(Forward).Normalize();
+		v = Forward.Cross(u);
+	}
+	else
+	{
+		u = AxisDirs[(Axis + 1) % 3];
+		v = AxisDirs[(Axis + 2) % 3];
+	}
+
+	FVector local = Point - DragStartRenderLocation;
 	return atan2f(local.Dot(v), local.Dot(u));
 }
 
 FVector FGizmo::GetAxisDirection(int Axis) const
 {
+	if (Axis < 0 || Axis > 2) return FVector(0, 0, 0);
 	bool bUseLocal = (Space == EGizmoSpace::Local) || (Mode == EGizmoMode::Scale);
 
 	if (bUseLocal && Target)
@@ -220,4 +317,9 @@ FVector FGizmo::GetRenderLocation() const
 	return (Target->GetTransform()->Location - CameraComponent->GetTransform()->Location).Normalize() * 10.0f + CameraComponent->GetTransform()->Location;
 
 	// return Target ? Target->GetTransform()->Location: FVector(0, 0, 0); 
+}
+
+FVector FGizmo::GetCameraLocation() const
+{
+	return CameraComponent ? CameraComponent->GetTransform()->Location : FVector(0, 0, 0);
 }

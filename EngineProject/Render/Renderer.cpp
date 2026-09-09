@@ -191,6 +191,11 @@ TSharedPtr<FShader> FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT
 	return Shader;
 }
 
+TSharedPtr<FShader> FRenderer::CreateShader(const wchar_t* FileName, std::vector<D3D11_INPUT_ELEMENT_DESC> Layouts)
+{
+	return CreateShader(FileName, Layouts.data(), Layouts.size());
+}
+
 TSharedPtr<FMesh> FRenderer::CreateMesh(const FMeshData& InMeshData)
 {
 	TSharedPtr<FMesh> Mesh = MakeShared<FMesh>();

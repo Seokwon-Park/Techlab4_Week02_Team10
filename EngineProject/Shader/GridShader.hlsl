@@ -5,7 +5,7 @@ cbuffer GridCB : register(b0)
     float Padding;
 };
 
-static const float GridSize = 200.0f; // 충분히 크게 (카메라 시야 밖까지 덮도록)
+static const float GridSize = 400.0f; 
 static const float4 Positions[4] =
 {
     float4(-0.5, 0.5, 0.0, 1.0), // z를 0으로, xy를 평면으로
@@ -40,6 +40,8 @@ static const float CellSize = 1.0f;
 static const float SubCellSize = 0.1f;
 static const float4 CellColor = float4(0.75, 0.75, 0.75, 0.6);
 static const float4 SubCellColor = float4(0.5, 0.5, 0.5, 0.35);
+static const float4 AxisXColor = float4(1.0, 0.0, 0.0, 0.35);
+static const float4 AxisYColor = float4(0.0, 1.0, 0.0, 0.35);
 
 static const float HeightToFadeRatio = 25.0f;
 static const float MinFadeDistance = 5.0f;
@@ -60,7 +62,7 @@ float4 mainPS(PSIn input) : SV_TARGET
     float2 distToCell = abs(cellCoords - CellSize * 0.5);
     float2 distToSubCell = abs(subCellCoords - SubCellSize * 0.5);
 
-    float2 d = fwidth(input.coords); // 카메라 거리에 따라 라인 두께 자동 보정
+    float2 d = fwidth(input.coords); 
     float2 cellLineWidth = 0.5 * (0.02 + d);
     float2 subCellLineWidth = 0.5 * (0.01 + d);
 
@@ -69,6 +71,12 @@ float4 mainPS(PSIn input) : SV_TARGET
         color = SubCellColor;
     if (any(distToCell < cellLineWidth))
         color = CellColor;
+    
+    float2 axisWidth = 0.5 * (0.03 + d);
+    if (abs(input.coords.y) < axisWidth.y)
+        color = AxisXColor; // 
+    if (abs(input.coords.x) < axisWidth.x)
+        color = AxisYColor; // 
 
     float distToCamera = length(input.coords - input.camPos.xy);
     float fadeDist = clamp(abs(input.camPos.z) * HeightToFadeRatio, MinFadeDistance, MaxFadeDistance);
