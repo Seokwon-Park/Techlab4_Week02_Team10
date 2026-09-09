@@ -353,7 +353,6 @@ UPrimitiveComponent* UWorld::GetPickingPrimitive(uint32 ScreenW, uint32 ScreenH)
 
 	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 	{
-
 		// ray를 로컬공간으로
 		FMatrix invWorld = Primitive->GetWorldMatrix().Inverse();
 		FVector4 LocalRayOrigin = invWorld.TransformPosition(ray.Origin);
@@ -367,7 +366,6 @@ UPrimitiveComponent* UWorld::GetPickingPrimitive(uint32 ScreenW, uint32 ScreenH)
 		LocalRay.Direction.X = LocalRayDir.X;
 		LocalRay.Direction.Y = LocalRayDir.Y;
 		LocalRay.Direction.Z = LocalRayDir.Z;
-
 
 		if (!Primitive) continue;
 		const FMeshData& mesh = Primitive->GetMeshData();

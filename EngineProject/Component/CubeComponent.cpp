@@ -5,5 +5,6 @@
 void UCubeComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetMeshData(FResourceManager::GetInstance().GetMesh("Cube"));
+	SetMesh(FResourceManager::GetInstance().GetMesh("Cube"));
+	SetMeshData(FGeometryGenerator::GetMeshData("Cube"));
 }

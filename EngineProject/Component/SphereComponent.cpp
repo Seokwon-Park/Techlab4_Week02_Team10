@@ -5,5 +5,6 @@
 void USphereComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetMeshData(FResourceManager::GetInstance().GetMesh("Sphere"));
+	SetMesh(FResourceManager::GetInstance().GetMesh("Sphere"));
+	SetMeshData(FGeometryGenerator::GetMeshData("Sphere"));
 }
