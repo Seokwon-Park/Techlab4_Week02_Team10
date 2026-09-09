@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
-#include "Math/Quat.h"
+#include "Quat.h"
 #include "Rotator.h"
+#include "EngineMath.h"
 
 FQuat::FQuat()
 {

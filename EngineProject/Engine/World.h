@@ -42,7 +42,7 @@ public:
 	ACameraActor* GetMainCamera() const;
 	UPrimitiveComponent* GetPickingPrimitive() { return PickingPrimitive; }
 
-	int32 GetActorNum() const { return Actors.size(); }
+	int32 GetActorNum() const { return (int32)Actors.size(); }
 
 private:
 	TArray<AActor*> Actors;

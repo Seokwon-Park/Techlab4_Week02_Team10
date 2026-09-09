@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 
-#include "Math/Vector4.h"
-
+#include "Vector4.h"
+#include "EngineMath.h"
 
 #include <cmath>
 #include <assert.h>
