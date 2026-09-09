@@ -214,9 +214,9 @@ void Engine::Run()
 		//Renderer->Draw(36);
 
 		Renderer->RenderAll(RenderQueue, VP);
-
+		FVector4 CamLoc = World->GetMainCamera()->GetCameraComponent()->GetLocation();
 		if (Outline->GetTarget())
-			OutlineRenderer->OnRender(*Outline, VP);
+			OutlineRenderer->OnRender(*Outline, VP, CamLoc);
 
 		if (Gizmo->GetTarget())
 		{
