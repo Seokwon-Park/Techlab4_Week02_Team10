@@ -3,21 +3,21 @@
 
 #include "Object.h"
 
-FClass::FClass()
+UClass::UClass()
 {
 }
 
-bool FClass::IsChildOf(FClass* BaseClass) const
+bool UClass::IsChildOf(UClass* BaseClass) const
 {
 	if (!BaseClass) return false;
-	for (const FClass* c = this; c; c = c->Super)
+	for (const UClass* c = this; c; c = c->Super)
 	{
 		if (c == BaseClass) return true;
 	}
 	return false;
 }
 
-UObject* FClass::GetDefaultObject() 
+UObject* UClass::GetDefaultObject() 
 {
 	if (!DefaultObject)
 	{

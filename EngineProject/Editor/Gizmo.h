@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Ray.h"
 #include "Transform.h"
 #include "Component/SceneComponent.h"
 

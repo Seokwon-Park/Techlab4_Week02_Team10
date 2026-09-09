@@ -12,7 +12,6 @@
 #include "World.h"
 
 #include "Renderer.h"
-#include "Picking.h"
 
 #include "CameraActor.h"
 #include "Component/CameraComponent.h"
@@ -38,16 +37,31 @@ void operator delete(void* Ptr, uint64 Size)
 
 bool Engine::Init(HINSTANCE hInstance)
 {
+	EditorUI = MakeUnique<FEditorUI>();
+	EditorUI->Init();
+
+	ConsolePanel = EditorUI->AddEditorPanel<FConsolePanel>();
+	ConsolePanel->AddLog(ELogVerbosity::Info, "Engine Initialize...");
+
 	// Create Main Window
+	LOG(Info, "Create Main Window...");
 	MainWindow = MakeUnique<Window>();
 	if (!MainWindow->Create(hInstance, 1280, 720, L"Engine"))
 	{
+		LOG(Error, "Failed To Create Main Window!");
 		return false;
 	}
+	LOG(Info, "Success!");
 
-	// Create Renderer
+	LOG(Info, "Initialize Renderer...");
 	Renderer = MakeUnique<FRenderer>();
-	Renderer->Create(MainWindow->GetHandle());
+	if (Renderer->Init(MainWindow->GetHandle()))
+	{
+
+	}
+
+	LOG(Info, "Initialize ResourceManager...");
+	FResourceManager::GetInstance().Init(Renderer.get());
 
 	ImGuiRenderer = MakeUnique<FImGuiRenderer>();
 	ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext());
@@ -60,15 +74,16 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	Gizmo = MakeUnique<FGizmo>();
 
-	EditorUI = MakeUnique<FEditorUI>();
-	ConsolePanel = EditorUI->AddEditorPanel<FConsolePanel>();
+
 	// PropertyPanel Add
 	PropertyPanel = EditorUI->AddEditorPanel<FPropertyPanel>();
 	ControlPanel = EditorUI->AddEditorPanel<FControlPanel>();
-	EditorUI->Init();
+
+
+	LOG(Info, "Engine Initialize...");
+
 
 	// Resource Manager 
-	FResourceManager::GetInstance().Init(Renderer.get());
 
 	// OutLine
 	OutlineRenderer = MakeUnique<FOutlineRenderer>();
@@ -111,8 +126,8 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
-		{"POSITION" , 0 , DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "POSITION" , 0 , DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	Shader = Renderer->CreateShader(L"Shader/DefaultShader.hlsl", layout, 2);
 
@@ -186,11 +201,11 @@ void Engine::Run()
 		FInputSystem::UpdateInputStates();
 
 		Renderer->BeginFrame();
-		 
+
 		Renderer->BindShader(Shader.get());
 
 		//Renderer->BindBuffer(Mesh.get());
-		GridRenderer->OnRender(Mat, VP);
+		GridRenderer->OnRender(VP, World->GetMainCamera()->GetCameraComponent()->GetLocation());
 
 
 		//FTransform transform;

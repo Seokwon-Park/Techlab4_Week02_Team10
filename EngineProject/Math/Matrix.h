@@ -48,7 +48,6 @@ public:
 
 	static FMatrix MakeTranslation(const FVector& T);
 
-
 	//void To3x4MatrixTranspose(float* Out) const;
 	// FMatrix TransposeAdjoint();
 

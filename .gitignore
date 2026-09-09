@@ -361,3 +361,18 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+*.Scene
+*.pptx
+imgui.ini
+/EngineProject/Scene/.Scene
+/EngineProject/Scene/A.Scene
+/EngineProject/Scene/adf.Scene
+/EngineProject/Scene/afdadf.Scene
+/EngineProject/Scene/asdfadg.Scene
+/EngineProject/Scene/Sc1.Scene
+/EngineProject/Scene/Sc2.Scene
+/EngineProject/Scene/sc3.Scene
+/EngineProject/Scene/Scene1.Scene
+/EngineProject/Scene/scene123.Scene
+/EngineProject/Scene/Scene2.Scene
+/EngineProject/Scene/scene345.Scene

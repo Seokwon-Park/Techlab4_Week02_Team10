@@ -20,20 +20,16 @@ void FResourceManager::Init(FRenderer* InRenderer)
 
     // 메시 데이터 업로드
     FMeshData CubeData = FGeometryGenerator::CreateCube(1.0f);
-    
-    TSharedPtr<FVertexBuffer> vb = Renderer->CreateVertexBuffer(CubeData.Vertices.data(), sizeof(FVertex) * (UINT)CubeData.Vertices.size(), sizeof(FVertex));
-    TSharedPtr<FIndexBuffer> ib = Renderer->CreateIndexBuffer(CubeData.Indices.data(), CubeData.Indices.size());
-    MeshMap[FString("Cube")] = Renderer->CreateMesh(vb, ib);
+    MeshMap[FString("Cube")] = Renderer->CreateMesh(CubeData);
 
     FMeshData ConeData = FGeometryGenerator::CreateCone(1.0f, 1.0f, 20, FVector4(1.0f, 0.0f, 0.0f, 1.0f));
-    vb = Renderer->CreateVertexBuffer(ConeData.Vertices.data(), sizeof(FVertex) * (UINT)ConeData.Vertices.size(), sizeof(FVertex));
-    ib = Renderer->CreateIndexBuffer(ConeData.Indices.data(), ConeData.Indices.size());
-    MeshMap[FString("Cone")] = Renderer->CreateMesh(vb, ib);
+    MeshMap[FString("Cone")] = Renderer->CreateMesh(ConeData);
 
     FMeshData SphereData = FGeometryGenerator::CreateSphere(1.0f, 20, 10, FVector4(1.0f, 1.0f, 1.0f, 1.0f));
-    vb = Renderer->CreateVertexBuffer(SphereData.Vertices.data(), sizeof(FVertex) * (UINT)SphereData.Vertices.size(), sizeof(FVertex));
-    ib = Renderer->CreateIndexBuffer(SphereData.Indices.data(), SphereData.Indices.size());
-    MeshMap[FString("Sphere")] = Renderer->CreateMesh(vb, ib);
+    MeshMap[FString("Sphere")] = Renderer->CreateMesh(SphereData);
+
+    FMeshData PlaneData = FGeometryGenerator::CreatePlane(1.0f,FVector4(1.0f, 1.0f, 1.0f, 1.0f));
+    MeshMap[FString("Plane")] = Renderer->CreateMesh(PlaneData);
 }
 
 void FResourceManager::SetRenderer(FRenderer* InRenderer)

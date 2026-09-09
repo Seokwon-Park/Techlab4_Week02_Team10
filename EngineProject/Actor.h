@@ -3,6 +3,8 @@
 #include "Object.h"
 #include "Component/PrimitiveComponent.h"
 
+#include "Class.h"
+
 class UWorld;
 
 

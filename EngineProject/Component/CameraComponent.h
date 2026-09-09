@@ -1,8 +1,6 @@
 #pragma once
 
 #include "SceneComponent.h"
-#include "../Math/EngineMath.h"
-#include "../Rotator.h"
 
 struct FRay;
 

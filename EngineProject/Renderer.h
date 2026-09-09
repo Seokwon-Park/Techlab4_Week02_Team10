@@ -28,7 +28,7 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
-	void Create(HWND hWindow);
+	bool Init(HWND hWindow);
 
 	void CreateDeviceAndSwapChain(HWND hWindow);
 	void CreateFrameBuffer();
@@ -57,6 +57,8 @@ public:
 	void SetDepthStencilEnabled(bool bEnabled);
 	void BindShader(FShader* InShader);
 	void BindMesh(FMesh* InMesh);
+
+	void Draw(uint32 VertexCount);
 	void DrawIndexed(uint32 IndexCount);
 
 	// 윈도우 사이즈 변경
