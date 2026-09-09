@@ -119,6 +119,7 @@ void UWorld::ClearScene()
 	while (!BeginPlayList.empty())BeginPlayList.pop();
 	PrimitiveComponents.clear();
 	Actors = NewActors;
+
 }
 
 bool UWorld::NewScene(const FString& Path)
@@ -327,9 +328,9 @@ bool UWorld::LoadScene(const FString& Path)
 
 		// 액터 스폰
 		AActor* Actor = SpawnActor(AActor::StaticClass(), &Transform);
-		Actor->AddPrimitiveComponent(Type);
+		Actor->AddPrimitiveComponent(Type, Transform);
 		Actor->SetUUID(UUID);
-		UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Actor->GetPrimitiveComponent());
+		
 
 	}
 

@@ -30,7 +30,7 @@ public:
 	//}
 
 	UPrimitiveComponent* GetPrimitiveComponent() const { return Cast<UPrimitiveComponent>(Root); }
-	void AddPrimitiveComponent(EPrimitiveType Type);
+	void AddPrimitiveComponent(EPrimitiveType Type, FTransform Transform);
 	void SetRootComponent(USceneComponent* SceneComponent);
 	USceneComponent* GetRootComponent();
 
