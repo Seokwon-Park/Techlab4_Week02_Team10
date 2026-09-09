@@ -2,7 +2,7 @@
 
 #include "../Component/SceneComponent.h"
 #include "../Math/EngineMath.h"
-#include "../Rotator.h"
+#include "../Math/Rotator.h"
 
 struct FRay;
 
