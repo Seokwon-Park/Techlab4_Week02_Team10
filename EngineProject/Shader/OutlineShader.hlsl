@@ -1,6 +1,7 @@
 cbuffer constants : register(b0)
 {
     matrix MVP;
+    float4 scale;
 };
 
 struct VS_INPUT
@@ -18,12 +19,17 @@ struct PS_INPUT
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
-    float3 outlinePos = float3(1.1f, 1.1f, 1.1f) * input.position;
+    float3 localPos = input.position;
     
-    // 1.1배 큰 메시를 그림
-    output.position = mul(outlinePos, MVP);
-    //output.position = float4(input.position, 1.0f);
-    output.color = float4(1.0f, 0.0f, 0.0f, 1.0f);  // 빨간색으로 그림
+    float3 dir = sign(localPos);
+    float3 thickness = 0.025f;
+    
+    float3 adjustThickness = dir * (thickness / scale.xyz);
+    
+    float3 outlinePos = localPos + adjustThickness;
+    
+    output.position = mul(float4(outlinePos, 1.0f), MVP);
+    output.color = float4(1.0f,1.0f,0.0f, 1.0f);
     return output;
 }
 
