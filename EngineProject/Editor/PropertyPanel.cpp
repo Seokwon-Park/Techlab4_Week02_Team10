@@ -56,15 +56,15 @@ void FPropertyPanel::OnRender()
 	ImGui::Text("Scale");
 
 	ImGui::Separator();
-	ImGui::SetNextItemWidth(100.0f);
-	ImGui::Combo("##GizmoCombo", &GizmoSelectedIndex, GizmoItems, IM_ARRAYSIZE(GizmoItems));
-	ImGui::SameLine();
-	if (ImGui::Button("Mode Chamge", ImVec2(100.0f, 19.0f))) { Gizmo->SetMode(static_cast<EGizmoMode>(GizmoSelectedIndex)); }
-
-	ImGui::SetNextItemWidth(100.0f);
-	ImGui::Combo("##SpaceCombo", &SpaceSelectedIndex, SpaceItems, IM_ARRAYSIZE(SpaceItems));
-	ImGui::SameLine();
-	if (ImGui::Button("Space Chamge", ImVec2(100.0f, 19.0f))) { Gizmo->SetSpace(static_cast<EGizmoSpace>(SpaceSelectedIndex)); }
+	if (ImGui::SetNextItemWidth(100.0f); ImGui::Combo("##GizmoCombo", &GizmoSelectedIndex, GizmoItems, IM_ARRAYSIZE(GizmoItems)))
+	{
+		Gizmo->SetMode(static_cast<EGizmoMode>(GizmoSelectedIndex));
+	}
+	
+	if (ImGui::SetNextItemWidth(100.0f); ImGui::Combo("##SpaceCombo", &SpaceSelectedIndex, SpaceItems, IM_ARRAYSIZE(SpaceItems)))
+	{
+		Gizmo->SetSpace(static_cast<EGizmoSpace>(SpaceSelectedIndex));
+	}
 
 	ImGui::End();
 }

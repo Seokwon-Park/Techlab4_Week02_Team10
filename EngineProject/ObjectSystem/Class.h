@@ -5,8 +5,9 @@
 
 using ClassConstructor = UObject * (*)();
 
-struct UClass : public UObject
+class UClass : public UObject
 {
+public:
 	UClass();
 
 	FString Name;
