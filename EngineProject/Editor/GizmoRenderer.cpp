@@ -116,6 +116,33 @@ void FGizmoRenderer::OnRender(const FGizmo& Gizmo, const FMatrix& ViewProj)
 
 		DrawMesh(SphereMesh.get(), SphereData);
 	}
+	else
+	{
+		FVector CamPos = Gizmo.GetCameraLocation();
+		FVector Forward = (GizmoLocation - CamPos).Normalize();
+		FVector Right = FVector(0, 0, 1).Cross(Forward).Normalize();
+		FVector Up = Forward.Cross(Right);
+
+		FMatrix Rot = Identity;
+		Rot.M[0][0] = Right.X;   Rot.M[0][1] = Right.Y;   Rot.M[0][2] = Right.Z;
+		Rot.M[1][0] = Up.X;      Rot.M[1][1] = Up.Y;      Rot.M[1][2] = Up.Z;
+		Rot.M[2][0] = Forward.X; Rot.M[2][1] = Forward.Y; Rot.M[2][2] = Forward.Z;
+
+		FMatrix Scale = Identity;
+		Scale.M[0][0] = Scale.M[1][1] = Scale.M[2][2] = 1.3f;
+
+		FMatrix Trans = FMatrix::MakeTranslation(GizmoLocation);
+
+		FGizmoData Data{};
+		Data.World = (Scale * Rot * Trans).GetTransposed();
+		Data.ViewProj = ViewProjT;
+		Data.Color = (6 == HoveredAxis)
+			? FVector4(1.0f, 1.0f, 0.0f, 1.0f)     // hover 시 노랑
+			: AxisDataArray[6].Color;
+
+
+		DrawMesh(RotationMesh.get(), Data);
+	}
 }
 
 void FGizmoRenderer::DrawMesh(FMesh* Mesh, const FGizmoData& Data)

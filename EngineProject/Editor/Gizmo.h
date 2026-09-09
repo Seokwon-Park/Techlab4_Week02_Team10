@@ -54,13 +54,12 @@ public:
 
 	inline FTransform GetTransform() const { return Target ? *Target->GetTransform() : FTransform(); }
 	inline FVector GetLocation() const { return Target ? Target->GetTransform()->Location : FVector(0, 0, 0); }
-	inline FRotator GetRotation() const { return Target ? Target->GetTransform()->Rotation: FRotator(0, 0, 0); }
-	inline FVector GetScale() const { return Target ? Target->GetTransform()->Scale: FVector(0, 0, 0); }
+	inline FRotator GetRotation() const { return Target ? Target->GetTransform()->Rotation : FRotator(0, 0, 0); }
+	inline FVector GetScale() const { return Target ? Target->GetTransform()->Scale : FVector(0, 0, 0); }
 
 	FVector GetRenderLocation() const;
-
+	FVector GetCameraLocation() const;
 	FVector GetAxisDirection(int Axis) const;
-
 private:
 	EGizmoMode Mode = EGizmoMode::Location;
 	EGizmoSpace Space = EGizmoSpace::Local;
@@ -76,6 +75,7 @@ private:
 	FRotator DragStartRotation;
 	FVector DragStartScale;
 	FVector DragAxisDirection;
+	FVector DragStartRenderLocation;
 
 	FVector DragPlaneNormal;
 
