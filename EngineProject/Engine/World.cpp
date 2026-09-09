@@ -65,11 +65,6 @@ namespace
 
 UWorld::~UWorld()
 {
-	for (AActor* Actor : Actors)
-	{
-		delete Actor;
-	}
-	Actors.clear();
 }
 
 bool UWorld::Init()
@@ -91,7 +86,8 @@ AActor* UWorld::SpawnActor(UClass* Class, const FTransform* UserTransformPtr)
 	if (!Class) return nullptr;
 	if (!Class->IsChildOf(AActor::StaticClass())) return nullptr;
 	const FTransform UserTransform = UserTransformPtr ? *UserTransformPtr : FTransform::Identity;
-	AActor* NewActor = Cast<AActor>(FObjectFactory::ConstructObject(Class));
+	UObject* NewObject= FObjectFactory::ConstructObject(Class);
+	AActor* NewActor = Cast<AActor>(NewObject);
 	NewActor->World = this;
 	if (!NewActor) return nullptr;
 

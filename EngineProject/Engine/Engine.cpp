@@ -210,7 +210,8 @@ void Engine::Run()
 
 void Engine::Shutdown()
 {
-	delete World;
+	for (UObject* Object : GUObjectArray)
+		delete Object;
 	ImGuiRenderer->Shutdown();
 	Renderer->Shutdown();
 }

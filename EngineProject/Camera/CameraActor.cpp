@@ -16,10 +16,10 @@ ACameraActor::~ACameraActor()
 {
 	// delete CameraComponent;
 
-	for (auto& i : SceneComponents)
-	{
-		delete i;
-	}
+	//for (auto& i : SceneComponents)
+	//{
+	//	delete i;
+	//}
 }
 
 void ACameraActor::BeginPlay()

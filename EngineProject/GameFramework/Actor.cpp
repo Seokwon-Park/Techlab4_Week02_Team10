@@ -15,10 +15,10 @@ AActor::AActor()
 
 AActor::~AActor()
 {
-	for (UActorComponent* Component : Components)
-		delete Component;
-	Components.clear();
-	RootComponent = nullptr;   // Root 는 Components에 이미 들어있으므로 delete 하지 말 것
+	//for (UActorComponent* Component : Components)
+	//	delete Component;
+	//Components.clear();
+	//RootComponent = nullptr;   // Root 는 Components에 이미 들어있으므로 delete 하지 말 것
 }
 
 void AActor::BeginPlay()

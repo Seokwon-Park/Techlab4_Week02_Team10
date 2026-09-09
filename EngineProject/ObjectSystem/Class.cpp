@@ -4,6 +4,7 @@
 #include "Object.h"
 
 UClass::UClass()
+	:UObject(false)
 {
 	LOG(Info, "Create RTTI UClass");
 }

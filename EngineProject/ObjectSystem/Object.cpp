@@ -15,6 +15,10 @@ UObject::UObject()
 	LOG(Info, "UUID : {}", UUID);
 }
 
+UObject::UObject(bool bRegister)
+{
+}
+
 UObject::~UObject()
 {
 }

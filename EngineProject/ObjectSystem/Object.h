@@ -44,6 +44,7 @@ class UObject
 {
 public:
 	UObject();
+	UObject(bool bRegister);
 	virtual ~UObject();
 
 	static UClass* StaticClass();
