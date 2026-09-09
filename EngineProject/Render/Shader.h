@@ -1,6 +1,6 @@
 #pragma once
 #include <wrl/client.h>
-#include "Types.h"
+#include "../Core/Types.h"
 
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;

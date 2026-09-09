@@ -1,22 +1,22 @@
 #include "EnginePCH.h"
 
 #include "Engine.h"
-#include "EngineStatics.h"
-#include "EngineTimer.h"
-#include "InputSystem.h"
+#include "Core/EngineStatics.h"
+#include "Core/EngineTimer.h"
+#include "Input/InputSystem.h"
 
-#include "ObjectFactory.h"
+#include "ObjectSystem/ObjectFactory.h"
 
-#include "GeometryGenerator.h"
+#include "Render/GeometryGenerator.h"
 
 #include "World.h"
 
-#include "Renderer.h"
-#include "Picking.h"
+#include "Render/Renderer.h"
+#include "Collision/Picking.h"
 
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
-#include "ResourceManager.h"
+#include "Engine/ResourceManager.h"
 
 void* operator new(uint64 Size)
 {

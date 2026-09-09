@@ -1,6 +1,7 @@
 #pragma once
-#include "Containers.h"
-#include "Property.h"
+#include "Core/Containers.h"
+#include "ObjectSystem/Property.h"
+#include "Render/Renderer.h"
 
 struct FMesh;
 struct FShader;

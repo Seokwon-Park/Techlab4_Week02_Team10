@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
 #include "SphereComponent.h"
-#include "ResourceManager.h"
+#include "Engine/ResourceManager.h"
 
 void USphereComponent::BeginPlay()
 {

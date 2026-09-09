@@ -2,7 +2,7 @@
 
 #include "KeyCode.h"
 #include "MouseButton.h"
-#include "Types.h"
+#include "Core/Types.h"
 
 class FInputSystem
 {

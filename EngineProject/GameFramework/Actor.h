@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object.h"
+#include "../ObjectSystem/Object.h"
 #include "Component/PrimitiveComponent.h"
 
 class UWorld;

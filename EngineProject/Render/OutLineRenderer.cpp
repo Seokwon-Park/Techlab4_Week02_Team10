@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
 #include "OutLineRenderer.h"
-#include "ResourceManager.h"
+#include "Engine/ResourceManager.h"
 
 void FOutlineRenderer::Init(FRenderer* InRenderer)
 {

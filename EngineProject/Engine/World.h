@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Object.h"
-#include "Actor.h"
+#include "ObjectSystem/Object.h"
+#include "GameFramework/Actor.h"
 #include "Component/PrimitiveComponent.h"
 #include "Math/Transform.h"
-#include "Renderer.h"
+#include "Render/Renderer.h"
 
 class ACameraActor;
 

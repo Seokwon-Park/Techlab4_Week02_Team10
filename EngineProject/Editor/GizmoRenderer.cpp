@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "GizmoRenderer.h"
 
-#include "GeometryGenerator.h"
+#include "Render/GeometryGenerator.h"
 
 FGizmoRenderer::FGizmoRenderer()
 {

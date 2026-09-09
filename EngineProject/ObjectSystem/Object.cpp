@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "Object.h"
 
-#include "EngineStatics.h"
+#include "Core/EngineStatics.h"
 
 TArray<UObject*> GUObjectArray;
 

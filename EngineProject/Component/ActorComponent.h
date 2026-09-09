@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Object.h"
+#include "../ObjectSystem/Object.h"
 
 class UActorComponent : public UObject
 {
