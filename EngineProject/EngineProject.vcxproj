@@ -198,14 +198,11 @@
     <ClCompile Include="ObjectFactory.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="OutLineRenderer.cpp" />
-    <ClCompile Include="Picking.cpp">
+    <ClCompile Include="Editor\OutLineRenderer.cpp" />
+    <ClCompile Include="Math\Quat.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Quat.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Ray.cpp">
+    <ClCompile Include="Math\Ray.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
@@ -215,7 +212,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Rotator.cpp">
+    <ClCompile Include="Math\Rotator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SceneComponent.cpp">
@@ -224,6 +221,7 @@
     <ClCompile Include="Shader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -248,10 +246,10 @@
     <ClCompile Include="Transform.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vector.cpp">
+    <ClCompile Include="Math\Vector.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vector4.cpp">
+    <ClCompile Include="Math\Vector4.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Window.cpp">
@@ -278,6 +276,7 @@
     <ClInclude Include="Editor\PropertyPanel.h" />
     <ClInclude Include="EngineLog.h" />
     <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="Texture2D.h" />
     <ClInclude Include="ImGuiRenderer.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Math\EngineMath.h" />
@@ -290,11 +289,10 @@
     <ClInclude Include="Math\VectorRegister.h" />
     <ClInclude Include="Math\VectorRegister_SSE.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Outline.h" />
-    <ClInclude Include="OutLineRenderer.h" />
-    <ClInclude Include="Picking.h" />
+    <ClInclude Include="Editor\Outline.h" />
+    <ClInclude Include="Editor\OutLineRenderer.h" />
     <ClInclude Include="Property.h" />
-    <ClInclude Include="Ray.h" />
+    <ClInclude Include="Math\Ray.h" />
     <ClInclude Include="Component\CubeComponent.h" />
     <ClInclude Include="Component\PrimitiveComponent.h" />
     <ClInclude Include="Component\SceneComponent.h" />
@@ -315,7 +313,7 @@
     <ClInclude Include="RenderPacket.h" />
     <ClInclude Include="Render\Vertex.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Rotator.h" />
+    <ClInclude Include="Math\Rotator.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_win32.h" />
@@ -340,6 +338,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\GizmoShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shader\GridShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>

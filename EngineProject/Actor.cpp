@@ -14,6 +14,7 @@ AActor::AActor()
 
 AActor::~AActor()
 {
+	Root = nullptr;
 	Components.clear();
 }
 
@@ -22,7 +23,6 @@ void AActor::BeginPlay()
 	if (UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Root))
 	{
 		World->AddPrimitive(Cast<UPrimitiveComponent>(Root));
-
 	}
 
 	for (UActorComponent* Component : Components)

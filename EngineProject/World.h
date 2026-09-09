@@ -15,7 +15,7 @@ public:
 
 	bool Init();
 	/*UPrimitiveComponent* SpawnPrimitive(FClass* Class);*/
-	AActor* SpawnActor(FClass* Class, const FTransform* Transform);
+	AActor* SpawnActor(UClass* Class, const FTransform* Transform);
 
 	template <class T>
 	T* SpawnActor(const FTransform* Transform)

@@ -1,23 +1,22 @@
 #pragma once
 
 #include "Property.h"
-
-class UObject;
+#include "Object.h"
 
 using ClassConstructor = UObject * (*)();
 
-struct FClass
+struct UClass : public UObject
 {
-	FClass();
+	UClass();
 
 	FString Name;
-	FClass* Super = nullptr;
+	UClass* Super = nullptr;
 	ClassConstructor Constructor = nullptr;
 
 	TArray<FProperty> Properties;
 	UObject* DefaultObject = nullptr;
 
-	bool IsChildOf(FClass* BaseClass) const;
+	bool IsChildOf(UClass* BaseClass) const;
 	UObject* GetDefaultObject();
 
 	inline const TArray<FProperty>& GetProperties() const { return Properties; }
@@ -36,9 +35,9 @@ struct FClass
 };
 
 //보류
-inline void CopyProperties(UObject* Src, UObject* Dst, FClass* FromClass)
+inline void CopyProperties(UObject* Src, UObject* Dst, UClass* FromClass)
 {
-	for (FClass* c = FromClass; c; c = c->Super)
+	for (UClass* c = FromClass; c; c = c->Super)
 		for (const FProperty& p : c->Properties)
 			memcpy((char*)Dst + p.Offset, (char*)Src + p.Offset, p.Size);
 }

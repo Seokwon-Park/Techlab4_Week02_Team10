@@ -30,7 +30,7 @@ public:
 	inline ID3D11Buffer* GetBuffer() const { return Buffer.Get(); }
 
 private:
-	uint32 Stride;
+	uint32 Stride = 0;
 	ComPtr<ID3D11Buffer> Buffer;
 
 };
