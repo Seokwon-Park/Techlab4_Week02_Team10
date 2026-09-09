@@ -3,6 +3,7 @@
 
 #include "Core/EngineStatics.h"
 #include "ObjectSystem/Class.h"
+#
 
 TArray<UObject*> GUObjectArray;
 
@@ -11,6 +12,7 @@ UObject::UObject()
 	UUID = FEngineStatics::GetUUID();
 	InternalIndex = GUObjectArray.size();
 	GUObjectArray.push_back(this);
+	LOG(Info, "UUID : {}", UUID);
 }
 
 UObject::~UObject()

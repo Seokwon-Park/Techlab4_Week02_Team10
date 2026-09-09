@@ -3,10 +3,11 @@
 #include "CameraActor.h"
 #include "../Component/ActorComponent.h"
 #include "CameraComponent.h"
+#include "ObjectSystem/ObjectFactory.h"
 
 ACameraActor::ACameraActor()
 {
-	UCameraComponent* CameraComponent = new UCameraComponent;
+	UCameraComponent* CameraComponent = FObjectFactory::ConstructObject<UCameraComponent>();
 	SetRootComponent(Cast<USceneComponent>(CameraComponent));
 	Components.push_back(Cast<UActorComponent>(CameraComponent));
 }

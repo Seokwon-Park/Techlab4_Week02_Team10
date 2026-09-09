@@ -21,6 +21,7 @@ class FConsolePanel : public IEditorPanel
 {
 public:
 	bool Init() override;
+	void Tick(float DeltaTime)override;
 	void OnRender() override;
 
 	void ClearLog();
@@ -29,7 +30,7 @@ public:
 	void AddLog(ELogVerbosity Verbosity, std::format_string<Args...> fmt, Args&&... args)
 	{
 		FLogData LogData;
-		
+
 
 		// 여기서 Category / Verbosity 활용
 		switch (Verbosity)
@@ -49,7 +50,7 @@ public:
 		}
 
 		LogData.message = std::format(fmt, std::forward<Args>(args)...);
-		
+
 		Items.push_back(LogData);
 	}
 

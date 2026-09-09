@@ -29,7 +29,7 @@ PS_INPUT mainVS(VS_INPUT input)
     float3 outlinePos = localPos + adjustThickness;
     
     output.position = mul(float4(outlinePos, 1.0f), MVP);
-    output.color = float4(1.0f,1.0f,0.0f, 1.0f);
+    output.color = float4(1.0f, 0.5f, 0.0f, 1.0f);
     return output;
 }
 

@@ -17,23 +17,7 @@
 #include "Camera/CameraComponent.h"
 #include "Engine/ResourceManager.h"
 
-void* operator new(uint64 Size)
-{
-	void* Ptr = malloc(Size);
-	if (!Ptr)
-		throw std::bad_alloc();
 
-	FEngineStatics::TotalAllocationBytes += static_cast<uint64>(Size);
-	FEngineStatics::TotalAllocationCount += 1;
-	return Ptr;
-}
-
-void operator delete(void* Ptr, uint64 Size)
-{
-	FEngineStatics::TotalAllocationBytes -= static_cast<uint64>(Size);
-	FEngineStatics::TotalAllocationCount -= 1;
-	free(Ptr);
-}
 
 bool Engine::Init(HINSTANCE hInstance)
 {
@@ -55,16 +39,28 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	LOG(Info, "Initialize Renderer...");
 	Renderer = MakeUnique<FRenderer>();
-	if (Renderer->Init(MainWindow->GetHandle()))
+	if (!Renderer->Init(MainWindow->GetHandle()))
 	{
+		LOG(Error, "Failed To Initialize Renderer!");
 
 	}
+	LOG(Info, "Success!");
+
 
 	LOG(Info, "Initialize ResourceManager...");
 	FResourceManager::GetInstance().Init(Renderer.get());
+	LOG(Info, "Success!");
 
+
+
+	LOG(Info, "Initialize ImGui...");
 	ImGuiRenderer = MakeUnique<FImGuiRenderer>();
-	ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext());
+	if (!ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext()))
+	{
+		LOG(Error, "Failed To Initialize ImGui!");
+
+	}
+	LOG(Info, "Success!");
 
 	GridRenderer = MakeUnique<FGridRenderer>();
 	GridRenderer->Init(Renderer.get());
@@ -74,14 +70,9 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	Gizmo = MakeUnique<FGizmo>();
 
-
 	// PropertyPanel Add
 	PropertyPanel = EditorUI->AddEditorPanel<FPropertyPanel>();
 	ControlPanel = EditorUI->AddEditorPanel<FControlPanel>();
-
-
-	LOG(Info, "Engine Initialize...");
-
 
 	// Resource Manager 
 
@@ -91,9 +82,8 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	Outline = MakeUnique<FOutline>();
 
-
 	// Do Sth
-	World = new UWorld();
+	World = FObjectFactory::ConstructObject<UWorld>();
 	World->Init();	//return bool
 
 	FTransform Transform;
@@ -107,19 +97,6 @@ bool Engine::Init(HINSTANCE hInstance)
 	vb = Renderer->CreateVertexBuffer(Data.Vertices.data(), sizeof(FVertex) * (UINT)Data.Vertices.size(), sizeof(FVertex));
 	ib = Renderer->CreateIndexBuffer(Data.Indices.data(), Data.Indices.size());
 
-	//TArray<FVertex> Vertices =
-	//{
-	//	{{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // Forward=2, Right=-0.5, Up=0
-	//	{{0.0f,  0.0f, 0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // Forward=2, Right=0,    Up=0.5
-	//	{{0.0f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}, // Forward=2, Right=0.5,  Up=0
-	//};
-
-	//TArray<uint32> Indices = { 0,1,2 };
-
-	//vb = Renderer->CreateVertexBuffer(Vertices.data(), sizeof(FVertex) * (UINT)Vertices.size());
-	//ib = Renderer->CreateIndexBuffer(Indices.data(), sizeof(uint32) * (UINT)Indices.size());
-
-
 	Mesh = MakeShared<FMesh>();
 	Mesh->VertexBuffer = vb;
 	Mesh->IndexBuffer = ib;
@@ -131,14 +108,21 @@ bool Engine::Init(HINSTANCE hInstance)
 	};
 	Shader = Renderer->CreateShader(L"Shader/DefaultShader.hlsl", layout, 2);
 
-	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader.get());
+	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh.get(), Shader.get());
 	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
 	PropertyPanel->FPropertyPanel::World = World;
-	PropertyPanel->FPropertyPanel::Gizmo = Gizmo;
 	ControlPanel->FControlPanel::World = World;
 	ControlPanel->FControlPanel::Mesh = Mesh;
 	ControlPanel->FControlPanel::Shader = Shader.get();
+	ControlPanel->SetGizmo(Gizmo.get());
+
+	ControlPanel->SetSceneClearCallback([&]() {
+		Gizmo->SetTarget(nullptr);
+		Outline->SetTarget(nullptr);
+		PropertyPanel->SetTarget(nullptr);
+		}
+	);
 
 	bIsRunning = true;
 
@@ -148,10 +132,8 @@ bool Engine::Init(HINSTANCE hInstance)
 void Engine::Run()
 {
 	EngineTimer::Init();
-	//World->SpawnPrimitive(UPrimitiveComponent::StaticClass());
 
 	LOG(Info, "{}", "Hello, World!");
-	World->SaveScene("A");
 
 	FMatrix Mat;
 	Mat.SetIdentity();
@@ -163,6 +145,8 @@ void Engine::Run()
 		EngineTimer::Tick();
 		float DeltaTime = EngineTimer::GetDeltaTime();
 		ControlPanel->FControlPanel::DeltaTime = DeltaTime;
+
+		//Check Swapchain Resize
 		MainWindow->ProcessMessage(bIsRunning);
 		if (MainWindow->CheckResized())
 		{
@@ -170,7 +154,10 @@ void Engine::Run()
 			World->GetMainCamera()->GetCameraComponent()->SetAspectRatio((float)MainWindow->GetWidth() / MainWindow->GetHeight());
 		}
 
+		//Update World
 		World->Tick(DeltaTime);
+
+		EditorUI->Tick(DeltaTime);
 
 		FMatrix VP = World->GetMainCamera()->GetCameraComponent()->GetViewProjectionMatrix();
 
@@ -180,44 +167,29 @@ void Engine::Run()
 
 		Gizmo->Update(ray, mousePos, VP, MainWindow->GetWidth(), MainWindow->GetHeight(), bMouseDown, World->GetMainCamera()->GetCameraComponent());
 
-
 		if (FInputSystem::IsMousePressed(EMouseButton::Left) && !Gizmo->IsUsing() && Gizmo->GetHoveredAxis() < 0 && !ImGui::GetIO().WantCaptureMouse)
 		{
 			UPrimitiveComponent* PickedComponent = World->GetPickingPrimitive(MainWindow->GetWidth(), MainWindow->GetHeight());
 			OutlineComponent = PickedComponent;
 			Gizmo->SetTarget(PickedComponent);
 			Outline->SetTarget(OutlineComponent);
+			PropertyPanel->SetTarget(PickedComponent);
 		}
 
-		if (FInputSystem::IsKeyPressed(EKeyCode::Space))
-		{
-			static int ModeIndex = 0;
-			ModeIndex = (ModeIndex + 1) % 3;
-			Gizmo->SetMode(static_cast<EGizmoMode>(ModeIndex));
-		}
+
 
 		TQueue<FRenderPacket> RenderQueue;
 		World->GatherRenderPackets(RenderQueue);
 		FInputSystem::UpdateInputStates();
 
+		//BeginRendering
 		Renderer->BeginFrame();
-
 		Renderer->BindShader(Shader.get());
-
-		//Renderer->BindBuffer(Mesh.get());
 		GridRenderer->OnRender(VP, World->GetMainCamera()->GetCameraComponent()->GetLocation());
-
-
-		//FTransform transform;
-		//World->GetMainCamera()->GetCameraComponent()->SetTransform(FVector(-1.0f, 0.0f, 0.0f));
-		//Renderer->UpdateConstantBuffer(VP);
-		//Renderer->Draw(36);
-
 		Renderer->RenderAll(RenderQueue, VP);
 
 		if (Outline->GetTarget())
 			OutlineRenderer->OnRender(*Outline, VP);
-
 		if (Gizmo->GetTarget())
 		{
 			Renderer->SetDepthStencilEnabled(false);
@@ -229,11 +201,7 @@ void Engine::Run()
 		ImGui::ShowDemoWindow();
 		EditorUI->OnRender();
 
-
-
 		ImGuiRenderer->End();
-
-
 
 		Renderer->EndFrame();
 	}
@@ -242,6 +210,7 @@ void Engine::Run()
 void Engine::Shutdown()
 {
 	delete World;
+	ImGuiRenderer->Shutdown();
 	Renderer->Shutdown();
 }
 

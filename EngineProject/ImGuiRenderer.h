@@ -14,6 +14,7 @@ public:
 	bool Init(HWND WindowHandle, ID3D11Device* Device, ID3D11DeviceContext* DeviceContext);
 	void Begin();
 	void End();
+	void Shutdown();
 private:
 
 };

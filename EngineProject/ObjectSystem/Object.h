@@ -2,6 +2,7 @@
 
 #include "Core/Types.h"
 #include "Core/Containers.h"
+#include "Core/EngineStatics.h"
 
 class UClass;
 // Property Reflection
@@ -60,6 +61,24 @@ public:
 	void SetUUID(uint32 Uid) { UUID = Uid; }
 
 	inline static void RegisterProperties(UClass* InClass) {};
+	
+	void* operator new(uint64 Size)
+	{
+		void* Ptr = malloc(Size);
+		if (!Ptr)
+			throw std::bad_alloc();
+
+		FEngineStatics::TotalAllocationBytes += static_cast<uint64>(Size);
+		FEngineStatics::TotalAllocationCount += 1;
+		return Ptr;
+	}
+
+	void operator delete(void* Ptr, uint64 Size)
+	{
+		FEngineStatics::TotalAllocationBytes -= static_cast<uint64>(Size);
+		FEngineStatics::TotalAllocationCount -= 1;
+		free(Ptr);
+	}
 
 private:
 	uint32 UUID;

@@ -5,6 +5,7 @@
 
 UClass::UClass()
 {
+	LOG(Info, "Create RTTI UClass");
 }
 
 bool UClass::IsChildOf(UClass* BaseClass) const

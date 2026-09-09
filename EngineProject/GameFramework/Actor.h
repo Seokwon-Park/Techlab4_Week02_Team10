@@ -29,7 +29,7 @@ public:
 	//	T* newComponent = 
 	//}
 
-	UPrimitiveComponent* GetPrimitiveComponent() const { return Cast<UPrimitiveComponent>(Root); }
+	UPrimitiveComponent* GetPrimitiveComponent() const { return Cast<UPrimitiveComponent>(RootComponent); }
 	void AddPrimitiveComponent(EPrimitiveType Type, FTransform Transform);
 	void SetRootComponent(USceneComponent* SceneComponent);
 	USceneComponent* GetRootComponent();
@@ -41,7 +41,7 @@ protected:
 private:
 	UWorld* World = nullptr;
 
-	USceneComponent* Root = nullptr;
+	USceneComponent* RootComponent = nullptr;
 
 	// 임시
 	//UPrimitiveComponent* Primitive = nullptr;

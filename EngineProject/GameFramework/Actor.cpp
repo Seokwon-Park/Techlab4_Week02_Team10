@@ -15,15 +15,17 @@ AActor::AActor()
 
 AActor::~AActor()
 {
-	Root = nullptr;
+	for (UActorComponent* Component : Components)
+		delete Component;
 	Components.clear();
+	RootComponent = nullptr;   // Root 는 Components에 이미 들어있으므로 delete 하지 말 것
 }
 
 void AActor::BeginPlay()
 {
-	if (UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Root))
+	if (UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(RootComponent))
 	{
-		World->AddPrimitive(Cast<UPrimitiveComponent>(Root));
+		World->AddPrimitive(Cast<UPrimitiveComponent>(RootComponent));
 	}
 
 	for (UActorComponent* Component : Components)
@@ -46,39 +48,39 @@ void AActor::AddPrimitiveComponent(EPrimitiveType Type, FTransform Transform)
 	switch (Type)
 	{
 	case EPrimitiveType::Sphere:
-		Root = FObjectFactory::ConstructObject<USphereComponent>();
-		Cast<UPrimitiveComponent>(Root)->SetType(Type);
+		RootComponent = FObjectFactory::ConstructObject<USphereComponent>();
+		Cast<UPrimitiveComponent>(RootComponent)->SetType(Type);
 		break;
 	case EPrimitiveType::Cube:
-		Root = FObjectFactory::ConstructObject<UCubeComponent>();
-		Cast<UPrimitiveComponent>(Root)->SetType(Type);
+		RootComponent = FObjectFactory::ConstructObject<UCubeComponent>();
+		Cast<UPrimitiveComponent>(RootComponent)->SetType(Type);
 		break;
 	case EPrimitiveType::Cone:
-		Root = FObjectFactory::ConstructObject<UPrimitiveComponent>();
-		Cast<UPrimitiveComponent>(Root)->SetMesh(FResourceManager::GetInstance().GetMesh("Cone"));
-		Cast<UPrimitiveComponent>(Root)->SetMeshData(FGeometryGenerator::GetMeshData("Cone"));
-		Cast<UPrimitiveComponent>(Root)->SetType(Type);
+		RootComponent = FObjectFactory::ConstructObject<UPrimitiveComponent>();
+		Cast<UPrimitiveComponent>(RootComponent)->SetMesh(FResourceManager::GetInstance().GetMesh("Cone"));
+		Cast<UPrimitiveComponent>(RootComponent)->SetMeshData(FGeometryGenerator::GetMeshData("Cone"));
+		Cast<UPrimitiveComponent>(RootComponent)->SetType(Type);
 		break;
 	case EPrimitiveType::Plane:
-		Root = FObjectFactory::ConstructObject<UPrimitiveComponent>();
-		Cast<UPrimitiveComponent>(Root)->SetMesh(FResourceManager::GetInstance().GetMesh("Plane"));
-		Cast<UPrimitiveComponent>(Root)->SetMeshData(FGeometryGenerator::GetMeshData("Plane"));
-		Cast<UPrimitiveComponent>(Root)->SetType(Type);
+		RootComponent = FObjectFactory::ConstructObject<UPrimitiveComponent>();
+		Cast<UPrimitiveComponent>(RootComponent)->SetMesh(FResourceManager::GetInstance().GetMesh("Plane"));
+		Cast<UPrimitiveComponent>(RootComponent)->SetMeshData(FGeometryGenerator::GetMeshData("Plane"));
+		Cast<UPrimitiveComponent>(RootComponent)->SetType(Type);
 		break;
 	default:
 		break;
 	break;
 	}
-	Root->SetTransform(Transform);
-	Components.push_back(Root);
+	RootComponent->SetTransform(Transform);
+	Components.push_back(RootComponent);
 }
 
 void AActor::SetRootComponent(USceneComponent* SceneComponent)
 {
-	Root = SceneComponent;
+	RootComponent = SceneComponent;
 }
 
 USceneComponent* AActor::GetRootComponent()
 {
-	return Root;
+	return RootComponent;
 }

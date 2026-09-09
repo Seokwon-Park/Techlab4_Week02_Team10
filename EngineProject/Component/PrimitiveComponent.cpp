@@ -14,7 +14,7 @@ void UPrimitiveComponent::SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue
 	if (Mesh && Shader)
 	{
 		FRenderPacket rp;
-		rp.mesh = Mesh.get();
+		rp.mesh = Mesh;
 		rp.shader = Shader;
 		rp.model = GetWorldMatrix();
 		RenderQueue.push(rp);
@@ -23,5 +23,5 @@ void UPrimitiveComponent::SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue
 
 void UPrimitiveComponent::SetMesh(FMesh* InMesh)
 {
-	Mesh = TSharedPtr<FMesh>(InMesh);
+	Mesh = InMesh;
 }

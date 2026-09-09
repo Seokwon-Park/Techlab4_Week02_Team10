@@ -6,6 +6,7 @@ class FEditorUI
 {
 public:
 	bool Init();
+	void Tick(float DeltaTime);
 	void OnRender();
 
 	template <typename T>

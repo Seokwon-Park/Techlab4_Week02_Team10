@@ -82,7 +82,7 @@ bool UWorld::Init()
 		return true;
 	}
 
-	
+
 	return false;
 }
 
@@ -94,8 +94,14 @@ AActor* UWorld::SpawnActor(UClass* Class, const FTransform* UserTransformPtr)
 	AActor* NewActor = Cast<AActor>(FObjectFactory::ConstructObject(Class));
 	NewActor->World = this;
 	if (!NewActor) return nullptr;
-	//TODO :
-	//NewActor->...
+
+	if (!NewActor->GetRootComponent())
+	{
+		USceneComponent* DefaultRoot = FObjectFactory::ConstructObject<USceneComponent>();
+		DefaultRoot->SetTransform(UserTransform);
+		NewActor->SetRootComponent(DefaultRoot);
+	}
+
 	Actors.push_back(NewActor);
 	BeginPlayList.push(NewActor);
 	return NewActor;
@@ -122,32 +128,16 @@ void UWorld::OnRender(FRenderer* Renderer)
 
 void UWorld::ClearScene()
 {
-	TArray<AActor*> NewActors;
-	for (AActor* actor : Actors)
-	{
-		delete actor;
-	}
-	Actors.clear();
-	//Components.Clear
-	while (!BeginPlayList.empty())BeginPlayList.pop();
 	PrimitiveComponents.clear();
-	Actors = NewActors;
+	while (!BeginPlayList.empty()) BeginPlayList.pop();
 
+	for (AActor* Actor : Actors) delete Actor;
+	Actors.clear();
+	MainCamera = nullptr;
 }
 
 bool UWorld::NewScene(const FString& Path)
 {
-	FString FullPath = "Scene/" + Path + ".Scene";
-	
-	if (std::filesystem::exists(FullPath))
-	{
-		return false; // 이미 존재하면 아무것도 하지 않음
-	}
-
-	std::ofstream File(FullPath);
-	
-	ClearScene(); // 씬 제거
-
 	ACameraActor* GetCamera = SpawnActor<ACameraActor>(nullptr);
 	if (GetCamera)
 	{
@@ -155,27 +145,7 @@ bool UWorld::NewScene(const FString& Path)
 	}
 	MainCamera = GetCamera;
 
-	std::filesystem::create_directories("Scene");
-
 	FEngineStatics::NextUUID = 0;
-
-	json Json;
-
-	Json["Version"] = 1;
-	Json["NextUUID"] = FEngineStatics::NextUUID;
-	Json["Primitives"] = json::object();
-
-	
-
-	if (!File.is_open())
-	{
-		return false;
-	}
-
-	File << Json.dump(4);
-
-	File.close();
-
 
 	return true;
 }
@@ -278,8 +248,6 @@ bool UWorld::LoadScene(const FString& Path)
 		return false;
 	}
 
-	ClearScene(); //기존씬 제거
-
 	if (Json.contains("NextUUID"))
 	{
 		FEngineStatics::NextUUID = Json["NextUUID"].get<uint64>();
@@ -351,7 +319,7 @@ bool UWorld::LoadScene(const FString& Path)
 		AActor* Actor = SpawnActor(AActor::StaticClass(), &Transform);
 		Actor->AddPrimitiveComponent(Type, Transform);
 		Actor->SetUUID(UUID);
-		
+
 
 	}
 
@@ -372,7 +340,7 @@ UPrimitiveComponent* UWorld::GetPickingPrimitive(uint32 ScreenW, uint32 ScreenH)
 	FRay ray = MainCamera->GetCameraComponent()->DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY(), ScreenW, ScreenH);
 
 	float minT{ FLT_MAX };
-	PickingPrimitive = nullptr;		//UPrimitiveComponent*
+	UPrimitiveComponent* PickingPrimitive = nullptr;		//UPrimitiveComponent*
 
 	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 	{

@@ -21,11 +21,11 @@ PS_INPUT mainVS(VS_INPUT input)
     
     output.position = mul(float4(input.position, 1.0f), MVP);
     //output.position = float4(input.position, 1.0f);
-	output.color = input.color;
+    output.color = float4(input.position, 1.0f);
 	return output;
 }
 
 float4 mainPS(PS_INPUT input) : SV_TARGET
 {
-	return input.color;
+    return input.color + float4(0.5f, 0.5f, 0.5f, 0.0f);
 }

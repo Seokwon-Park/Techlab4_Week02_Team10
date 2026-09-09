@@ -10,7 +10,9 @@ class ACameraActor;
 
 class UWorld : public UObject
 {
+	DECLARE_CLASS(UWorld, UObject)
 public:
+	UWorld() = default;
 	virtual ~UWorld();
 
 	bool Init();
@@ -40,7 +42,6 @@ public:
 	// 카메라 세터, 게터
 	void SetMainCamera(ACameraActor* Camera);
 	ACameraActor* GetMainCamera() const;
-	UPrimitiveComponent* GetPickingPrimitive() { return PickingPrimitive; }
 
 	int32 GetActorNum() const { return (int32)Actors.size(); }
 
@@ -55,5 +56,4 @@ private:
 	ACameraActor* MainCamera = nullptr;
 
 	// 피킹 프리미티브
-	UPrimitiveComponent* PickingPrimitive;
 };

@@ -19,6 +19,10 @@ bool FConsolePanel::Init()
 	return true;
 }
 
+void FConsolePanel::Tick(float DeltaTime)
+{
+}
+
 void FConsolePanel::OnRender()
 {
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);

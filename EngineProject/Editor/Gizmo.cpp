@@ -160,7 +160,7 @@ void FGizmo::BeginDrag(int Axis, const FRay& MouseRay, const FVector2& MousePos)
 	DragStartMousePos = MousePos;
 	DraggingAxis = Axis;
 	DragStartLocation = GetLocation();
-	DragStartRenderLocation = GetRenderLocation();     // 추가
+	DragStartRenderLocation = GetRenderLocation();    
 	DragStartRotation = GetRotation();
 	DragStartScale = GetScale();
 

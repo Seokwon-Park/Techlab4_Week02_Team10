@@ -264,12 +264,12 @@ FMeshData FGeometryGenerator::CreateCube(float Size, const FVector4& Color)
 
 	TArray<FVector> colors =
 	{
-		FVector(0.0f,0.0f,1.0f),//Front
-		FVector(0.0f,0.0f,1.0f), //Back
-		FVector(0.0f,1.0f,0.0f), //Top
-		FVector(0.0f,1.0f,0.0f),//Bottom
-		FVector(1.0f,0.0f,0.0f),//Left
-		FVector(1.0f,0.0f,0.0f), //Right
+		FVector(1.0f,0.0f,0.6f),//Front
+		FVector(1.0f,0.0f,0.6f), //Back
+		FVector(0.6f,1.0f,0.0f), //Top
+		FVector(0.6f,1.0f,0.0f),//Bottom
+		FVector(0.0f,0.6f,1.0f),//Left
+		FVector(0.0f,0.6f,1.0f), //Right
 	};
 
 	TArray<TArray<uint32>> cubeFaces =
@@ -375,6 +375,10 @@ FMeshData FGeometryGenerator::GetMeshData(const FString& InName)
 	else if (InName == FString("Sphere"))
 	{
 		return CreateSphere(1.0f, 20, 10, FVector4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+	else if (InName == FString("Plane"))
+	{
+		return CreatePlane(1.0f, FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 
 
