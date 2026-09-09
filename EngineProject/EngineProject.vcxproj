@@ -198,6 +198,7 @@
     <ClCompile Include="ObjectFactory.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="OutLineRenderer.cpp" />
     <ClCompile Include="Picking.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -289,6 +290,8 @@
     <ClInclude Include="Math\VectorRegister.h" />
     <ClInclude Include="Math\VectorRegister_SSE.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Outline.h" />
+    <ClInclude Include="OutLineRenderer.h" />
     <ClInclude Include="Picking.h" />
     <ClInclude Include="Property.h" />
     <ClInclude Include="Ray.h" />
@@ -330,6 +333,9 @@
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="OutlineShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Shader\DefaultShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>

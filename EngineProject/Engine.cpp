@@ -70,6 +70,13 @@ bool Engine::Init(HINSTANCE hInstance)
 	// Resource Manager 
 	FResourceManager::GetInstance().Init(Renderer.get());
 
+	// OutLine
+	OutlineRenderer = MakeUnique<FOutlineRenderer>();
+	OutlineRenderer->Init(Renderer.get());
+
+	Outline = MakeUnique<FOutline>();
+
+
 	// Do Sth
 	World = new UWorld();
 	World->Init();	//return bool
@@ -134,6 +141,8 @@ void Engine::Run()
 	FMatrix Mat;
 	Mat.SetIdentity();
 
+	UPrimitiveComponent* OutlineComponent = nullptr;
+
 	while (bIsRunning)
 	{
 		EngineTimer::Tick();
@@ -156,8 +165,14 @@ void Engine::Run()
 
 		Gizmo->Update(ray, mousePos, VP, MainWindow->GetWidth(), MainWindow->GetHeight(), bMouseDown, World->GetMainCamera()->GetCameraComponent());
 
+
 		if (FInputSystem::IsMousePressed(EMouseButton::Left) && !Gizmo->IsUsing() && Gizmo->GetHoveredAxis() < 0 && !ImGui::GetIO().WantCaptureMouse)
-			Gizmo->SetTarget(World->GetPickingPrimitive(MainWindow->GetWidth(), MainWindow->GetHeight()));
+		{
+			UPrimitiveComponent* PickedComponent = World->GetPickingPrimitive(MainWindow->GetWidth(), MainWindow->GetHeight());
+			OutlineComponent = PickedComponent;
+			Gizmo->SetTarget(PickedComponent);
+			Outline->SetTarget(OutlineComponent);
+		}
 
 		if (FInputSystem::IsKeyPressed(EKeyCode::Space))
 		{
@@ -171,7 +186,7 @@ void Engine::Run()
 		FInputSystem::UpdateInputStates();
 
 		Renderer->BeginFrame();
-
+		 
 		Renderer->BindShader(Shader.get());
 
 		//Renderer->BindBuffer(Mesh.get());
@@ -185,6 +200,9 @@ void Engine::Run()
 
 		Renderer->RenderAll(RenderQueue, VP);
 
+		if (Outline->GetTarget())
+			OutlineRenderer->OnRender(*Outline, VP);
+
 		if (Gizmo->GetTarget())
 		{
 			Renderer->SetDepthStencilEnabled(false);
@@ -195,6 +213,8 @@ void Engine::Run()
 
 		ImGui::ShowDemoWindow();
 		EditorUI->OnRender();
+
+
 
 		ImGuiRenderer->End();
 

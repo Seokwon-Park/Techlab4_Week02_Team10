@@ -27,7 +27,7 @@ public:
 	void SubmitToRenderQueue(TQueue<FRenderPacket>& RenderQueue);
 
 	FMeshData GetMeshData() const { return MeshData; }
-	void SetMeshData(FMesh* InMesh);
+	void SetMesh(FMesh* InMesh);
 	TSharedPtr<FMesh> GetMesh() const { return Mesh; };
 	FShader* GetShader() const { return Shader; };
 
