@@ -6,6 +6,8 @@
 struct FOutlineData
 {
 	FMatrix World;
+	FMatrix ViewProj;
+	FVector4 CameraPos;
 	FVector4 Scale;
 };
 
@@ -15,7 +17,7 @@ public:
 
 	void Init(FRenderer* InRenderer);
 	void SetMesh(FMesh* InMesh);
-	void OnRender(const FOutline& InOutline, const FMatrix& ViewProj);
+	void OnRender(const FOutline& InOutline, const FMatrix& ViewProj, const FVector4& CameraPos);
 	
 private:
 	FRenderer* Renderer;
