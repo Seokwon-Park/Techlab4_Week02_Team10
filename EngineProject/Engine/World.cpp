@@ -215,6 +215,13 @@ bool UWorld::LoadScene(const FString& Path)
 	FString FullPath = "Scene/" + Path + ".Scene";
 	std::ifstream File(FullPath);
 
+	if (!std::filesystem::exists(FullPath))
+	{
+		return false;
+	}
+
+	ClearScene();
+
 	if (!File.is_open())
 	{
 		return false;
