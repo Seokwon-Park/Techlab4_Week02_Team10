@@ -35,11 +35,12 @@ public:
 	inline void AddPrimitive(UPrimitiveComponent* Primitive) { PrimitiveComponents.push_back(Primitive); }
 
 	void GatherRenderPackets(TQueue<FRenderPacket>& RenderQueue);
-	UPrimitiveComponent* GetPickingPrimitive();
+	UPrimitiveComponent* GetPickingPrimitive(uint32 ScreenW, uint32 ScreenH);
 
 	// 카메라 세터, 게터
 	void SetMainCamera(ACameraActor* Camera);
 	ACameraActor* GetMainCamera() const;
+	UPrimitiveComponent* GetPickingPrimitive() { return PickingPrimitive; }
 
 private:
 	TArray<AActor*> Actors;
@@ -50,4 +51,7 @@ private:
 
 	//카메라 추가 
 	ACameraActor* MainCamera = nullptr;
+
+	// 피킹 프리미티브
+	UPrimitiveComponent* PickingPrimitive;
 };

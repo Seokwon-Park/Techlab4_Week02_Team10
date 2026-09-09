@@ -133,7 +133,7 @@ FRotator UCameraComponent::GetRotation() const
     return transform.Rotation;
 }
 
-FRay UCameraComponent::DeProjection(int32 MouseX, int32 MouseY)
+FRay UCameraComponent::DeProjection(int32 MouseX, int32 MouseY, uint32 ScreenW, uint32 ScreenH)
 {
     FVector COP = transform.Location;
     const FMatrix InvPerspective = GetPerspectiveMatrix().Inverse();
@@ -141,8 +141,8 @@ FRay UCameraComponent::DeProjection(int32 MouseX, int32 MouseY)
 
     // 1280 720
 
-    const float NDCX = 2.0f * MouseX / 1280 - 1.0f;
-    const float NDCY = 1.0f - 2.0f * MouseY / 720;
+    const float NDCX = 2.0f * MouseX / ScreenW - 1.0f;
+    const float NDCY = 1.0f - 2.0f * MouseY / ScreenH;
 
     // Near Plane 위의 점
     FVector4 NDCPoint(NDCX, NDCY, 1.0f, 1.0f);
