@@ -16,8 +16,8 @@
 #include "Editor/PropertyPanel.h"
 #include "Editor/ControlPanel.h"
 
-#include "Outline.h"
-#include "OutLineRenderer.h"
+#include "Editor/Outline.h"
+#include "Editor/OutLineRenderer.h"
 
 class Engine
 {

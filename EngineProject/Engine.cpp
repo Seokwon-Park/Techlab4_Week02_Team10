@@ -12,7 +12,6 @@
 #include "World.h"
 
 #include "Renderer.h"
-#include "Picking.h"
 
 #include "CameraActor.h"
 #include "Component/CameraComponent.h"
@@ -49,6 +48,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	Renderer = MakeUnique<FRenderer>();
 	Renderer->Create(MainWindow->GetHandle());
 
+	FResourceManager::GetInstance().Init(Renderer.get());
+
 	ImGuiRenderer = MakeUnique<FImGuiRenderer>();
 	ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext());
 
@@ -67,8 +68,10 @@ bool Engine::Init(HINSTANCE hInstance)
 	ControlPanel = EditorUI->AddEditorPanel<FControlPanel>();
 	EditorUI->Init();
 
+	LOG(Info, "Engine Initialize...");
+
+
 	// Resource Manager 
-	FResourceManager::GetInstance().Init(Renderer.get());
 
 	// OutLine
 	OutlineRenderer = MakeUnique<FOutlineRenderer>();
@@ -190,7 +193,7 @@ void Engine::Run()
 		Renderer->BindShader(Shader.get());
 
 		//Renderer->BindBuffer(Mesh.get());
-		GridRenderer->OnRender(Mat, VP);
+		GridRenderer->OnRender(VP, World->GetMainCamera()->GetCameraComponent()->GetLocation());
 
 
 		//FTransform transform;

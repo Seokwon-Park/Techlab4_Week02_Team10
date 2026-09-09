@@ -159,18 +159,32 @@ TSharedPtr<FShader> FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT
 	ID3DBlob* ErrorBlob;
 	HRESULT hr = D3DCompileFromFile(FileName, nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorBlob);
 
-	Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, Shader->VertexShader.GetAddressOf());
-	
-	assert(SUCCEEDED(hr));
+
+	if (FAILED(hr))
+	{
+		if (ErrorBlob)
+		{
+			OutputDebugStringA((char*)ErrorBlob->GetBufferPointer());
+			ErrorBlob->Release();
+		}
+		assert(false && "Vertex shader compile failed");
+		return nullptr; // 혹은 적절한 실패 처리
+	}
+
+
+	hr = Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, Shader->VertexShader.GetAddressOf());
 
 	ID3DBlob* PixelShaderCSO;
 	D3DCompileFromFile(FileName, nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, nullptr);
 	Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, Shader->PixelShader.GetAddressOf());
 
-	hr = Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
-		VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(Shader->InputLayout));
+	if (InLayoutSize > 0)
+	{
+		hr = Device->CreateInputLayout(InLayoutDesc, InLayoutSize,
+			VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(Shader->InputLayout));
+	}
 
-	assert(SUCCEEDED(hr));
+
 
 	VertexShaderCSO->Release();
 	PixelShaderCSO->Release();
@@ -244,6 +258,15 @@ void FRenderer::UpdateConstantBuffer(const FMatrix& MVP)
 
 void FRenderer::BindVertexBuffer(FVertexBuffer* VertexBuffer)
 {
+	if (VertexBuffer == nullptr)
+	{
+		ID3D11Buffer* NullBuffer = nullptr;
+		uint32 NullStride = 0;
+		uint32 NullOffset = 0;
+		DeviceContext->IASetVertexBuffers(0, 1, &NullBuffer, &NullStride, &NullOffset);
+		return;
+	}
+
 	uint32 offset = 0;
 	uint32 Stride = VertexBuffer->GetStride();
 	ID3D11Buffer* Buffer = VertexBuffer->GetBuffer();
@@ -286,6 +309,11 @@ void FRenderer::BindMesh(FMesh* InMesh)
 {
 	BindVertexBuffer(InMesh->VertexBuffer.get());
 	BindIndexBuffer(InMesh->IndexBuffer.get());
+}
+
+void FRenderer::Draw(uint32 VertexCount)
+{
+	DeviceContext->Draw(VertexCount, 0);
 }
 
 void FRenderer::DrawIndexed(uint32 IndexCount)
@@ -346,31 +374,31 @@ void FRenderer::Shutdown()
 
 void FRenderer::Resize(int32 InWidth, int32 InHeight)
 {
-    // 기존 RTV 해제
+	// 기존 RTV 해제
 	FrameBuffer.Reset();
 	FrameBufferRTV.Reset();
 	DepthStencilBuffer.Reset();
 	FrameBufferDSV.Reset();
 
-    // SwapChain 크기 변경
-    SwapChain->ResizeBuffers(
-        0,
-        InWidth,
-        InHeight,
-        DXGI_FORMAT_UNKNOWN,
-        0
-    );
+	// SwapChain 크기 변경
+	SwapChain->ResizeBuffers(
+		0,
+		InWidth,
+		InHeight,
+		DXGI_FORMAT_UNKNOWN,
+		0
+	);
 
-    SwapChain->GetBuffer(
-        0,
-        IID_PPV_ARGS(&FrameBuffer)
-    );
+	SwapChain->GetBuffer(
+		0,
+		IID_PPV_ARGS(&FrameBuffer)
+	);
 
-    Device->CreateRenderTargetView(
+	Device->CreateRenderTargetView(
 		FrameBuffer.Get(),
-        nullptr,
-        &FrameBufferRTV
-    );
+		nullptr,
+		&FrameBufferRTV
+	);
 
 	D3D11_TEXTURE2D_DESC DepthDesc{};
 
@@ -390,14 +418,14 @@ void FRenderer::Resize(int32 InWidth, int32 InHeight)
 
 	Device->CreateDepthStencilView(DepthStencilBuffer.Get(), nullptr, FrameBufferDSV.GetAddressOf());
 
-    ViewportInfo.TopLeftX = 0.0f;
-    ViewportInfo.TopLeftY = 0.0f;
-    ViewportInfo.Width = static_cast<float>(InWidth);
-    ViewportInfo.Height = static_cast<float>(InHeight);
-    ViewportInfo.MinDepth = 0.0f;
-    ViewportInfo.MaxDepth = 1.0f;
+	ViewportInfo.TopLeftX = 0.0f;
+	ViewportInfo.TopLeftY = 0.0f;
+	ViewportInfo.Width = static_cast<float>(InWidth);
+	ViewportInfo.Height = static_cast<float>(InHeight);
+	ViewportInfo.MinDepth = 0.0f;
+	ViewportInfo.MaxDepth = 1.0f;
 
-    //DeviceContext->RSSetViewports(1, &Viewport);
+	//DeviceContext->RSSetViewports(1, &Viewport);
 
-    
+
 }

@@ -18,7 +18,7 @@ class UPrimitiveComponent :public USceneComponent
 	DECLARE_CLASS(UPrimitiveComponent, USceneComponent)
 
 	REFLECT_START(ClassName)
-		REFLECT_END()
+	REFLECT_END()
 public:
 	virtual void BeginPlay() override;
 

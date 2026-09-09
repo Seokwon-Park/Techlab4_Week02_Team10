@@ -5,7 +5,7 @@
 class FObjectFactory
 {
 public:
-	static UObject* ConstructObject(FClass* Class);
+	static UObject* ConstructObject(UClass* Class);
 
 	template <typename T>
 	static T* ConstructObject()

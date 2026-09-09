@@ -3,13 +3,12 @@
 #include "Types.h"
 #include "Containers.h"
 
-#include "Class.h"
-
+class UClass;
 // Property Reflection
 
 #define REFLECT_START(ClassName) \
 public: \
-	inline static void RegisterProperties(FClass* InClass) \
+	inline static void RegisterProperties(UClass* InClass) \
 	{
 
 #define PROPERTY(PropertyName) \
@@ -23,9 +22,9 @@ private:
 public:                                                                 \
     using Super = SuperClassName;                                       \
     using ThisClass = ClassName;		                                \
-    static FClass* StaticClass()                                        \
+    static UClass* StaticClass()                                        \
     {                                                                   \
-        static FClass c;                                                \
+        static UClass c;                                                \
         static bool bIsInit = false;                                    \
         if (!bIsInit)                                                   \
         {                                                               \
@@ -37,7 +36,7 @@ public:                                                                 \
         }                                                               \
         return &c;                                                      \
     }                                                                   \
-    virtual FClass* GetClass() const override { return StaticClass(); } \
+    virtual UClass* GetClass() const override { return StaticClass(); } \
 private:																
 
 class UObject
@@ -46,23 +45,8 @@ public:
 	UObject();
 	virtual ~UObject();
 
-	static FClass* StaticClass()
-	{
-		static FClass c;
-		static bool bIsInit = false;
-		if (!bIsInit)
-		{
-			c.Name = "Object";
-			c.Super = nullptr;
-			c.Constructor = []() -> UObject* 
-				{ 
-					return new UObject(); 
-				};
-			bIsInit = true;
-		}
-		return &c;
-	}
-	virtual FClass* GetClass() const { return StaticClass(); }
+	static UClass* StaticClass();
+	virtual UClass* GetClass() const;
 
 	template <typename T>
 	bool IsA()
@@ -70,12 +54,12 @@ public:
 		return IsA(T::StaticClass());
 	}
 
-	bool IsA(FClass* Class);
+	bool IsA(UClass* Class);
 
 	uint32 GetUUID() const { return UUID; }
 	void SetUUID(uint32 Uid) { UUID = Uid; }
 
-	inline static void RegisterProperties(FClass* InClass) {};
+	inline static void RegisterProperties(UClass* InClass) {};
 
 private:
 	uint32 UUID;
