@@ -91,6 +91,7 @@ class FGeometryGenerator
 {
 public:
 	static FMeshData CreateLine(const FVector& Start, const FVector& End, const FVector4& Color);
+	static FMeshData CreatePlane(float Size, const FVector4& Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 	static FMeshData CreateAxis();
 
 	static FMeshData CreateCone(float Radius, float Height, int Segments, const FVector4& Color);

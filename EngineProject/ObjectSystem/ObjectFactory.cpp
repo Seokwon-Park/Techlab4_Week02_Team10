@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "ObjectFactory.h"
 
-UObject* FObjectFactory::ConstructObject(FClass* Class)
+UObject* FObjectFactory::ConstructObject(UClass* Class)
 {
     if (!Class || !Class->Constructor)
         return nullptr;

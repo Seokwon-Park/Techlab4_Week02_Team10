@@ -15,7 +15,7 @@ public:
 
 	bool Init();
 	/*UPrimitiveComponent* SpawnPrimitive(FClass* Class);*/
-	AActor* SpawnActor(FClass* Class, const FTransform* Transform);
+	AActor* SpawnActor(UClass* Class, const FTransform* Transform);
 
 	template <class T>
 	T* SpawnActor(const FTransform* Transform)
@@ -40,6 +40,9 @@ public:
 	// 카메라 세터, 게터
 	void SetMainCamera(ACameraActor* Camera);
 	ACameraActor* GetMainCamera() const;
+	UPrimitiveComponent* GetPickingPrimitive() { return PickingPrimitive; }
+
+	int32 GetActorNum() const { return Actors.size(); }
 
 private:
 	TArray<AActor*> Actors;
@@ -50,4 +53,7 @@ private:
 
 	//카메라 추가 
 	ACameraActor* MainCamera = nullptr;
+
+	// 피킹 프리미티브
+	UPrimitiveComponent* PickingPrimitive;
 };

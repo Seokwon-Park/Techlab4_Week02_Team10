@@ -4,6 +4,8 @@
 #include "Math/Transform.h"
 #include "Component/SceneComponent.h"
 
+class UCameraComponent;
+
 enum class EGizmoMode
 {
 	Location,
@@ -33,7 +35,7 @@ public:
 
 	void Update(const FRay& MouseRay, const FVector2& MousePos,
 		const FMatrix& ViewProj, int ScreenW, int ScreenH,
-		bool bMouseDown);
+		bool bMouseDown, UCameraComponent* CameraComponent);
 
 	bool IsUsing() const { return DraggingAxis >= 0; }
 	int GetHoveredAxis() const { return HoveredAxis; }
@@ -51,9 +53,11 @@ public:
 	float ComputeAngleOnPlane(const FVector& Point, int Axis) const;
 
 	inline FTransform GetTransform() const { return Target ? *Target->GetTransform() : FTransform(); }
-	inline FVector GetLocation() const { return Target ? Target->GetTransform()->Location: FVector(0, 0, 0); }
+	inline FVector GetLocation() const { return Target ? Target->GetTransform()->Location : FVector(0, 0, 0); }
 	inline FRotator GetRotation() const { return Target ? Target->GetTransform()->Rotation: FRotator(0, 0, 0); }
 	inline FVector GetScale() const { return Target ? Target->GetTransform()->Scale: FVector(0, 0, 0); }
+
+	FVector GetRenderLocation() const;
 
 	FVector GetAxisDirection(int Axis) const;
 
@@ -73,6 +77,8 @@ private:
 	FVector DragAxisDirection;
 
 	FVector DragPlaneNormal;
+
+	UCameraComponent* CameraComponent;
 
 	float DragStartAngle;
 	float RingRadius = 1.0f;

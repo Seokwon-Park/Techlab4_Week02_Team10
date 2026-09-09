@@ -5,6 +5,8 @@
 #include "Vector4.h"
 #include "Matrix.h"
 #include "Quat.h"
+#include "Rotator.h"
+#include "Collision/Ray.h"
 #include "VectorRegister.h"
 #include "MatrixRegister.h"
 

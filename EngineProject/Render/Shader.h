@@ -14,12 +14,10 @@ enum class EShaderType
 
 struct FShader
 {
-	// vs, ps 쌍으로 관리하도록 함
-	
 	// 모든 셰이더 구조체는 ID3D11DeviceChild 의 자식들임
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> VertexShader;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> PixelShader;
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> InputLayout;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> VertexShader = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> PixelShader = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> InputLayout = nullptr;
 	 
 	uint32 Stride;
 };

@@ -8,7 +8,6 @@
 #include "Camera/CameraComponent.h"
 #include "Input/InputSystem.h"
 
-
 #include "Collision/Ray.h"
 
 namespace
@@ -75,7 +74,7 @@ bool UWorld::Init()
 	return false;
 }
 
-AActor* UWorld::SpawnActor(FClass* Class, const FTransform* UserTransformPtr)
+AActor* UWorld::SpawnActor(UClass* Class, const FTransform* UserTransformPtr)
 {
 	if (!Class) return nullptr;
 	if (!Class->IsChildOf(AActor::StaticClass())) return nullptr;
@@ -117,9 +116,11 @@ void UWorld::ClearScene()
 		delete actor;
 	}
 	Actors.clear();
-	BeginPlayList = TQueue<AActor*>();
+	//Components.Clear
+	while (!BeginPlayList.empty())BeginPlayList.pop();
 	PrimitiveComponents.clear();
 	Actors = NewActors;
+
 }
 
 bool UWorld::NewScene(const FString& Path)
@@ -166,7 +167,7 @@ bool UWorld::SaveScene(const FString& Path)
 	Json["Version"] = 1;
 	Json["NextUUID"] = FEngineStatics::NextUUID;
 	Json["Primitives"] = json::object();
-	
+
 	for (AActor* Actor : Actors)
 	{
 
@@ -182,9 +183,9 @@ bool UWorld::SaveScene(const FString& Path)
 		const FTransform* Transform = Primitive->GetTransform();
 
 		pJson["Location"] = { Transform->Location.X, Transform->Location.Y, Transform->Location.Z };
-		pJson["Rotation"] = { Transform->Rotation.Roll, Transform->Rotation.Pitch, Transform->Rotation.Yaw};
+		pJson["Rotation"] = { Transform->Rotation.Roll, Transform->Rotation.Pitch, Transform->Rotation.Yaw };
 		pJson["Scale"] = { Transform->Scale.X, Transform->Scale.Y, Transform->Scale.Z };
-		
+
 		if (Cast<UPrimitiveComponent>(Primitive))
 		{
 			pJson["Type"] = PrimitiveTypeToString(Cast<UPrimitiveComponent>(Primitive)->GetType());
@@ -198,7 +199,7 @@ bool UWorld::SaveScene(const FString& Path)
 			pJson["Type"] = "Other";
 		}
 
-		
+
 		Json["Primitives"][std::to_string(Primitive->GetUUID())] = pJson;
 
 	}
@@ -304,7 +305,7 @@ bool UWorld::LoadScene(const FString& Path)
 
 		FString TypeString = PrimitiveJson["Type"].get<FString>();
 
-		if (TypeString == "Camera") 
+		if (TypeString == "Camera")
 		{
 			// 현재 카메라 delete하고 새로 생성
 			ACameraActor* GetCamera = SpawnActor<ACameraActor>(nullptr);
@@ -314,7 +315,6 @@ bool UWorld::LoadScene(const FString& Path)
 			}
 			MainCamera = GetCamera;
 			MainCamera->GetRootComponent()->SetTransform(Transform);
-
 
 			continue;
 		}
@@ -328,8 +328,11 @@ bool UWorld::LoadScene(const FString& Path)
 
 
 		// 액터 스폰
-		// AActor* actor = SpawnActor;
-		// actor->SetUUID(UUID);
+		AActor* Actor = SpawnActor(AActor::StaticClass(), &Transform);
+		Actor->AddPrimitiveComponent(Type, Transform);
+		Actor->SetUUID(UUID);
+		
+
 	}
 
 	return true;
@@ -349,7 +352,7 @@ UPrimitiveComponent* UWorld::GetPickingPrimitive(uint32 ScreenW, uint32 ScreenH)
 	FRay ray = MainCamera->GetCameraComponent()->DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY(), ScreenW, ScreenH);
 
 	float minT{ FLT_MAX };
-	UPrimitiveComponent* PickingPrimitive = nullptr;
+	PickingPrimitive = nullptr;		//UPrimitiveComponent*
 
 	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 	{
@@ -375,7 +378,7 @@ UPrimitiveComponent* UWorld::GetPickingPrimitive(uint32 ScreenW, uint32 ScreenH)
 		float rayT{};
 
 		if (!RayIntersectsAABB(LocalRay, BoxMin, BoxMax, rayT))
-		{	
+		{
 			continue;
 		}
 

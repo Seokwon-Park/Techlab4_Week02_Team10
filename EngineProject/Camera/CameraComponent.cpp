@@ -37,7 +37,7 @@ void UCameraComponent::TickComponent(float DeltaTime)
     }
     if (FInputSystem::IsKeyDown(EKeyCode::Q))
     {
-        transform.Location += transform.GetUp() * CameraSpeed * DeltaTime;
+        transform.Location -= transform.GetUp() * CameraSpeed * DeltaTime;
     }
     if (FInputSystem::IsKeyDown(EKeyCode::E))
     {

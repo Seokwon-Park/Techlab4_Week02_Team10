@@ -57,6 +57,8 @@ public:
 	void SetDepthStencilEnabled(bool bEnabled);
 	void BindShader(FShader* InShader);
 	void BindMesh(FMesh* InMesh);
+
+	void Draw(uint32 VertexCount);
 	void DrawIndexed(uint32 IndexCount);
 
 	// 윈도우 사이즈 변경

@@ -5,7 +5,7 @@
 
 bool FControlPanel::Init()
 {
-
+	
 
 
 	return true;
@@ -15,14 +15,10 @@ void FControlPanel::AddActor(EPrimitiveType Type)
 {
 	FTransform Transform;
 	AActor* Actor = World->SpawnActor(AActor::StaticClass(), &Transform);
-	Actor->AddPrimitiveComponent(Type);
+	Actor->AddPrimitiveComponent(Type, Transform);
+	
 
-	UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Actor->GetPrimitiveComponent());
-	FMeshData Data = FGeometryGenerator::CreateCube(1.0f);
-	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader);
-	Actor->GetPrimitiveComponent()->SetMeshData(Data);
-
-	ActorNum++;
+	ActorNum = World->GetActorNum() - 1;
 }
 
 
@@ -31,26 +27,29 @@ void FControlPanel::OnRender()
 	ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Jungle Control Panel");
 	
-	ImGui::Text("Hello Jungle world");
+	ImGui::Text("Hello Jungle World");
 	ImGui::Text("FPS: %.2f (%.0f ms)",1.0f / DeltaTime, DeltaTime * 1000.0f);
 
 	ImGui::Separator();
+	ImGui::SetNextItemWidth(130.0f);
 	ImGui::Combo("Actor", &SelectedIndex, Items, IM_ARRAYSIZE(Items));
 	ImGui::SameLine();
 	ImGui::Text("Primitive");
 	//EngineTimer::GetDeltaTime();
 	if (ImGui::SmallButton("Spawn")) { AddActor(static_cast<EPrimitiveType>(SelectedIndex)); }
 	ImGui::SameLine();
+	ImGui::SetNextItemWidth(80.0f);
 	ImGui::InputInt("##N", &ActorNum, 0, 0, ImGuiInputTextFlags_ReadOnly);
 	ImGui::SameLine();
 	ImGui::Text("Number of spawn");
 
 	ImGui::Separator();
 	// 씬 생성 세이브 로드
+	ImGui::SetNextItemWidth(165.0f);
 	ImGui::InputText("Scene Name", SceneName, IM_ARRAYSIZE(SceneName));
-	if (ImGui::SmallButton("New Scene")) { World->NewScene(SceneName); }
-	if (ImGui::SmallButton("Save Scene")) { World->SaveScene(SceneName); }
-	if (ImGui::SmallButton("Load Scene")) { World->LoadScene(SceneName); }
+	if (ImGui::Button("New Scene", ImVec2(80.0f, 19.0f))) { World->NewScene(SceneName); ActorNum = World->GetActorNum() - 1;}
+	if (ImGui::Button("Save Scene", ImVec2(80.0f, 19.0f))) { World->SaveScene(SceneName); ActorNum = World->GetActorNum() - 1;}
+	if (ImGui::Button("Load Scene", ImVec2(80.0f, 19.0f))) { World->LoadScene(SceneName); ActorNum = World->GetActorNum() - 1;}
 	ImGui::Separator();
 	UCameraComponent* CamCom = World->GetMainCamera()->GetCameraComponent();
 
@@ -59,7 +58,7 @@ void FControlPanel::OnRender()
 
 	FTransform* transform = CamCom->GetTransform();
 
-	ImGui::SetNextItemWidth(240.0f);
+	ImGui::SetNextItemWidth(255.0f);
 	ImGui::InputFloat("##FOV", &CamCom->FOV);
 
 	ImGui::SetNextItemWidth(80.0f);

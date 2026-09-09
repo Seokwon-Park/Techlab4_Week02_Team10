@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "Gizmo.h"
+#include "Camera/CameraComponent.h"
 
 static const FVector AxisDirs[3] = {
 	FVector(1, 0, 0),
@@ -10,8 +11,10 @@ static const FVector AxisDirs[3] = {
 static const float AxisLength = 1.5f;
 static const float HitPixels = 12.0f;
 
-void FGizmo::Update(const FRay& MouseRay, const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH, bool bMouseDown)
+void FGizmo::Update(const FRay& MouseRay, const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH, bool bMouseDown, UCameraComponent* CameraComponent)
 {
+	FGizmo::CameraComponent = CameraComponent;
+
 	if (!Target)
 	{
 		HoveredAxis = -1;
@@ -32,6 +35,8 @@ void FGizmo::Update(const FRay& MouseRay, const FVector2& MousePos, const FMatri
 
 	if (bMouseDown && HoveredAxis >= 0)
 		BeginDrag(HoveredAxis, MouseRay);
+
+	
 }
 
 int FGizmo::PickAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH)
@@ -44,38 +49,38 @@ int FGizmo::PickAxis(const FVector2& MousePos, const FMatrix& ViewProj, int Scre
 
 int FGizmo::PickLinearAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH)
 {
-	FVector origin = GetLocation();
+	FVector Origin = GetRenderLocation();
 
-	int best = -1;
-	float bestDist = HitPixels;
+	int Best = -1;
+	float BestDist = HitPixels;
 
 	for (int i = 0; i < 3; ++i)
 	{
-		FVector2 start = WorldToScreen(origin, ViewProj, ScreenW, ScreenH);
-		FVector2 end = WorldToScreen(origin + GetAxisDirection(i) * AxisLength, ViewProj, ScreenW, ScreenH);
+		FVector2 Start = WorldToScreen(Origin, ViewProj, ScreenW, ScreenH);
+		FVector2 End = WorldToScreen(Origin + GetAxisDirection(i) * AxisLength, ViewProj, ScreenW, ScreenH);
 
-		float dist = DistanceToSegment(MousePos, start, end);
-		if (dist < bestDist)
+		float Dist = DistanceToSegment(MousePos, Start, End);
+		if (Dist < BestDist)
 		{
-			bestDist = dist;
-			best = i;
+			BestDist = Dist;
+			Best = i;
 		}
 	}
-	return best;
+	return Best;
 }
 
 int FGizmo::PickRotationAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH)
 {
-	const FVector Origin = GetLocation();
+	const FVector Origin = GetRenderLocation();
 	const int Segments = 32;
 
-	int best = -1;
-	float bestDist = HitPixels;
+	int Best = -1;
+	float BestDist = HitPixels;
 
-	for (int axis = 0; axis < 3; ++axis)
+	for (int Axis = 0; Axis < 3; ++Axis)
 	{
-		FVector u = AxisDirs[(axis + 1) % 3];
-		FVector v = AxisDirs[(axis + 2) % 3];
+		FVector u = GetAxisDirection((Axis + 1) % 3);
+		FVector v = GetAxisDirection((Axis + 2) % 3);
 
 		FVector2 prev;
 		bool bHasPrev = false;
@@ -91,11 +96,11 @@ int FGizmo::PickRotationAxis(const FVector2& MousePos, const FMatrix& ViewProj, 
 
 			if (bHasPrev)
 			{
-				float dist = DistanceToSegment(MousePos, prev, screenPos);
-				if (dist < bestDist)
+				float Dist = DistanceToSegment(MousePos, prev, screenPos);
+				if (Dist < BestDist)
 				{
-					bestDist = dist;
-					best = axis;
+					BestDist = Dist;
+					Best = Axis;
 				}
 			}
 
@@ -104,7 +109,7 @@ int FGizmo::PickRotationAxis(const FVector2& MousePos, const FMatrix& ViewProj, 
 		}
 	}
 
-	return best;
+	return Best;
 }
 
 void FGizmo::BeginDrag(int Axis, const FRay& MouseRay)
@@ -123,9 +128,9 @@ void FGizmo::BeginDrag(int Axis, const FRay& MouseRay)
 	}
 	else
 	{
-		FVector toCamera = -MouseRay.Direction;
-		FVector ortho = axis.Cross(toCamera);
-		DragPlaneNormal = ortho.Cross(axis).Normalize();
+		FVector ToCamera = -MouseRay.Direction;
+		FVector Ortho = axis.Cross(ToCamera);
+		DragPlaneNormal = Ortho.Cross(axis).Normalize();
 	}
 
 	float t;
@@ -204,4 +209,15 @@ FVector FGizmo::GetAxisDirection(int Axis) const
 		return FVector(v.X, v.Y, v.Z).Normalize();
 	}
 	return AxisDirs[Axis];
+}
+
+FVector FGizmo::GetRenderLocation() const
+{
+	if (!Target) return FVector(0, 0, 0);
+
+	if (CameraComponent->bIsOrthogonal) return GetLocation();
+
+	return (Target->GetTransform()->Location - CameraComponent->GetTransform()->Location).Normalize() * 10.0f + CameraComponent->GetTransform()->Location;
+
+	// return Target ? Target->GetTransform()->Location: FVector(0, 0, 0); 
 }

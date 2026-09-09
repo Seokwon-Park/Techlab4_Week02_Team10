@@ -12,7 +12,6 @@
 #include "World.h"
 
 #include "Render/Renderer.h"
-#include "Collision/Picking.h"
 
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
@@ -49,6 +48,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	Renderer = MakeUnique<FRenderer>();
 	Renderer->Create(MainWindow->GetHandle());
 
+	FResourceManager::GetInstance().Init(Renderer.get());
+
 	ImGuiRenderer = MakeUnique<FImGuiRenderer>();
 	ImGuiRenderer->Init(MainWindow->GetHandle(), Renderer->GetDevice(), Renderer->GetDeviceContext());
 
@@ -67,8 +68,10 @@ bool Engine::Init(HINSTANCE hInstance)
 	ControlPanel = EditorUI->AddEditorPanel<FControlPanel>();
 	EditorUI->Init();
 
+	LOG(Info, "Engine Initialize...");
+
+
 	// Resource Manager 
-	FResourceManager::GetInstance().Init(Renderer.get());
 
 	// OutLine
 	OutlineRenderer = MakeUnique<FOutlineRenderer>();
@@ -83,7 +86,7 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	FTransform Transform;
 	AActor* Actor = World->SpawnActor(AActor::StaticClass(), &Transform);
-	Actor->AddPrimitiveComponent(EPrimitiveType::Cube);
+	Actor->AddPrimitiveComponent(EPrimitiveType::Cube, Transform);
 
 	FMeshData Data = FGeometryGenerator::CreateCube(1.0f);
 	//FMeshData Data = FGeometryGenerator::CreateCylinder(1.0f, 3.0f, 20, FVector4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -119,7 +122,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader.get());
 	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
-	PropertyPanel->transform = Actor->GetPrimitiveComponent()->GetTransform();
+	PropertyPanel->FPropertyPanel::World = World;
+	PropertyPanel->FPropertyPanel::Gizmo = Gizmo;
 	ControlPanel->FControlPanel::World = World;
 	ControlPanel->FControlPanel::Mesh = Mesh;
 	ControlPanel->FControlPanel::Shader = Shader.get();
@@ -162,7 +166,7 @@ void Engine::Run()
 		FVector2 mousePos(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
 		bool bMouseDown = FInputSystem::IsMouseDown(EMouseButton::Left);
 
-		Gizmo->Update(ray, mousePos, VP, MainWindow->GetWidth(), MainWindow->GetHeight(), bMouseDown);
+		Gizmo->Update(ray, mousePos, VP, MainWindow->GetWidth(), MainWindow->GetHeight(), bMouseDown, World->GetMainCamera()->GetCameraComponent());
 
 
 		if (FInputSystem::IsMousePressed(EMouseButton::Left) && !Gizmo->IsUsing() && Gizmo->GetHoveredAxis() < 0 && !ImGui::GetIO().WantCaptureMouse)
@@ -189,7 +193,7 @@ void Engine::Run()
 		Renderer->BindShader(Shader.get());
 
 		//Renderer->BindBuffer(Mesh.get());
-		GridRenderer->OnRender(Mat, VP);
+		GridRenderer->OnRender(VP, World->GetMainCamera()->GetCameraComponent()->GetLocation());
 
 
 		//FTransform transform;

@@ -146,7 +146,6 @@
   <ItemGroup>
     <ClCompile Include="Camera\CameraActor.cpp" />
     <ClCompile Include="Camera\CameraComponent.cpp" />
-    <ClCompile Include="Collision\Picking.cpp" />
     <ClCompile Include="Collision\Ray.cpp" />
     <ClCompile Include="Component\CubeComponent.cpp" />
     <ClCompile Include="Component\PrimitiveComponent.cpp" />
@@ -160,6 +159,7 @@
     <ClCompile Include="Editor\Gizmo.cpp" />
     <ClCompile Include="Editor\GizmoRenderer.cpp" />
     <ClCompile Include="Editor\GridRenderer.cpp" />
+    <ClCompile Include="Editor\OutLineRenderer.cpp" />
     <ClCompile Include="Editor\PropertyPanel.cpp" />
     <ClCompile Include="EnginePCH.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
@@ -189,12 +189,12 @@
     <ClCompile Include="Render\Buffer.cpp" />
     <ClCompile Include="Render\GeometryGenerator.cpp" />
     <ClCompile Include="Render\Mesh.cpp" />
-    <ClCompile Include="Render\OutLineRenderer.cpp" />
     <ClCompile Include="Render\Renderer.cpp" />
     <ClCompile Include="Render\Shader.cpp" />
     <ClCompile Include="Render\Vertex.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -220,7 +220,6 @@
   <ItemGroup>
     <ClInclude Include="Camera\CameraActor.h" />
     <ClInclude Include="Camera\CameraComponent.h" />
-    <ClInclude Include="Collision\Picking.h" />
     <ClInclude Include="Collision\Ray.h" />
     <ClInclude Include="Component\ActorComponent.h" />
     <ClInclude Include="Core\Containers.h" />
@@ -238,6 +237,8 @@
     <ClInclude Include="Editor\GizmoRenderer.h" />
     <ClInclude Include="Editor\GridRenderer.h" />
     <ClInclude Include="Editor\GuizmoRenderer.h" />
+    <ClInclude Include="Editor\Outline.h" />
+    <ClInclude Include="Editor\OutLineRenderer.h" />
     <ClInclude Include="Editor\PropertyPanel.h" />
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\ResourceManager.h" />
@@ -257,6 +258,7 @@
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Math\VectorRegister.h" />
     <ClInclude Include="Math\VectorRegister_SSE.h" />
+    <ClInclude Include="Math\Rotator.h" />
     <ClInclude Include="ObjectSystem\Casts.h" />
     <ClInclude Include="ObjectSystem\Class.h" />
     <ClInclude Include="ObjectSystem\Object.h" />
@@ -271,13 +273,11 @@
     <ClInclude Include="Render\Buffer.h" />
     <ClInclude Include="Render\GeometryGenerator.h" />
     <ClInclude Include="Render\Mesh.h" />
-    <ClInclude Include="Render\Outline.h" />
-    <ClInclude Include="Render\OutLineRenderer.h" />
     <ClInclude Include="Render\Renderer.h" />
     <ClInclude Include="Render\RenderPacket.h" />
     <ClInclude Include="Render\Shader.h" />
     <ClInclude Include="Render\Vertex.h" />
-    <ClInclude Include="Rotator.h" />
+    <ClInclude Include="Texture2D.h" />
     <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="ThirdParty\ImGui\backends\imgui_impl_win32.h" />
     <ClInclude Include="ThirdParty\ImGui\imconfig.h" />
@@ -296,6 +296,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\GizmoShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shader\GridShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>

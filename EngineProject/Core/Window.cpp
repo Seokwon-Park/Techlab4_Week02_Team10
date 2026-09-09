@@ -125,18 +125,8 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	case WM_MOUSEMOVE:
 	{
-		//FInputSystem::OnMouseMove((int)(short)LOWORD(lParam) * (Width/1280), (int)(short)HIWORD(lParam) * (Height/720));
-		///*POINT Point;
-		//GetCursorPos(&Point);
-		//ScreenToClient(hWnd, &Point);
-		//FInputSystem::OnMouseMove(Point.x, Point.y);*/
-		printf("Mouse X: %d, Mouse Y: %d\n", (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
-
 		int MouseX = (int)(short)LOWORD(lParam);
 		int MouseY = (int)(short)HIWORD(lParam);
-
-		printf("Mouse X(refined): %d, Mouse Y: %d\n", MouseX, MouseY);
-
 		FInputSystem::OnMouseMove(MouseX, MouseY);
 	}
 	break;

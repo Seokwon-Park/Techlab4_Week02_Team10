@@ -3,6 +3,8 @@
 #include "../ObjectSystem/Object.h"
 #include "Component/PrimitiveComponent.h"
 
+#include "ObjectSystem/Class.h"
+
 class UWorld;
 
 
@@ -14,7 +16,7 @@ class AActor : public UObject
 		REFLECT_END()
 public:
 	AActor();
-	virtual ~AActor() = default;
+	virtual ~AActor();
 
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
@@ -28,7 +30,7 @@ public:
 	//}
 
 	UPrimitiveComponent* GetPrimitiveComponent() const { return Cast<UPrimitiveComponent>(Root); }
-	void AddPrimitiveComponent(EPrimitiveType Type);
+	void AddPrimitiveComponent(EPrimitiveType Type, FTransform Transform);
 	void SetRootComponent(USceneComponent* SceneComponent);
 	USceneComponent* GetRootComponent();
 

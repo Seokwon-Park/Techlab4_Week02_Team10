@@ -2,6 +2,7 @@
 #include "GizmoRenderer.h"
 
 #include "Render/GeometryGenerator.h"
+#include "Camera/CameraComponent.h"
 
 FGizmoRenderer::FGizmoRenderer()
 {
@@ -64,9 +65,11 @@ void FGizmoRenderer::OnRender(const FGizmo& Gizmo, const FMatrix& ViewProj)
 	Renderer->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	const FMatrix ViewProjT = ViewProj.GetTransposed();
-	const FVector GizmoLocation = Gizmo.GetLocation();
+	// const FVector GizmoLocation = Gizmo.GetLocation();
 	const int HoveredAxis = Gizmo.GetHoveredAxis();
 
+	//const FVector GizmoLocation = (Gizmo.GetTarget()->GetTransform()->Location - CameraComponent->GetTransform()->Location).Normalize() * 10.0f + CameraComponent->GetTransform()->Location;
+	const FVector GizmoLocation = Gizmo.GetRenderLocation();
 	// 축 3개
 	Renderer->BindMesh(AxisMesh);
 	Transform.Location = GizmoLocation;

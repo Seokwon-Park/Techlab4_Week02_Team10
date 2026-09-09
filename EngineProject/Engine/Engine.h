@@ -16,8 +16,8 @@
 #include "Editor/PropertyPanel.h"
 #include "Editor/ControlPanel.h"
 
-#include "Render/Outline.h"
-#include "Render/OutLineRenderer.h"
+#include "Editor/Outline.h"
+#include "Editor/OutLineRenderer.h"
 
 class Engine
 {
@@ -43,7 +43,8 @@ private:
 	TUniquePtr<FImGuiRenderer> ImGuiRenderer;
 	TUniquePtr<FGridRenderer> GridRenderer;
 	TUniquePtr<FGizmoRenderer> GizmoRenderer;
-	TUniquePtr<FGizmo> Gizmo;
+	//TUniquePtr<FGizmo> Gizmo;
+	TSharedPtr<FGizmo> Gizmo;
 	TUniquePtr<FOutline> Outline;
 	TUniquePtr<FOutlineRenderer> OutlineRenderer;
 
