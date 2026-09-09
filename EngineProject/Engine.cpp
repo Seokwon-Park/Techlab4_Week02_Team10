@@ -83,7 +83,7 @@ bool Engine::Init(HINSTANCE hInstance)
 
 	FTransform Transform;
 	AActor* Actor = World->SpawnActor(AActor::StaticClass(), &Transform);
-	Actor->AddPrimitiveComponent(EPrimitiveType::Cube);
+	Actor->AddPrimitiveComponent(EPrimitiveType::Cube, Transform);
 
 	FMeshData Data = FGeometryGenerator::CreateCube(1.0f);
 	//FMeshData Data = FGeometryGenerator::CreateCylinder(1.0f, 3.0f, 20, FVector4(1.0f, 0.0f, 0.0f, 1.0f));

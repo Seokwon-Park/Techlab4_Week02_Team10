@@ -31,6 +31,7 @@ public:
 	TSharedPtr<FMesh> GetMesh() const { return Mesh; };
 	FShader* GetShader() const { return Shader; };
 
+	void SetType(EPrimitiveType Ptype) { Type = Ptype; }
 	EPrimitiveType GetType() const { return Type; }
 protected:
 	EPrimitiveType Type = EPrimitiveType::None;
