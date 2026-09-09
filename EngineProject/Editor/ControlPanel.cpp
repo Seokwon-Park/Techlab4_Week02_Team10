@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "ControlPanel.h"
-#include "../CameraActor.h"
-#include "../Component/CameraComponent.h"
+#include "../Camera/CameraActor.h"
+#include "../Camera/CameraComponent.h"
 
 bool FControlPanel::Init()
 {

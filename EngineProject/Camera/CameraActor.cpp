@@ -1,8 +1,8 @@
 #include "EnginePCH.h"
 
 #include "CameraActor.h"
-#include "Component/ActorComponent.h"
-#include "Component/CameraComponent.h"
+#include "../Component/ActorComponent.h"
+#include "CameraComponent.h"
 
 ACameraActor::ACameraActor()
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneComponent.h"
+#include "../Component/SceneComponent.h"
 #include "../Math/EngineMath.h"
 #include "../Rotator.h"
 

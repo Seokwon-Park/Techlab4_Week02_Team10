@@ -14,8 +14,8 @@
 #include "Renderer.h"
 #include "Picking.h"
 
-#include "CameraActor.h"
-#include "Component/CameraComponent.h"
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
 #include "ResourceManager.h"
 
 void* operator new(uint64 Size)

@@ -1,5 +1,5 @@
 #include "EnginePCH.h"
-#include "Component/CameraComponent.h"
+#include "CameraComponent.h"
 #include "InputSystem.h"
 #include "Ray.h"
 

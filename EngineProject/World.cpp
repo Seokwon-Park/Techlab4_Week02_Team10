@@ -4,8 +4,8 @@
 #include "ObjectFactory.h"
 #include "EngineStatics.h"
 
-#include "CameraActor.h"
-#include "Component/CameraComponent.h"
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
 #include "InputSystem.h"
 
 
