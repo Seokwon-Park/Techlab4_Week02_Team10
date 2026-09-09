@@ -215,6 +215,8 @@ FVector FGizmo::GetRenderLocation() const
 {
 	if (!Target) return FVector(0, 0, 0);
 
+	if (CameraComponent->bIsOrthogonal) return GetLocation();
+
 	return (Target->GetTransform()->Location - CameraComponent->GetTransform()->Location).Normalize() * 10.0f + CameraComponent->GetTransform()->Location;
 
 	// return Target ? Target->GetTransform()->Location: FVector(0, 0, 0); 
