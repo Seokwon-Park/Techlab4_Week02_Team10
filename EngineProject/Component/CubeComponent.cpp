@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
 #include "CubeComponent.h"
-#include "../ResourceManager.h"
+#include "../Engine/ResourceManager.h"
 
 void UCubeComponent::BeginPlay()
 {

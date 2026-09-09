@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Transform.h"
+#include "Collision/Ray.h"
+#include "Math/Transform.h"
 #include "Component/SceneComponent.h"
 
 class UCameraComponent;

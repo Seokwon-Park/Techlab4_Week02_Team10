@@ -1,16 +1,17 @@
 #pragma once
 
 #include "SceneComponent.h"
-#include "../Shader.h"
-#include "../Mesh.h"
-#include "RenderPacket.h"
-#include "GeometryGenerator.h"
+#include "../Render/Shader.h"
+#include "../Render/Mesh.h"
+#include "Render/RenderPacket.h"
+#include "Render/GeometryGenerator.h"
 
 enum class EPrimitiveType
 {
-	None,
 	Sphere,
-	Cube
+	Cube,
+	Cone,
+	Plane
 };
 
 class UPrimitiveComponent :public USceneComponent
@@ -34,7 +35,7 @@ public:
 	void SetType(EPrimitiveType Ptype) { Type = Ptype; }
 	EPrimitiveType GetType() const { return Type; }
 protected:
-	EPrimitiveType Type = EPrimitiveType::None;
+	EPrimitiveType Type = EPrimitiveType::Cube;
 	FShader* Shader = nullptr;
 	TSharedPtr<FMesh> Mesh = nullptr;
 	FMeshData MeshData;

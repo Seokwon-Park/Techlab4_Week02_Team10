@@ -20,11 +20,12 @@ public:
 	int32 SelectedIndex = 0;
 	int32 ActorNum = 0;
 
-	const char* Items[3] =
+	const char* Items[4] =
 	{
-		"None",
 		"Sphere",
-		"Cube"
+		"Cube",
+		"Cone",
+		"Plane",
 	};
 
 

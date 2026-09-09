@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "PrimitiveComponent.h"
-#include "../Renderer.h"
-#include "../ResourceManager.h"
+#include "../Render/Renderer.h"
+#include "../Engine/ResourceManager.h"
 
 void UPrimitiveComponent::BeginPlay()
 {

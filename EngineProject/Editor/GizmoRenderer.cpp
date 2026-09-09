@@ -1,8 +1,8 @@
 #include "EnginePCH.h"
 #include "GizmoRenderer.h"
 
-#include "GeometryGenerator.h"
-#include "Component/CameraComponent.h"
+#include "Render/GeometryGenerator.h"
+#include "Camera/CameraComponent.h"
 
 FGizmoRenderer::FGizmoRenderer()
 {
