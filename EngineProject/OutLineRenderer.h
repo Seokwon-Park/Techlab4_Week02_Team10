@@ -3,6 +3,12 @@
 #include "Renderer.h"
 #include "Outline.h"
 
+struct FOutlineData
+{
+	FMatrix World;
+	FVector4 Scale;
+};
+
 class FOutlineRenderer
 {
 public:
@@ -17,7 +23,6 @@ private:
 	FShader* Shader;
 	FMesh* Mesh;
 
-	TSharedPtr<FMesh> Test;
-
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> RasterizerState;
+	TSharedPtr<FConstantBuffer> ConstantBuffer;
 };

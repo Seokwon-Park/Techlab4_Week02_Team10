@@ -11,11 +11,7 @@ void FOutlineRenderer::Init(FRenderer* InRenderer)
 	RasterizerDesc.CullMode = D3D11_CULL_FRONT;
 	RasterizerDesc.FrontCounterClockwise = FALSE;
 	Renderer->GetDevice()->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
-
-	//auto Data = FGeometryGenerator::CreateSphere(1.0f, 20, 10, FVector4(1.0f, 0.0f, 0.0f, 1.0f));
-	//Test = MakeShared<FMesh>();
-	//Test->VertexBuffer = Renderer->CreateVertexBuffer(Data.Vertices.data(), sizeof(FVertex) * (UINT)Data.Vertices.size(), sizeof(FVertex));
-	//Test->IndexBuffer = Renderer->CreateIndexBuffer(Data.Indices.data(), Data.Indices.size());
+	ConstantBuffer = Renderer->CreateConstantBuffer(sizeof(FOutlineData));
 }
 
 void FOutlineRenderer::SetMesh(FMesh* InMesh)
@@ -38,6 +34,11 @@ void FOutlineRenderer::OnRender(const FOutline& InOutline, const FMatrix& InView
 	Renderer->BindMesh(InOutline.GetMesh());
 
 	FMatrix MVP = InOutline.GetWorldMatrix() * InViewProj;
-	Renderer->UpdateConstantBuffer(MVP);
+	MVP = MVP.GetTransposed();
+	FVector4 Scale = InOutline.GetTargetScale();
+	FOutlineData OutlineConst = { MVP, Scale };
+	//Renderer->UpdateConstantBuffer(MVP);
+	Renderer->UpdateConstantBufferData(ConstantBuffer.get(), &OutlineConst, sizeof(OutlineConst));
+	Renderer->BindConstantBuffer(0, ConstantBuffer.get(), EShaderBindFlagBits::Vertex);
 	Renderer->DrawIndexed(InOutline.GetMesh()->IndexBuffer->GetIndexCount());
 }

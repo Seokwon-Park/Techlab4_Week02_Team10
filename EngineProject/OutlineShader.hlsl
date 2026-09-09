@@ -1,6 +1,7 @@
 cbuffer constants : register(b0)
 {
     matrix MVP;
+    float4 scale;
 };
 
 struct VS_INPUT
