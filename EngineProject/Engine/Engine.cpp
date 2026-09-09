@@ -199,7 +199,6 @@ void Engine::Run()
 
 		ImGuiRenderer->Begin();
 
-		ImGui::ShowDemoWindow();
 		EditorUI->OnRender();
 
 		ImGuiRenderer->End();

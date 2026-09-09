@@ -172,7 +172,7 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		Height = rc.bottom - rc.top;
 
 		bIsResized = true;
-		break;
+		bIsInSizeMove = false;
 		break;
 	}
 	default:

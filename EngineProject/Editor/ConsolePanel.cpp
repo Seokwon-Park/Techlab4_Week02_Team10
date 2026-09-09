@@ -16,6 +16,9 @@ bool FConsolePanel::Init()
 	Commands.push_back("CLEAR");
 	Commands.push_back("CLASSIFY");
 
+	AutoScroll = true;       // 추가
+	ScrollToBottom = false;  // 추가
+
 	return true;
 }
 

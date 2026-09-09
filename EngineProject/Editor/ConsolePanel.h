@@ -52,6 +52,8 @@ public:
 		LogData.message = std::format(fmt, std::forward<Args>(args)...);
 
 		Items.push_back(LogData);
+
+		ScrollToBottom = true;  
 	}
 
 	void ExecCommand(const FString& command_line);
