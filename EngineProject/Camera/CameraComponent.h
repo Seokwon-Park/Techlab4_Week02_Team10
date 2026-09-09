@@ -4,7 +4,6 @@
 #include "../Math/EngineMath.h"
 #include "../Math/Rotator.h"
 
-struct FRay;
 
 class UCameraComponent : public USceneComponent
 {

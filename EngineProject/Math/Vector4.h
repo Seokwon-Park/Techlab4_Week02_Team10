@@ -3,6 +3,8 @@
 #include <iostream>
 #include "../Core/Types.h"
 
+//template<typename T>
+//struct TVector;
 struct FVector;
 struct FMatrix;
 

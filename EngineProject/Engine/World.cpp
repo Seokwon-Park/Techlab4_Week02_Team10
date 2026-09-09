@@ -81,6 +81,8 @@ bool UWorld::Init()
 		SetMainCamera(GetCamera);
 		return true;
 	}
+
+	
 	return false;
 }
 
@@ -135,6 +137,15 @@ void UWorld::ClearScene()
 
 bool UWorld::NewScene(const FString& Path)
 {
+	FString FullPath = "Scene/" + Path + ".Scene";
+	
+	if (std::filesystem::exists(FullPath))
+	{
+		return false; // 이미 존재하면 아무것도 하지 않음
+	}
+
+	std::ofstream File(FullPath);
+	
 	ClearScene(); // 씬 제거
 
 	ACameraActor* GetCamera = SpawnActor<ACameraActor>(nullptr);
@@ -154,8 +165,7 @@ bool UWorld::NewScene(const FString& Path)
 	Json["NextUUID"] = FEngineStatics::NextUUID;
 	Json["Primitives"] = json::object();
 
-	FString FullPath = "Scene/" + Path + ".Scene";
-	std::ofstream File(FullPath);
+	
 
 	if (!File.is_open())
 	{

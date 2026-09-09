@@ -1,6 +1,8 @@
 #pragma once
 #include "../Core/Types.h"
 
+//template<typename T>
+//struct TVector;
 struct FVector;
 struct FVector4;
 struct FRotator;

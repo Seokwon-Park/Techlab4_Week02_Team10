@@ -379,13 +379,13 @@
     <ClInclude Include="ThirdParty\ImGui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TVector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Editor\Outline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Editor\OutLineRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\TVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
