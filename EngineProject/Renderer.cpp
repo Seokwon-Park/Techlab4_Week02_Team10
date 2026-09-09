@@ -19,7 +19,7 @@ void FRenderer::EndFrame()
 	SwapChain->Present(1, 0);
 }
 
-void FRenderer::Create(HWND hWindow)
+bool FRenderer::Init(HWND hWindow)
 {
 	CreateDeviceAndSwapChain(hWindow);
 
@@ -40,6 +40,7 @@ void FRenderer::Create(HWND hWindow)
 	DeviceContext->VSSetShader(shader->VertexShader.Get(), nullptr, 0);
 	DeviceContext->PSSetShader(shader->PixelShader.Get(), nullptr, 0);
 	DeviceContext->IASetInputLayout(shader->InputLayout.Get());*/
+	return true;
 }
 
 
@@ -184,8 +185,6 @@ TSharedPtr<FShader> FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT
 			VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &(Shader->InputLayout));
 	}
 
-
-
 	VertexShaderCSO->Release();
 	PixelShaderCSO->Release();
 
@@ -194,7 +193,12 @@ TSharedPtr<FShader> FRenderer::CreateShader(const wchar_t* FileName, D3D11_INPUT
 
 TSharedPtr<FMesh> FRenderer::CreateMesh(const FMeshData& InMeshData)
 {
-	return TSharedPtr<FMesh>();
+	TSharedPtr<FMesh> Mesh = MakeShared<FMesh>();
+
+	Mesh->VertexBuffer = CreateVertexBuffer(InMeshData.Vertices.data(), sizeof(FVertex) * InMeshData.Vertices.size(), sizeof(FVertex));
+	Mesh->IndexBuffer = CreateIndexBuffer(InMeshData.Indices.data(), InMeshData.Indices.size());
+	
+	return Mesh;
 }
 
 TSharedPtr<FMesh> FRenderer::CreateMesh(TSharedPtr<FVertexBuffer> VertexBuffer, TSharedPtr<FIndexBuffer> IndexBuffer)

@@ -28,7 +28,7 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
-	void Create(HWND hWindow);
+	bool Init(HWND hWindow);
 
 	void CreateDeviceAndSwapChain(HWND hWindow);
 	void CreateFrameBuffer();
