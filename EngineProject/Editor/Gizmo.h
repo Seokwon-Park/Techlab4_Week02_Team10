@@ -46,8 +46,8 @@ public:
 	int PickRotationAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH);
 
 
-	void BeginDrag(int Axis, const FRay& MouseRay);
-	void UpdateDrag(const FRay& MouseRay);
+	void BeginDrag(int Axis, const FRay& MouseRay, const FVector2& MousePos);
+	void UpdateDrag(const FRay& MouseRay, const FVector2& MousePos);
 	void EndDrag();
 
 	float ComputeAngleOnPlane(const FVector& Point, int Axis) const;
@@ -70,6 +70,7 @@ private:
 	int HoveredAxis = -1;
 	int DraggingAxis = -1;
 
+	FVector2 DragStartMousePos;
 	FVector DragStartPoint;
 	FVector DragStartLocation;
 	FRotator DragStartRotation;

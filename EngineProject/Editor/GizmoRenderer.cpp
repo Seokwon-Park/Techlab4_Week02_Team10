@@ -16,7 +16,7 @@ bool FGizmoRenderer::Init(FRenderer* InRenderer)
 	LocationMesh->VertexBuffer = Renderer->CreateVertexBuffer(LocMeshData.Vertices.data(), sizeof(FVertex) * (UINT)LocMeshData.Vertices.size(), sizeof(FVertex));
 	LocationMesh->IndexBuffer = Renderer->CreateIndexBuffer(LocMeshData.Indices.data(), LocMeshData.Indices.size());
 
-	FMeshData RotMeshData = FGeometryGenerator::CreateRing(1.0f, 0.01f, 32, 16, FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	FMeshData RotMeshData = FGeometryGenerator::CreateRing(1.0f, 0.03f, 32, 16, FVector4(1.0f, 0.0f, 0.0f, 1.0f));
 	RotationMesh = MakeShared<FMesh>();
 	RotationMesh->VertexBuffer = Renderer->CreateVertexBuffer(RotMeshData.Vertices.data(), sizeof(FVertex) * (UINT)RotMeshData.Vertices.size(), sizeof(FVertex));
 	RotationMesh->IndexBuffer = Renderer->CreateIndexBuffer(RotMeshData.Indices.data(), RotMeshData.Indices.size());
@@ -37,12 +37,12 @@ bool FGizmoRenderer::Init(FRenderer* InRenderer)
 	AxisDataArray.push_back({ FRotator(0.0f, 0.0f, -90.0f) ,FVector4(0.0f, 1.0f, 0.0f, 1.0f) });
 	AxisDataArray.push_back({ FRotator(0.0f, 0.0f, 0.0f) ,FVector4(0.0f, 0.0f, 1.0f, 1.0f) });
 
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{"POSITION" , 0 , DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-	Shader = Renderer->CreateShader(L"Shader/GizmoShader.hlsl", layout, 2);
+	AxisDataArray.push_back({ FRotator(0.0f, 0.0f, 0.0f) ,FVector4(0.0f, 0.0f, 1.0f, 1.0f) });
+	AxisDataArray.push_back({ FRotator(0.0f, 0.0f, 0.0f) ,FVector4(0.0f, 0.0f, 1.0f, 1.0f) });
+	AxisDataArray.push_back({ FRotator(0.0f, 0.0f, 0.0f) ,FVector4(0.0f, 0.0f, 1.0f, 1.0f) });
+	AxisDataArray.push_back({ FRotator(0.0f, 0.0f, 0.0f) ,FVector4(1.0f, 1.0f, 1.0f, 1.0f) }); // ScreenAxis
+
+	Shader = Renderer->CreateShader(L"Shader/GizmoShader.hlsl", FVertex::GetLayout());
 
 	return false;
 }
@@ -102,15 +102,20 @@ void FGizmoRenderer::OnRender(const FGizmo& Gizmo, const FMatrix& ViewProj)
 		DrawMesh(AxisMesh, Data);
 	}
 
-	// 중앙 구
-	Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
+	if (Gizmo.GetMode() != EGizmoMode::Rotation)
+	{
+		// 중앙 구
+		Transform.Rotation = FRotator(0.0f, 0.0f, 0.0f);
 
-	FGizmoData SphereData{};
-	SphereData.World = Transform.GetWorldMatrix().GetTransposed();
-	SphereData.ViewProj = ViewProjT;
-	SphereData.Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+		FGizmoData SphereData{};
+		SphereData.World = Transform.GetWorldMatrix().GetTransposed();
+		SphereData.ViewProj = ViewProjT;
+		SphereData.Color = (6 == HoveredAxis)
+			? FVector4(1.0f, 1.0f, 0.0f, 1.0f)     // hover 시 노랑
+			: AxisDataArray[6].Color;
 
-	DrawMesh(SphereMesh.get(), SphereData);
+		DrawMesh(SphereMesh.get(), SphereData);
+	}
 }
 
 void FGizmoRenderer::DrawMesh(FMesh* Mesh, const FGizmoData& Data)

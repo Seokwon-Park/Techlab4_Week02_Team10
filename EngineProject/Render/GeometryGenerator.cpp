@@ -21,12 +21,12 @@ FMeshData FGeometryGenerator::CreatePlane(float Size, const FVector4& Color)
 	}
 
 	PlaneMeshData.Indices.push_back(0);
-	PlaneMeshData.Indices.push_back(1);
 	PlaneMeshData.Indices.push_back(2);
+	PlaneMeshData.Indices.push_back(1);
 
 	PlaneMeshData.Indices.push_back(0);
-	PlaneMeshData.Indices.push_back(2);
 	PlaneMeshData.Indices.push_back(3);
+	PlaneMeshData.Indices.push_back(2);
 
 	return PlaneMeshData;
 }
