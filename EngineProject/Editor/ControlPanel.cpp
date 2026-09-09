@@ -27,7 +27,7 @@ void FControlPanel::OnRender()
 	ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Jungle Control Panel");
 	
-	ImGui::Text("Hello Jungle world");
+	ImGui::Text("Hello Jungle World");
 	ImGui::Text("FPS: %.2f (%.0f ms)",1.0f / DeltaTime, DeltaTime * 1000.0f);
 
 	ImGui::Separator();
