@@ -349,7 +349,7 @@ UPrimitiveComponent* UWorld::GetPickingPrimitive(uint32 ScreenW, uint32 ScreenH)
 	FRay ray = MainCamera->GetCameraComponent()->DeProjection(FInputSystem::GetMouseX(), FInputSystem::GetMouseY(), ScreenW, ScreenH);
 
 	float minT{ FLT_MAX };
-	UPrimitiveComponent* PickingPrimitive = nullptr;
+	PickingPrimitive = nullptr;		//UPrimitiveComponent*
 
 	for (UPrimitiveComponent* Primitive : PrimitiveComponents)
 	{

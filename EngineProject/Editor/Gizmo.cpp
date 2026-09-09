@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "Gizmo.h"
+#include "Component/CameraComponent.h"
 
 static const FVector AxisDirs[3] = {
 	FVector(1, 0, 0),
@@ -10,8 +11,10 @@ static const FVector AxisDirs[3] = {
 static const float AxisLength = 1.5f;
 static const float HitPixels = 12.0f;
 
-void FGizmo::Update(const FRay& MouseRay, const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH, bool bMouseDown)
+void FGizmo::Update(const FRay& MouseRay, const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH, bool bMouseDown, UCameraComponent* CameraComponent)
 {
+	FGizmo::CameraComponent = CameraComponent;
+
 	if (!Target)
 	{
 		HoveredAxis = -1;
@@ -32,6 +35,8 @@ void FGizmo::Update(const FRay& MouseRay, const FVector2& MousePos, const FMatri
 
 	if (bMouseDown && HoveredAxis >= 0)
 		BeginDrag(HoveredAxis, MouseRay);
+
+	
 }
 
 int FGizmo::PickAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH)
@@ -44,7 +49,7 @@ int FGizmo::PickAxis(const FVector2& MousePos, const FMatrix& ViewProj, int Scre
 
 int FGizmo::PickLinearAxis(const FVector2& MousePos, const FMatrix& ViewProj, int ScreenW, int ScreenH)
 {
-	FVector origin = GetLocation();
+	FVector origin = GetRenderLocation();
 
 	int best = -1;
 	float bestDist = HitPixels;
@@ -204,4 +209,13 @@ FVector FGizmo::GetAxisDirection(int Axis) const
 		return FVector(v.X, v.Y, v.Z).Normalize();
 	}
 	return AxisDirs[Axis];
+}
+
+FVector FGizmo::GetRenderLocation() const
+{
+	if (!Target) return FVector(0, 0, 0);
+
+	return (Target->GetTransform()->Location - CameraComponent->GetTransform()->Location).Normalize() * 10.0f + CameraComponent->GetTransform()->Location;
+
+	// return Target ? Target->GetTransform()->Location: FVector(0, 0, 0); 
 }

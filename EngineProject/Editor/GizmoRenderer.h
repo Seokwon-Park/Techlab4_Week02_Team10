@@ -3,6 +3,8 @@
 #include "Renderer.h"
 #include "Gizmo.h"
 
+class UCameraComponent;
+
 struct FGizmoData
 {
 	FMatrix World;

@@ -119,7 +119,8 @@ bool Engine::Init(HINSTANCE hInstance)
 	Actor->GetPrimitiveComponent()->SetMeshShader(Mesh, Shader.get());
 	Actor->GetPrimitiveComponent()->SetMeshData(Data);
 
-	PropertyPanel->transform = Actor->GetPrimitiveComponent()->GetTransform();
+	PropertyPanel->FPropertyPanel::World = World;
+	PropertyPanel->FPropertyPanel::Gizmo = Gizmo;
 	ControlPanel->FControlPanel::World = World;
 	ControlPanel->FControlPanel::Mesh = Mesh;
 	ControlPanel->FControlPanel::Shader = Shader.get();
@@ -162,7 +163,7 @@ void Engine::Run()
 		FVector2 mousePos(FInputSystem::GetMouseX(), FInputSystem::GetMouseY());
 		bool bMouseDown = FInputSystem::IsMouseDown(EMouseButton::Left);
 
-		Gizmo->Update(ray, mousePos, VP, MainWindow->GetWidth(), MainWindow->GetHeight(), bMouseDown);
+		Gizmo->Update(ray, mousePos, VP, MainWindow->GetWidth(), MainWindow->GetHeight(), bMouseDown, World->GetMainCamera()->GetCameraComponent());
 
 
 		if (FInputSystem::IsMousePressed(EMouseButton::Left) && !Gizmo->IsUsing() && Gizmo->GetHoveredAxis() < 0 && !ImGui::GetIO().WantCaptureMouse)
